@@ -1,0 +1,450 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Http\Request;
+use App\Http\Controllers\API\BaseController as BaseController;
+use Illuminate\Support\Facades\Hash;
+use DB;
+use Validator;
+use Intervention\Image\ImageManagerStatic as Image;
+use App\Services\PayUService\Exception;
+use GuzzleHttp\Client;
+
+class ApiController extends BaseController
+{
+    public function getDepot(){
+        $depot = DB::table('depots')->select('id', 'name')->get();
+
+        return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
+    }
+
+    public function checkKey(Request $request){
+        $data = $request->all();
+        $key = $data["key"];
+        $id = $data["id"];
+
+        $depot = DB::table('depots')->select('key')->where('id', $id)->first();
+
+        if (Hash::check($key, $depot->key)) {
+            return $this->sendResponse(true, 'Data retrieved successfully.');
+        }else{
+            return $this->sendResponse(false, 'Data retrieved successfully.');
+        }
+    }
+
+    public function getRoles(){
+        $roles = DB::table('roles')->select('id', 'display_name')->get();
+        return $this->sendResponse($roles->toArray(), 'Roles retrieved successfully.');
+    }
+
+    public function getProductCategories(){
+        $product_categories = DB::table('product_categories')->select('id', 'name', 'sequence')->get();
+        return $this->sendResponse($product_categories->toArray(), 'product categories retrieved successfully.');
+    }
+
+    public function syncPullCount(Request $request){
+        $data = $request->all();
+        $table = $data["table"];
+        $all = ($data["all"] == "true") ? true : false;
+        $staff_id = (int) $data["staff_id"];
+        $depot_id = (int) $data["depot_id"];
+
+        if($all){
+            if(Schema::hasColumn($table, 'depot_id')){
+                $records = DB::table($table)->where('depot_id', $depot_id)->count();
+            }
+            else if(Schema::hasColumn($table, 'staff_id')){
+                $records = DB::table($table)->where('staff_id', $staff_id)->count();
+            }else{
+                $records = DB::table($table)->count();
+            }
+        }
+        else{
+            if(Schema::hasColumn($table, 'depot_id'))
+                $records = DB::table($table)->where('depot_id', $depot_id)->whereNotExists(function ($query) use ($table, $staff_id) {
+                    $query->select(DB::raw(1))
+                        ->from('sync_records')
+                        ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
+                })->count();
+
+            else if(Schema::hasColumn($table, 'staff_id'))
+                $records = DB::table($table)->where('staff_id', $staff_id)->whereNotExists(function ($query) use ($table, $staff_id) {
+                    $query->select(DB::raw(1))
+                        ->from('sync_records')
+                        ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
+                })->count();
+            else
+                $records = DB::table($table)->whereNotExists(function ($query) use ($table, $staff_id) {
+                    $query->select(DB::raw(1))
+                        ->from('sync_records')
+                        ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
+                })->count();
+        }
+
+        return $this->sendResponse($records, 'records retrieved successfully.');
+    }
+
+    public function syncPull(Request $request){
+        $data = $request->all();
+        $table = $data["table"];
+        $all = ($data["all"] == "true") ? true : false;
+        $skip = (int) $data["skip"];
+        $staff_id = (int) $data["staff_id"];
+        $depot_id = (int) $data["depot_id"];
+
+        if($all){
+            if(Schema::hasColumn($table, 'depot_id')){
+                $records = DB::table($table)->where('depot_id', $depot_id)->skip($skip)->take(10)->get();
+            }
+            else if(Schema::hasColumn($table, 'staff_id')){
+                $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(10)->get();
+            }else{
+                $records = DB::table($table)->skip($skip)->take(10)->get();
+            }
+        }
+        else{
+            if(Schema::hasColumn($table, 'depot_id')){
+                $records = DB::table($table)->where('depot_id', $depot_id)->whereNotExists(function ($query) use ($table, $staff_id) {
+                    $query->select(DB::raw(1))
+                          ->from('sync_records')
+                          ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
+                })->skip($skip)->take(10)->get();
+            }
+            else if(Schema::hasColumn($table, 'staff_id')){
+                $records = DB::table($table)->where('staff_id', $staff_id)->whereNotExists(function ($query) use ($table, $staff_id) {
+                    $query->select(DB::raw(1))
+                          ->from('sync_records')
+                          ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
+                })->skip($skip)->take(10)->get();
+            }
+            else{
+                $records = DB::table($table)->whereNotExists(function ($query) use ($table, $staff_id) {
+                    $query->select(DB::raw(1))
+                          ->from('sync_records')
+                          ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
+                })->skip($skip)->take(10)->get();
+            }
+        }
+        
+        $results = json_decode(json_encode($records), true);
+        foreach($results as $result){
+            \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $result["id"]]);
+        }
+
+        return $this->sendResponse($records->toArray(), 'records retrieved successfully.');
+    }
+
+    public function syncPush(Request $request){
+        $data = $request->all();
+        $table = $data["table"];
+        $record = $data["record"];
+        $staff_id = (int) $data["staff_id"];
+        
+        /* foreach($record AS $key => $value){
+            if($records[$key] == "sync" && $value == null){
+
+            }
+        } */
+
+        $syncId = $record["id"];
+
+        //New Record
+        if($record["sync"] == null){
+            unset($record["id"]);
+            unset($record["sync"]);
+            $id = DB::table($table)->insertGetId($record);
+            DB::table('converted_synchs')->insert(
+                ['table' => $table, 'sync_id' => $syncId, 'converted_id' => $id]
+            );
+
+            \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
+        }
+
+        //Updates
+        else if($record["sync"] == 3){
+            $id = (int) $record["id"];
+            unset($record["id"]);
+            unset($record["sync"]);
+            
+            $count = DB::table($table)->where('id', $id)->count();
+            if($count){
+                DB::table($table)->where('id', $id)
+                ->update($record);
+
+                DB::table("sync_records")->where([
+                    ["name", $table],
+                    ["data_id", $id],
+                    ["staff_id", "!=", $staff_id]
+                ])->delete();
+            }else{
+                $id = DB::table($table)->insertGetId($record);
+                DB::table('converted_synchs')->insert(
+                    ['table' => $table, 'sync_id' => $syncId, 'converted_id' => $id]
+                );
+
+                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
+            }
+        }
+
+        //Error
+        else if($record["sync"] == 1){
+            unset($record["id"]);
+            unset($record["sync"]);
+            
+            $ret = DB::table("converted_synchs")->select("converted_id")->where([
+                ["sync_id", "=", $syncId],
+                ["table", "=", $table]
+            ])->first();
+            if($ret){
+                $id = $ret->converted_id;
+            }else{
+                $id = DB::table($table)->insertGetId($record);
+                DB::table('converted_synchs')->insert(
+                    ['table' => $table, 'sync_id' => $syncId, 'converted_id' => $id]
+                );
+
+                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
+            }
+            
+        }else{
+
+        }
+
+        return $this->sendResponse($id, 'records retrieved successfully.');
+    }
+
+    public function syncDelete(Request $request){
+        $data = $request->all();
+        $records = $data["records"];
+        $staff_id = (int) $data["staff_id"];
+        
+        foreach($records AS $key => $value){
+            DB::table($value["table_name"])->where('id', $value["reference_id"])->delete();
+            \App\SyncDeleteRecord::firstOrCreate(['name' => $value["table_name"], 'staff_id' => $staff_id, 'data_id' => $value["reference_id"]]);
+        }
+
+        $r = DB::table("sync_delete_records")->select("name", "data_id")->whereExists(function ($query) use ($staff_id) {
+            $query->select(DB::raw(1))
+                  ->from('sync_records')
+                  ->whereRaw("sync_records.name = sync_delete_records.name AND sync_records.staff_id != sync_delete_records.staff_id AND sync_delete_records.data_id = sync_records.data_id");
+        })->get();
+
+
+
+        return $this->sendResponse($r->toArray(), 'records retrieved successfully.');
+    }
+
+    //Server Firebase
+    public function accessByEmail(Request $request){
+        $data = $request->all();
+        $email = $data["email"];
+
+        $records = DB::table("staffs")->select("staffs.*", 'depots.name AS depot_name', 'roles.display_name AS role_name')->join('roles', 'staffs.role_id', '=', 'roles.id')->join('depots', 'staffs.depot_id', '=', 'depots.id')->where("staffs.email", $email)->first();
+
+        return $this->sendResponse($records, 'Depot retrieved successfully.');
+    }
+
+    public function updateFCMToken(Request $request){
+        $data = $request->all();
+        $token = $data["token"];
+        $id = $data["id"];
+
+        $records = DB::table('staffs')
+        ->where('id', $id)
+        ->update(['fcm_token' => $token]);
+
+        $client = new Client([
+            'headers' => [ 
+                'Content-Type' => 'application/json',
+                'Authorization' => 'key=AAAAnwpjJ4A:APA91bGhQX_UvzPgzRYhoiowbvBzgSdftHXEB7niQqa0QmY-exWBE61eSNFIZ5SQBQfMqqF21LaGtSBxU7HFtUUX9QYeq1pyXoreHShhmeuAmelFkyFUnYg4JvkLdhvUYrccXKfPDxZF'
+            ]
+        ]);
+
+        $response = $client->post('https://iid.googleapis.com/iid/v1/'.$token.'/rel/topics/general');
+
+        return $this->sendResponse($records, 'Token Updated');
+    }
+
+    /* Stat */
+
+    //Top 10 dealers
+    public function topTenDealers(Request $request){
+        $data = $request->all();
+        $thisMonth = $data["thisMonth"];
+        $lastMonth = $data["lastMonth"];
+
+        $records = DB::table('staffs AS s')->select("s.name", "depots.name AS depot_name", "s.thumbnail",
+        DB::raw("IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0]), 0) AS mySold"),
+        DB::raw("IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $lastMonth[1] AND YEAR(d.created_date) = $lastMonth[0]), 0) AS last_sold"),
+        DB::raw("(SELECT d.created_date FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0] ORDER BY i.id DESC LIMIT 1) AS last_updated")
+        )->join('depots', 's.depot_id', '=', 'depots.id')->whereRaw('s.role_id = 3')->having('mySold', '!=', 0)->orderBy('mySold', 'desc')->limit(10)->get();
+        return $this->sendResponse($records, 'Top 10 Dealers retrieved successfully.');
+    }
+
+    //Top 10 Depot
+
+    public function topTenDepot(Request $request){
+        $data = $request->all();
+        $thisMonth = $data["thisMonth"];
+        $lastMonth = $data["lastMonth"];
+        $records = DB::table('staffs AS s')->select("de.name AS depot_name", 
+        DB::raw("SUM(IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0]), 0)) AS mySold"),
+        DB::raw("SUM(IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $lastMonth[1] AND YEAR(d.created_date) = $lastMonth[0]), 0)) AS last_sold"),
+        DB::raw("(SELECT d.created_date FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.depot_id = de.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0] ORDER BY i.id DESC LIMIT 1) AS last_updated")
+        )->join('depots AS de', 's.depot_id', '=', 'de.id')->whereRaw('s.role_id = 3')->groupBy('de.id')->having('mySold', '!=', 0)->orderBy('mySold', 'desc')->limit(10)->get();
+        return $this->sendResponse($records, 'Top 10 Depot retrieved successfully.');
+    }
+
+    public function depotDashboardDealers(Request $request){
+        $data = $request->all();
+        $thisMonth = $data["thisMonth"];
+        $lastMonth = $data["lastMonth"];
+        $depot_id = $data["depot_id"];
+        $records = DB::table('staffs AS s')->select("s.name", "depots.name AS depot_name", "s.thumbnail",
+        DB::raw("IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0]), 0) AS powder_thisMonth"),
+        DB::raw("IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $lastMonth[1] AND YEAR(d.created_date) = $lastMonth[0]), 0) AS powder_lastMonth"),
+        DB::raw("IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.id = 3 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0]), 0) AS cup_thisMonth"),
+        DB::raw("IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.id = 7 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0]), 0) AS machine_thisMonth"),
+        DB::raw("(SELECT d.created_date FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0] ORDER BY i.id DESC LIMIT 1) AS last_updated")
+        )->join('depots', 's.depot_id', '=', 'depots.id')->whereRaw('s.role_id = 3 AND depots.id = ' . $depot_id)->orderBy('powder_thisMonth', 'desc')->get();
+        return $this->sendResponse($records, 'depotDashboardDealers');
+    }
+    
+    //Clients Query
+    public function depotTotalClients(Request $request){
+        $data = $request->all();
+        $depot_id = $data["depot_id"];
+        $records = DB::table('clients AS c')
+        ->join('staffs AS s', 's.id', '=', 'c.staff_id')->whereRaw('s.depot_id = ' . $depot_id)->count();
+        return $this->sendResponse($records, 'depotTotalClients');
+    }
+
+
+    //Temp
+    public function importOldServer(){
+        
+        DB::table("machines_copy")->whereNotNull('owner_id')->orderBy('id')->chunk(100, function ($machines) {
+            foreach($machines AS $key => $value){
+                $client = DB::table("clients_copy")->where("id", $value->owner_id)->first();
+                $staff = DB::table("staffs")->where("mapper_id", $value->creator_id)->first();
+                
+                //client thumbnail
+                
+                if(is_object($client)){
+                    if($client->photo !== null || $client->photo !== ""){
+                        try {
+                            $ct = Image::make($value->photo);
+                            $ct->resize(150, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                            });
+    
+                            $client_thumbnail = (string) $ct->encode('data-url');
+                        }
+                        catch (\Exception $e) {
+                            $client_thumbnail = null;
+                        }
+                    }else
+                        $client_thumbnail = null;
+                    
+    
+                    $client_id = DB::table('clients')->insertGetId(
+                        [
+                            'name' => $client->name, 
+                            'alias' => ($client->alias) ? $client->alias : null,
+                            'company' => ($client->company) ? $client->company : null,
+                            'email' => ($client->email) ? $client->email : null,
+                            'photo' => ($client->photo) ? $client->photo : null,
+                            'thumbnail' => $client_thumbnail,
+                            'lat' => null,
+                            'lng' => null,
+                            'created_at' => date("Y-m-d H:i:s", $client->created_date / 1000),
+                            'updated_at' => date("Y-m-d H:i:s", $client->updated_date / 1000),
+                            'deleted_at' => null,
+                            'staff_id' => $staff->id,
+                            'location_id' => null,
+                        ]
+                    );
+    
+                    if($client->contact){
+                        DB::table('contacts')->insert(
+                            [
+                                'reference_id' => $client_id,
+                                'contact' => $client->contact,
+                                'module_id' => 3
+                            ]
+                        );
+                    }
+    
+                    if($client->contact2){
+                        DB::table('contacts')->insert(
+                            [
+                                'reference_id' => $client_id,
+                                'contact' => $client->contact2,
+                                'module_id' => 3
+                            ]
+                        );
+                    }
+                }else{
+                    $client_id = null;
+                }
+
+                $lat = $value->lat;
+                $lng = $value->lng;
+                $location = DB::table("locations")->select("id", "name_1", "name_2", "name_3")->whereRaw("st_contains(SHAPE, ST_GeomFromText('POINT($lng $lat)', 1))", [])->first();
+                
+                if(!is_object($location)){
+                    $loc = null;
+                }else{
+                    $loc = $location->id;
+                    // echo "$lat $lng";// , $location->name_1 + " " + $location->name_2 + " " + $location->name_3 + "<br/>";
+                    // echo " " . $location->name_1 . " " . $location->name_2 . " " . $location->name_3 . " $staff->id $created_at <br/>";
+                }
+
+                if(!is_object($value)){
+                    $thumbnail = null;
+                }else{
+                    if($value->photo !== null || $value->photo !== ""){
+                        try {
+                            $img = Image::make($value->photo);
+                            $img->resize(150, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                            });
+    
+                            $thumbnail = (string) $img->encode('data-url');
+                        }
+                        catch (\Exception $e) {
+                            $thumbnail = null;
+                        }
+                        
+                    }else
+                        $thumbnail = null;
+                }
+
+                $machineId = DB::table('machines')->insertGetId(
+                    [
+                        'staff_id' => $staff->id,
+                        'client_id' => $client_id,
+                        'created_at' => date("Y-m-d H:i:s", $value->created_date / 1000),
+                        'updated_at' => date("Y-m-d H:i:s", $value->updated_date / 1000),
+                        'location_id' => $loc,
+                        'accuracy' => $value->accuracy,
+                        'delivery' => ($value->delivery === "Unspecified") ? "Sat" : $value->delivery,
+                        'lat' => $lat,
+                        'lng' => $lng,
+                        'machine_type' => ($value->machine_type == "Unspecified") ? "Other" : $value->machine_type,
+                        'sequence' => $value->sequence,
+                        'photo' => ($value->photo) ? $value->photo : null,
+                        'thumbnail' => $thumbnail,
+                        'establishment_type' => ($value->establishment_type) ? $value->establishment_type : null,
+                        'deleted_at' => null
+
+                    ]
+                );
+                echo $machineId . "<br/>";
+            }
+        });
+        
+    }
+}

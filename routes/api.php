@@ -1,0 +1,47 @@
+<?php
+
+use Illuminate\Http\Request;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+//Route::resource('users', 'API\ApiController');
+Route::middleware('auth:api', 'throttle:240,1')->group( function () {
+	//Route::resource('users', 'API\ApiController');
+	Route::get('/getDepot', 'API\ApiController@getDepot');
+	Route::get('/checkKey', 'API\ApiController@checkKey');
+	Route::get('/getRoles', 'API\ApiController@getRoles');
+	Route::get('/getProductCategories', 'API\ApiController@getProductCategories');
+	Route::post('/syncPull', 'API\ApiController@syncPull');
+	Route::post('/syncPullCount', 'API\ApiController@syncPullCount');
+
+	Route::post('/syncPush', 'API\ApiController@syncPush');
+	Route::post('/syncDelete', 'API\ApiController@syncDelete');
+
+	Route::resource('staff', 'API\StaffController');
+
+	//server firebase
+	Route::post('/accessByEmail', 'API\ApiController@accessByEmail');
+	Route::post('/updateFCMToken', 'API\ApiController@updateFCMToken');
+
+	/* Stats */
+	//Top 10 Dealers
+	Route::post('/topTenDealers', 'API\ApiController@topTenDealers');
+	//Top 10 Depot
+	Route::post('/topTenDepot', 'API\ApiController@topTenDepot');
+	//
+	Route::post('/depotTotalClients', 'API\ApiController@depotTotalClients');
+
+	/* Depot Dashboard*/
+	Route::post('/depotDashboardDealers', 'API\ApiController@depotDashboardDealers');
+	
+});
+
+
