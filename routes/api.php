@@ -38,9 +38,13 @@ Route::middleware('auth:api', 'throttle:240,1')->group( function () {
 	Route::post('/topTenDepot', 'API\ApiController@topTenDepot');
 	//
 	Route::post('/depotTotalClients', 'API\ApiController@depotTotalClients');
+	Route::post('/depotTotalMachines', 'API\ApiController@depotTotalMachines');
 
 	/* Depot Dashboard*/
 	Route::post('/depotDashboardDealers', 'API\ApiController@depotDashboardDealers');
+
+	//test
+	Route::post('/test', 'API\ApiController@test');
 	
 });
 

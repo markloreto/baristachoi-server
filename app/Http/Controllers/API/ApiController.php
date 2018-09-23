@@ -312,13 +312,28 @@ class ApiController extends BaseController
         return $this->sendResponse($records, 'depotDashboardDealers');
     }
     
-    //Clients Query
+    //Total Clients
     public function depotTotalClients(Request $request){
         $data = $request->all();
         $depot_id = $data["depot_id"];
         $records = DB::table('clients AS c')
         ->join('staffs AS s', 's.id', '=', 'c.staff_id')->whereRaw('s.depot_id = ' . $depot_id)->count();
         return $this->sendResponse($records, 'depotTotalClients');
+    }
+
+    //Total Machines
+    public function depotTotalMachines(Request $request){
+        $data = $request->all();
+        $depot_id = $data["depot_id"];
+        $records = DB::table('machines AS m')
+        ->join('staffs AS s', 's.id', '=', 'm.staff_id')->whereRaw('s.depot_id = ' . $depot_id)->count();
+        return $this->sendResponse($records, 'depotTotalMachines');
+    }
+
+    public function test(Request $request){
+        $data = $request->all();
+       
+        return $this->sendResponse(["a" => "b"], 'depotTotalMachines');
     }
 
 
