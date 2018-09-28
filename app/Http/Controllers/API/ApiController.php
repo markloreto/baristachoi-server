@@ -11,11 +11,14 @@ use Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 use App\Services\PayUService\Exception;
 use GuzzleHttp\Client;
+use Carbon\Carbon;
 
 class ApiController extends BaseController
 {
+    public $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     public function getDepot(){
-        $depot = DB::table('depots')->select('id', 'name')->get();
+
+        $depot = DB::table('depots')->select('id', 'name', 'lat', 'lng')->get();
 
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
@@ -302,7 +305,7 @@ class ApiController extends BaseController
         $thisMonth = $data["thisMonth"];
         $lastMonth = $data["lastMonth"];
         $depot_id = $data["depot_id"];
-        $records = DB::table('staffs AS s')->select("s.name", "depots.name AS depot_name", "s.thumbnail",
+        $records = DB::table('staffs AS s')->select("s.name", "depots.name AS depot_name", "s.thumbnail", "s.id",
         DB::raw("IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0]), 0) AS powder_thisMonth"),
         DB::raw("IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.category = 1 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $lastMonth[1] AND YEAR(d.created_date) = $lastMonth[0]), 0) AS powder_lastMonth"),
         DB::raw("IFNULL((SELECT SUM(ifnull(i.sold, 0)) FROM inventories i INNER JOIN products p ON i.product_id = p.id INNER JOIN disrs d ON i.reference_id = d.id WHERE d.dealer_id = s.id AND p.id = 3 AND i.module_id = 2 AND i.type = 2 AND MONTH(d.created_date) = $thisMonth[1] AND YEAR(d.created_date) = $thisMonth[0]), 0) AS cup_thisMonth"),
@@ -330,10 +333,68 @@ class ApiController extends BaseController
         return $this->sendResponse($records, 'depotTotalMachines');
     }
 
+    public function dealerFullInfo(Request $request){
+        $data = $request->all();
+        $staff_id = $data["staff_id"];
+
+        $record = DB::table("staffs AS s")
+        ->select("s.*",
+        DB::raw("IFNULL((SELECT COUNT(*) FROM machines WHERE staff_id = $staff_id), 0) AS total_machines"),
+        DB::raw("IFNULL((SELECT COUNT(*) FROM clients WHERE staff_id = $staff_id), 0) AS total_clients")
+        )
+        ->where("s.id", $staff_id)->first();
+        return $this->sendResponse($record, 'dealerFullInfo');
+    }
+
+    public function depotClientsMonthInc(Request $request){
+        $data = $request->all();
+        $year = $data["year"];
+        $depot_id = $data["depot_id"];
+        $monthData = [];
+        $until = Carbon::parse("next month")->format("F Y");
+
+        foreach($this->months AS $month){
+            if("$month $year" != $until){
+                $m = Carbon::parse("$month $year")->subMonth()->endOfMonth()->toDateTimeString();
+                $r = DB::table('machines AS m')->whereDate("m.created_at", "<=", $m)
+                ->join('staffs AS s', 's.id', '=', 'm.staff_id')->whereRaw('s.depot_id = ' . $depot_id)
+                ->count();
+                array_push($monthData, ["month" => Carbon::parse("$month")->format("M"), "count" => $r, "test" => $until]);
+            }else{
+                break;
+            }
+            
+        }
+
+        return $this->sendResponse($monthData, 'depotClientsMonthInc');
+    }
+
+    public function machinesNearby(Request $request){
+        $data = $request->all();
+        $lat = $data["lat"];
+        $lng = $data["lng"];
+        $distance = isset($data["distance"]) ? $data["distance"] : 1;
+
+        $records = DB::table("machines AS m")->select("m.lat", "m.lng", "m.id", 
+        DB::raw("((ACOS(SIN($lat * PI() / 180) * SIN(m.lat * PI() / 180) + COS($lat * PI() / 180) * COS(m.lat * PI() / 180) * COS(($lng - m.lng) * PI() / 180)) * 180 / PI()) * 60 * 1.1515) as distance"))
+        ->having('distance', '<=', $distance)
+        ->orderBy('distance', 'asc')->get();
+
+        return $this->sendResponse($records, 'machinesNearby');
+    }
+
     public function test(Request $request){
         $data = $request->all();
+        $year = 2018;
+        
+
+        /* $records = DB::table('machines')->select(DB::raw('count(id) as `data`'),DB::raw("CONCAT_WS('-', YEAR(created_at), LPAD(MONTH(created_at), 2, '0')) as monthyear"))
+        ->groupby('monthyear')
+        ->orderBy("monthyear")
+        ->whereYear('created_at', '=', 2018)
+        ->get(); */
        
-        return $this->sendResponse(["a" => "b"], 'depotTotalMachines');
+        return $this->sendResponse($monthData, 'depotTotalMachines');
     }
 
 
