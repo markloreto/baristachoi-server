@@ -18,9 +18,63 @@ class ApiController extends BaseController
     public $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     public function getDepot(){
 
-        $depot = DB::table('depots')->select('id', 'name', 'lat', 'lng')->get();
+        $depot = DB::table('depots AS d')->select('d.id', 'd.name', 'd.lat', 'd.lng', 'l.name_1 AS province', 'l.name_2 AS municipal', 'l.name_3 AS brgy')
+        ->join('locations AS l', 'd.location_id', '=', 'l.id')
+        ->get();
 
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
+    }
+
+    public function getLogin(Request $request){
+        $data = $request->all();
+        $depot_id = $data["depot_id"];
+        $staff_id = $data["staff_id"];
+
+        $records = \App\Logins::where([["depot_id", $depot_id], ["staff_id", $staff_id]])
+        ->whereDate('created_at', Carbon::today())
+        ->get();
+
+        return $this->sendResponse($records->toArray(), 'getLogin');
+    }
+
+    public function setLogin(Request $request){
+        $data = $request->all();
+        $depot_id = $data["depot_id"];
+        $staff_id = $data["staff_id"];
+        $created_at = $data["created_at"];
+
+        $logins = new \App\Logins;
+
+        $logins->depot_id = $depot_id;
+        $logins->staff_id = $staff_id;
+        $logins->created_at = $created_at;
+
+        $logins->save();
+
+        $client = new Client([
+            'headers' => [ 
+                'Content-Type' => 'application/json',
+                'Authorization' => 'key=AAAAnwpjJ4A:APA91bGhQX_UvzPgzRYhoiowbvBzgSdftHXEB7niQqa0QmY-exWBE61eSNFIZ5SQBQfMqqF21LaGtSBxU7HFtUUX9QYeq1pyXoreHShhmeuAmelFkyFUnYg4JvkLdhvUYrccXKfPDxZF'
+            ]
+        ]);
+
+        $records = DB::table("staffs")->select("staffs.name", 'depots.name AS depot_name', 'roles.display_name AS role_name')->join('roles', 'staffs.role_id', '=', 'roles.id')->join('depots', 'staffs.depot_id', '=', 'depots.id')->where("staffs.id", $staff_id)->first();
+
+        $response = $client->post('https://fcm.googleapis.com/fcm/send',
+        ['body' => json_encode(
+            [
+                'to' => '/topics/general',
+                "collapse_key" => "New Messages",
+                "notification" => array(
+                    "body" => $records->name . " @ " . Carbon::createFromFormat('Y-m-d H:i:s', $created_at)->toDayDateTimeString(),
+                    "title" => "DTR for " . $records->depot_name . " Depot",
+                    "icon" => "https://baristachoi-server.firebaseapp.com/assets/images/fcm-icon.png",
+                    "click_action" => "https://baristachoi-server.firebaseapp.com/"
+                )
+            ]
+        )]);
+
+        return $this->sendResponse([], 'setLogin');
     }
 
     public function checkKey(Request $request){
@@ -133,7 +187,8 @@ class ApiController extends BaseController
         
         $results = json_decode(json_encode($records), true);
         foreach($results as $result){
-            \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $result["id"]]);
+            if($staff_id != null)
+                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $result["id"]]);
         }
 
         return $this->sendResponse($records->toArray(), 'records retrieved successfully.');

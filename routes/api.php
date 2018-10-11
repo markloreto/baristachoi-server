@@ -24,6 +24,8 @@ Route::middleware('auth:api', 'throttle:240,1')->group( function () {
 
 	Route::post('/syncPush', 'API\ApiController@syncPush');
 	Route::post('/syncDelete', 'API\ApiController@syncDelete');
+	Route::post('/getLogin', 'API\ApiController@getLogin');
+	Route::post('/setLogin', 'API\ApiController@setLogin');
 
 	Route::resource('staff', 'API\StaffController');
 
