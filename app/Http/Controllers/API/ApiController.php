@@ -208,8 +208,39 @@ class ApiController extends BaseController
 
         $syncId = $record["id"];
 
-        //New Record
-        if($record["sync"] == null){
+        $s1 = DB::table($table)->where('id', $syncId)->count();
+        $s2 = DB::table("converted_synchs")->where([['sync_id', $syncId],['table', $table]])->count();
+
+        if($s1){ // Original Data OR Converted Data
+            //updates
+            $id = (int) $record["id"];
+            unset($record["id"]);
+            unset($record["sync"]);
+
+            DB::table($table)->where('id', $id)
+                ->update($record);
+
+            DB::table("sync_records")->where([
+                ["name", $table],
+                ["data_id", $id],
+                ["staff_id", "!=", $staff_id]
+            ])->delete();
+        }else if($s2){ //Error
+            //updates
+            $r = DB::table("converted_synchs")->select('converted_id', 'id')->where('sync_id', $syncId)->first();
+            $id = (int) $r->converted_id;
+            unset($record["id"]);
+            unset($record["sync"]);
+
+            DB::table($table)->where('id', $id)
+                ->update($record);
+
+            DB::table("sync_records")->where([
+                ["name", $table],
+                ["data_id", $id],
+                ["staff_id", "!=", $staff_id]
+            ])->delete();
+        }else{
             unset($record["id"]);
             unset($record["sync"]);
             $id = DB::table($table)->insertGetId($record);
@@ -219,57 +250,6 @@ class ApiController extends BaseController
 
             \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
         }
-
-        //Updates
-        else if($record["sync"] == 3){
-            $id = (int) $record["id"];
-            unset($record["id"]);
-            unset($record["sync"]);
-            
-            $count = DB::table($table)->where('id', $id)->count();
-            if($count){
-                DB::table($table)->where('id', $id)
-                ->update($record);
-
-                DB::table("sync_records")->where([
-                    ["name", $table],
-                    ["data_id", $id],
-                    ["staff_id", "!=", $staff_id]
-                ])->delete();
-            }else{
-                $id = DB::table($table)->insertGetId($record);
-                DB::table('converted_synchs')->insert(
-                    ['table' => $table, 'sync_id' => $syncId, 'converted_id' => $id]
-                );
-
-                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
-            }
-        }
-
-        //Error
-        else if($record["sync"] == 1){
-            unset($record["id"]);
-            unset($record["sync"]);
-            
-            $ret = DB::table("converted_synchs")->select("converted_id")->where([
-                ["sync_id", "=", $syncId],
-                ["table", "=", $table]
-            ])->first();
-            if($ret){
-                $id = $ret->converted_id;
-            }else{
-                $id = DB::table($table)->insertGetId($record);
-                DB::table('converted_synchs')->insert(
-                    ['table' => $table, 'sync_id' => $syncId, 'converted_id' => $id]
-                );
-
-                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
-            }
-            
-        }else{
-
-        }
-
         return $this->sendResponse($id, 'records retrieved successfully.');
     }
 
