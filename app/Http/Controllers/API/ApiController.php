@@ -200,11 +200,13 @@ class ApiController extends BaseController
         $record = $data["record"];
         $staff_id = (int) $data["staff_id"];
         
-        /* foreach($record AS $key => $value){
-            if($records[$key] == "sync" && $value == null){
-
+        foreach($record AS $key => $value){
+            if($key == "created_date"){
+                if (strpos($value, 'Z') !== false) {
+                    $record['created_date'] = substr($value, 0, -4);
+                }
             }
-        } */
+        }
 
         $syncId = $record["id"];
 
