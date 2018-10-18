@@ -12,7 +12,7 @@ use Intervention\Image\ImageManagerStatic as Image;
 use App\Services\PayUService\Exception;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
-
+//
 class ApiController extends BaseController
 {
     public $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
