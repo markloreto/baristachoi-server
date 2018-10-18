@@ -203,7 +203,7 @@ class ApiController extends BaseController
         foreach($record AS $key => $value){
             if($key == "created_date"){
                 if (strpos($value, 'Z') !== false) {
-                    $record['created_date'] = substr($value, 0, -4);
+                    $record['created_date'] = substr($value, 0, -4); //
                 }
             }
         }
