@@ -20,4 +20,6 @@ Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
 
-Route::get('foo', 'API\ApiController@importOldServer');
+//Route::get('foo', 'API\ApiController@importOldServer');
+
+Route::get('chrono/abc/{depot_id}/{year}/{month}', 'BasicController@abc');

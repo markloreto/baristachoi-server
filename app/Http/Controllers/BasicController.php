@@ -1,0 +1,311 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Http\Request;
+use App\Http\Controllers\API\BaseController as BaseController;
+use Illuminate\Support\Facades\Hash;
+use DB;
+use Validator;
+use Intervention\Image\ImageManagerStatic as Image;
+use App\Services\PayUService\Exception;
+use GuzzleHttp\Client;
+use Carbon\Carbon;
+
+class BasicController extends Controller
+{
+    //
+    public function abc($depot_id, $year, $month){
+        $date = Carbon::parse("$year-$month");
+        $depot_id = $depot_id;
+        $product_categories = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
+        $lastMonthWarehouse = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
+        foreach($product_categories AS $key => $record){
+            $d = DB::table("products AS p")
+            ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
+            DB::raw("(ifnull((SELECT SUM(qty) FROM inventories i JOIN inventory_adjustments d ON d.id = i.reference_id WHERE type = 2 AND product_id = p.id AND module_id = 4 AND created_date < '".$date."' AND d.depot_id = ".$depot_id."), 0)) AS adjustment_minus"),
+            DB::raw("(ifnull((SELECT SUM(qty) FROM inventories i JOIN inventory_adjustments d ON d.id = i.reference_id WHERE type = 1 AND product_id = p.id AND module_id = 4 AND created_date < '".$date."' AND d.depot_id = ".$depot_id."), 0)) AS adjustment_plus"),
+            DB::raw("(ifnull((SELECT SUM(qty) FROM inventories i JOIN delivery_receipts d ON d.id = i.reference_id WHERE type = 1 AND product_id = p.id AND module_id = 1 AND created_date < '".$date."' AND d.depot_id = ".$depot_id."), 0)) AS delivery_receipt"),
+            DB::raw("(ifnull((SELECT SUM(qty) FROM inventories i JOIN disrs d ON d.id = i.reference_id WHERE type = 2 AND product_id = p.id AND module_id = 2 AND created_date < '".$date."' AND d.depot_id = ".$depot_id."), 0)) AS disr"))
+            ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
+            ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
+            ->where("p.category", $record->id)
+            ->orderBy('p.sequence', 'asc')
+            ->get()
+            ->toArray();
+
+            $warehouseTotal = 0;
+            foreach($d AS $value){
+                $warehouseTotal += intval($value->adjustment_plus) + (($value->delivery_receipt - $value->disr) - intval($value->adjustment_minus));
+            }
+
+
+            $lastMonthWarehouse[$key]->warehouseTotal = $warehouseTotal;
+            $lastMonthWarehouse[$key]->products = $d;
+        }
+
+        $data["warehouse"] = $lastMonthWarehouse;
+
+        $dealers = DB::table('staffs AS s')->select("id", "name", 
+        DB::raw("(SELECT id FROM disrs WHERE depot_id = ".$depot_id." AND dealer_id = s.id AND created_date < '".$date."' ORDER BY sequence DESC LIMIT 1) AS last_disr"))
+        ->whereRaw("s.depot_id = :depot_id AND s.role_id = 3", ["depot_id" => $depot_id])
+        ->havingRaw("last_disr IS NOT NULL")
+        ->get()
+        ->toArray();
+
+        foreach($dealers AS $dealerKey => $dealersRecord){
+            $lastMonthDUV = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
+            $lastMonthDUVTotal = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
+            foreach($product_categories AS $key => $record){
+                $d = DB::table("products AS p")
+                ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
+                DB::raw("(SELECT IFNULL(remaining, 0) FROM inventories i WHERE reference_id = " . $dealersRecord->last_disr . " AND type = 2 AND product_id = p.id AND module_id = 2 AND depot_id = ".$depot_id.") AS remaining_stock"))
+                ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
+                ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
+                ->where("p.category", $record->id)
+                ->orderBy('p.sequence', 'asc')
+                ->get()
+                ->toArray();
+
+                $duvTotal = 0;
+                foreach($d AS $k => $value){
+                    $duvTotal += $value->remaining_stock;
+                }
+
+                $lastMonthDUV[$key]->duvTotal = $duvTotal;
+                $lastMonthDUV[$key]->products = $d;
+
+            }
+            $dealers[$dealerKey]->category = $lastMonthDUV;
+        }
+
+        $data["dealers"] = $dealers;
+
+
+        $lastMonthDUVTotal = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
+        $disrArray = [];
+        foreach($dealers AS $k => $dealer){
+            array_push($disrArray, $dealer->last_disr);
+        }
+
+        if(count($disrArray) == 0){
+            array_push($disrArray, 0);
+        }
+
+        
+        foreach($product_categories AS $key => $record){
+            $d = DB::table("products AS p")
+            ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
+            DB::raw("(SELECT SUM(IFNULL(remaining, 0)) FROM inventories i WHERE depot_id = ".$depot_id." AND type = 2 AND product_id = p.id AND module_id = 2 AND i.reference_id IN (" . implode(",", $disrArray) . ")) AS remaining_stock"))
+            ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
+            ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
+            ->where("p.category", $record->id)
+            ->orderBy('p.sequence', 'asc')
+            ->get()
+            ->toArray();
+
+            $duvTotal = 0;
+            foreach($d AS $k => $value){
+                $duvTotal += $value->remaining_stock;
+            }
+
+            $lastMonthDUVTotal[$key]->duvTotal = $duvTotal;
+            $lastMonthDUVTotal[$key]->products = $d;
+
+        }
+
+        $data["duvTotal"] = $lastMonthDUVTotal;
+
+        $deliveryReceipts = DB::table('delivery_receipts AS d')->select("id", "dr AS dr_num", "created_date",
+        DB::raw("IFNULL((SELECT SUM(IFNULL(amount, 0)) FROM payments p WHERE reference_id = d.id AND module_id = 1 AND depot_id = ".$depot_id."), 0) AS total_payment"),
+        DB::raw("(SELECT SUM(IFNULL(qty, 0) * cost) FROM inventories i WHERE reference_id = d.id AND module_id = 1 AND depot_id = ".$depot_id.") AS total_cost")) 
+        ->whereRaw("d.depot_id = ?", [$depot_id])
+        ->whereBetween(DB::raw('date(created_date)'), [$date, Carbon::parse("$year-$month")->endOfMonth()])
+        ->get()
+        ->toArray();
+
+        foreach($deliveryReceipts AS $deliveryReceiptsKey => $deliveryReceiptsRecords){
+            $dr = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
+            foreach($product_categories AS $key => $record){
+                $d = DB::table("products AS p")
+                ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
+                DB::raw("(SELECT (IFNULL(qty, 0) * cost) FROM inventories i WHERE reference_id = " . $deliveryReceiptsRecords->id . " AND type = 1 AND product_id = p.id AND module_id = 1 AND depot_id = ".$depot_id.") AS cost"),
+                DB::raw("(SELECT IFNULL(qty, 0) FROM inventories i WHERE reference_id = " . $deliveryReceiptsRecords->id . " AND type = 1 AND product_id = p.id AND module_id = 1 AND depot_id = ".$depot_id.") AS received"))
+                ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
+                ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
+                ->where("p.category", $record->id)
+                ->orderBy('p.sequence', 'asc')
+                ->get()
+                ->toArray();
+
+                $total = 0;
+                $cost = 0;
+                foreach($d AS $k => $value){
+                    $total += $value->received;
+                    $cost += $value->cost;
+                }
+
+                $dr[$key]->total = $total;
+                $dr[$key]->cost = $cost;
+                
+                $dr[$key]->products = $d;
+            }
+            $deliveryReceipts[$deliveryReceiptsKey]->categories= $dr;
+        }
+
+        $data["delivery_receipts"] = $deliveryReceipts;
+
+        $deliveryReceiptsTotal = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
+        $drArray = [];
+        foreach($deliveryReceipts AS $k => $dr){
+            array_push($drArray, $dr->id);
+        }
+
+        if(count($drArray) == 0){
+            array_push($drArray, 0);
+        }
+
+        
+        foreach($product_categories AS $key => $record){
+            $d = DB::table("products AS p")
+            ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
+            DB::raw("(SELECT SUM(IFNULL(qty, 0) * cost) FROM inventories i WHERE type = 1 AND product_id = p.id AND module_id = 1 AND i.reference_id IN (" . implode(",", $drArray) . " AND depot_id = ".$depot_id.")) AS cost"),
+            DB::raw("(SELECT SUM(IFNULL(qty, 0)) FROM inventories i WHERE type = 1 AND product_id = p.id AND module_id = 1 AND i.reference_id IN (" . implode(",", $drArray) . " AND depot_id = ".$depot_id.")) AS received"))
+            ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
+            ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
+            ->where("p.category", $record->id)
+            ->orderBy('p.sequence', 'asc')
+            ->get()
+            ->toArray();
+
+            $total = 0;
+            $cost = 0;
+            foreach($d AS $k => $value){
+                $total += $value->received;
+                $cost += $value->cost;
+            }
+
+            $deliveryReceiptsTotal[$key]->total = $total;
+            $deliveryReceiptsTotal[$key]->cost = $cost;
+            $deliveryReceiptsTotal[$key]->products = $d;
+
+        }
+
+        $data["deliveryReceiptsTotal"] = $deliveryReceiptsTotal;
+
+        $disrDealers = DB::table('staffs AS s')->select("id", "name",
+        DB::raw("(SELECT SUM(IFNULL(sold, 0) * price) FROM inventories i WHERE type = 2 AND module_id = 2 AND reference_id IN (SELECT id FROM disrs WHERE dealer_id = s.id AND created_date > '".$date."' AND created_date < '".Carbon::parse("$year-$month")->endOfMonth()."' AND depot_id = ".$depot_id.")) AS total_dealer_price"),
+        DB::raw("(SELECT SUM(IFNULL(amount, 0)) FROM payments p WHERE module_id = 2 AND reference_id IN (SELECT id FROM disrs WHERE dealer_id = s.id AND created_date > '".$date."' AND created_date < '".Carbon::parse("$year-$month")->endOfMonth()."' AND depot_id = ".$depot_id.")) AS total_dealer_payments"),
+        DB::raw("(SELECT COUNT(id) FROM disrs WHERE dealer_id = s.id AND created_date > '".$date."' AND created_date < '".Carbon::parse("$year-$month")->endOfMonth()."' AND depot_id = ".$depot_id." ORDER BY sequence DESC LIMIT 1) AS disr"))
+        ->whereRaw("s.depot_id = :depot_id AND s.role_id = 3", ["depot_id" => $depot_id])
+        ->havingRaw("disr > 0")
+        ->get()
+        ->toArray();
+
+        foreach($disrDealers AS $k => $dealer){
+            $disrs = DB::table('disrs AS d')->select("id", "created_date", "sequence",
+            DB::raw("(SELECT SUM(IFNULL(sold, 0) * price) FROM inventories i WHERE type = 2 AND module_id = 2 AND reference_id = d.id AND depot_id = ".$depot_id.") AS total_price"),
+            DB::raw("(SELECT SUM(IFNULL(amount, 0)) FROM payments p WHERE module_id = 2 AND reference_id = d.id AND depot_id = ".$depot_id.") AS total_payments"))
+            ->whereBetween(DB::raw('date(created_date)'), [$date, Carbon::parse("$year-$month")->endOfMonth()])
+            ->whereRaw("dealer_id = ? AND depot_id = ?", [$dealer->id, $depot_id])
+            ->orderBy('sequence', 'asc')
+            ->get()
+            ->toArray();
+
+            foreach($disrs AS $key => $disr){
+                $cats = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
+                foreach($product_categories AS $susi => $record){
+                    $d = DB::table("products AS p")
+                    ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
+                    DB::raw("(ifnull((SELECT SUM(sold * price) FROM inventories i WHERE type = 2 AND product_id = p.id AND module_id = 2 AND reference_id = ".$disr->id." AND depot_id = ".$depot_id."), 0)) AS price"),
+                    DB::raw("(ifnull((SELECT SUM(sold) FROM inventories i WHERE type = 2 AND product_id = p.id AND module_id = 2 AND reference_id = ".$disr->id." AND depot_id = ".$depot_id."), 0)) AS sold"))
+                    ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
+                    ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
+                    ->where("p.category", $record->id)
+                    ->orderBy('p.sequence', 'asc')
+                    ->get()
+                    ->toArray();
+
+                    $total = 0;
+                    $price = 0;
+                    foreach($d AS $v){
+                        $total += $v->sold;
+                        $price += $v->price;
+                    }
+
+                    $cats[$susi]->total = $total;
+                    $cats[$susi]->price = $price;
+                    $cats[$susi]->products = $d;
+                }
+                $disrs[$key]->categories = $cats;
+            }
+
+            $disrDealers[$k]->disrs = $disrs;
+        }
+
+        $data["disrDealers"] = $disrDealers;
+
+        $solds = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
+
+        foreach($product_categories AS $key => $record){
+            $d = DB::table("products AS p")
+            ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
+            DB::raw("IFNULL((SELECT SUM(IFNULL(sold, 0)) FROM inventories i WHERE i.product_id = p.id AND type = 2 AND module_id = 2 AND reference_id IN (SELECT id FROM disrs WHERE created_date > '".$date."' AND created_date < '".Carbon::parse("$year-$month")->endOfMonth()."' AND depot_id = ".$depot_id.")), 0) AS total_sold"),
+            DB::raw("IFNULL((SELECT SUM(IFNULL(sold, 0) * price) FROM inventories i WHERE i.product_id = p.id AND type = 2 AND module_id = 2 AND reference_id IN (SELECT id FROM disrs WHERE created_date > '".$date."' AND created_date < '".Carbon::parse("$year-$month")->endOfMonth()."' AND depot_id = ".$depot_id.")), 0) AS total_price"),
+            DB::raw("IFNULL((SELECT SUM(IFNULL(sold, 0) * cost) FROM inventories i WHERE i.product_id = p.id AND type = 2 AND module_id = 2 AND reference_id IN (SELECT id FROM disrs WHERE created_date > '".$date."' AND created_date < '".Carbon::parse("$year-$month")->endOfMonth()."' AND depot_id = ".$depot_id.")), 0) AS total_cost"))
+            ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
+            ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
+            ->where("p.category", $record->id)
+            ->orderBy('p.sequence', 'asc')
+            ->get()
+            ->toArray();
+
+            $total = 0;
+            $price = 0;
+            $cost = 0;
+            foreach($d AS $k => $value){
+                $total += $value->total_sold;
+                $price += $value->total_price;
+                $cost += $value->total_cost;
+            }
+
+            $solds[$key]->total = $total;
+            $solds[$key]->price = $price;
+            $solds[$key]->cost = $cost;
+            $solds[$key]->products = $d;
+
+        }
+
+        $data["sold"] = $solds;
+
+        $disrPayments = DB::table('payments AS p')->select(
+        DB::raw("IFNULL(SUM(amount), 0) AS total_payment"))
+        ->whereRaw("depot_id = ? AND module_id = 2 AND reference_id IN (SELECT id FROM disrs WHERE created_date >= '".$date."' AND created_date <= '".Carbon::parse("$year-$month")->endOfMonth()."' AND depot_id = ".$depot_id.")", [$depot_id])
+        ->first();
+
+        $disrCost = DB::table('inventories AS i')->select(
+            DB::raw("IFNULL(SUM(IFNULL(sold,0) * price), 0) AS total_price"))
+            ->whereRaw("depot_id = ? AND type = 2 AND module_id = 2 AND reference_id IN (SELECT id FROM disrs WHERE created_date >= '".$date."' AND created_date <= '".Carbon::parse("$year-$month")->endOfMonth()."' AND depot_id = ".$depot_id.")", [$depot_id])
+            ->first();
+
+        $data["disrPayments"] = ["payment" => $disrPayments->total_payment, "amount" => $disrCost->total_price];
+
+        $deliveryPayments = DB::table('payments AS p')->select(
+        DB::raw("IFNULL(SUM(amount), 0) AS total_payment"))
+        ->whereRaw("depot_id = ? AND module_id = 1 AND reference_id IN (SELECT id FROM delivery_receipts WHERE created_date < '".$date."' AND depot_id = ".$depot_id.")", [$depot_id])
+        ->first();
+
+        $deliveryCost = DB::table('inventories AS i')->select(
+            DB::raw("IFNULL(SUM(qty * cost), 0) AS total_cost"))
+            ->whereRaw("depot_id = ? AND type = 1 AND module_id = 1 AND reference_id IN (SELECT id FROM delivery_receipts WHERE created_date < '".$date."' AND depot_id = ".$depot_id.")", [$depot_id])
+            ->first();
+
+        $data["previous_deliveries"] = ["payment" => floatval($deliveryPayments->total_payment), "amount" => floatval($deliveryCost->total_cost)];
+        
+        /* echo "<pre>";
+        print_r($data);
+        echo "</pre>"; */
+        return response()->json($data);
+    }
+}
