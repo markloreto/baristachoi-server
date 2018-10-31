@@ -206,7 +206,7 @@ class BasicController extends Controller
         foreach($disrDealers AS $k => $dealer){
             $disrs = DB::table('disrs AS d')->select("id", "created_date", "sequence",
             DB::raw("(SELECT SUM(IFNULL(sold, 0) * price) FROM inventories i WHERE type = 2 AND module_id = 2 AND reference_id = d.id AND depot_id = ".$depot_id.") AS total_price"),
-            DB::raw("(SELECT SUM(IFNULL(amount, 0)) FROM payments p WHERE module_id = 2 AND reference_id = d.id AND depot_id = ".$depot_id.") AS total_payments"))
+            DB::raw("IFNULL((SELECT SUM(IFNULL(amount, 0)) FROM payments p WHERE module_id = 2 AND reference_id = d.id AND depot_id = ".$depot_id."), 0) AS total_payments"))
             ->whereBetween(DB::raw('date(created_date)'), [$date, Carbon::parse("$year-$month")->endOfMonth()])
             ->whereRaw("dealer_id = ? AND depot_id = ?", [$dealer->id, $depot_id])
             ->orderBy('sequence', 'asc')
