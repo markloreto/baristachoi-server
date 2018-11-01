@@ -17,6 +17,7 @@ class BasicController extends Controller
 {
     //
     public function abc($depot_id, $year, $month){
+        $month = intval($month) - 1;
         $date = Carbon::parse("$year-$month");
         $depot_id = $depot_id;
         $product_categories = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
