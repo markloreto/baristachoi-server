@@ -120,8 +120,7 @@ class BasicController extends Controller
         $deliveryReceipts = DB::table('delivery_receipts AS d')->select("id", "dr AS dr_num", "created_date",
         DB::raw("IFNULL((SELECT SUM(IFNULL(amount, 0)) FROM payments p WHERE reference_id = d.id AND module_id = 1 AND depot_id = ".$depot_id."), 0) AS total_payment"),
         DB::raw("IFNULL((SELECT SUM(IFNULL(qty, 0) * cost) FROM inventories i WHERE reference_id = d.id AND module_id = 1 AND depot_id = ".$depot_id."), 0) AS total_cost")) 
-        ->whereRaw("d.depot_id = ?", [$depot_id])
-        ->whereBetween(DB::raw('date(created_date)'), [$date, Carbon::parse("$year-$month")->endOfMonth()])
+        ->whereRaw("d.depot_id = ? AND created_date >= ? AND created_date <= ?", [$depot_id, $date, Carbon::parse("$year-$month")->endOfMonth()])
         ->get()
         ->toArray();
 
@@ -207,8 +206,7 @@ class BasicController extends Controller
             $disrs = DB::table('disrs AS d')->select("id", "created_date", "sequence",
             DB::raw("(SELECT SUM(IFNULL(sold, 0) * price) FROM inventories i WHERE type = 2 AND module_id = 2 AND reference_id = d.id AND depot_id = ".$depot_id.") AS total_price"),
             DB::raw("IFNULL((SELECT SUM(IFNULL(amount, 0)) FROM payments p WHERE module_id = 2 AND reference_id = d.id AND depot_id = ".$depot_id."), 0) AS total_payments"))
-            ->whereBetween(DB::raw('date(created_date)'), [$date, Carbon::parse("$year-$month")->endOfMonth()])
-            ->whereRaw("dealer_id = ? AND depot_id = ?", [$dealer->id, $depot_id])
+            ->whereRaw("dealer_id = ? AND depot_id = ? AND created_date >= ? AND created_date <= ?", [$dealer->id, $depot_id, $date, Carbon::parse("$year-$month")->endOfMonth()])
             ->orderBy('sequence', 'asc')
             ->get()
             ->toArray();
