@@ -17,7 +17,6 @@ class BasicController extends Controller
 {
     //
     public function abc($depot_id, $year, $month){
-        $month = intval($month) - 1;
         $date = Carbon::parse("$year-$month");
         $depot_id = $depot_id;
         $product_categories = DB::table('product_categories')->select("id", "name")->where("id", "!=", 4)->orderBy('sequence', 'asc')->get()->toArray();
@@ -121,7 +120,7 @@ class BasicController extends Controller
         $deliveryReceipts = DB::table('delivery_receipts AS d')->select("id", "dr AS dr_num", "created_date",
         DB::raw("IFNULL((SELECT SUM(IFNULL(amount, 0)) FROM payments p WHERE reference_id = d.id AND module_id = 1 AND depot_id = ".$depot_id."), 0) AS total_payment"),
         DB::raw("IFNULL((SELECT SUM(IFNULL(qty, 0) * cost) FROM inventories i WHERE reference_id = d.id AND module_id = 1 AND depot_id = ".$depot_id."), 0) AS total_cost")) 
-        ->whereRaw("d.depot_id = ? AND created_date >= ? AND created_date <= ?", [$depot_id, $date, Carbon::parse("$year-$month")->endOfMonth()])
+        ->whereRaw("d.depot_id = ? AND DATE(created_date) >= ? AND DATE(created_date) <= ?", [$depot_id, $date, Carbon::parse("$year-$month")->endOfMonth()])
         ->get()
         ->toArray();
 
