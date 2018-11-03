@@ -97,7 +97,7 @@ class BasicController extends Controller
         foreach($product_categories AS $key => $record){
             $d = DB::table("products AS p")
             ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
-            DB::raw("(SELECT SUM(IFNULL(remaining, 0)) FROM inventories i WHERE depot_id = ".$depot_id." AND type = 2 AND product_id = p.id AND module_id = 2 AND i.reference_id IN (" . implode(",", $disrArray) . ")) AS remaining_stock"))
+            DB::raw("IFNULL((SELECT SUM(IFNULL(remaining, 0)) FROM inventories i WHERE depot_id = ".$depot_id." AND type = 2 AND product_id = p.id AND module_id = 2 AND i.reference_id IN (" . implode(",", $disrArray) . ")), 0) AS remaining_stock"))
             ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
             ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
             ->where("p.category", $record->id)
