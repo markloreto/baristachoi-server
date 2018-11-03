@@ -60,7 +60,7 @@ class BasicController extends Controller
             foreach($product_categories AS $key => $record){
                 $d = DB::table("products AS p")
                 ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
-                DB::raw("(SELECT IFNULL(remaining, 0) FROM inventories i WHERE reference_id = " . $dealersRecord->last_disr . " AND type = 2 AND product_id = p.id AND module_id = 2 AND depot_id = ".$depot_id.") AS remaining_stock"))
+                DB::raw("IFNULL((SELECT IFNULL(remaining, 0) FROM inventories i WHERE reference_id = " . $dealersRecord->last_disr . " AND type = 2 AND product_id = p.id AND module_id = 2 AND depot_id = ".$depot_id."), 0) AS remaining_stock"))
                 ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
                 ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
                 ->where("p.category", $record->id)
@@ -169,8 +169,8 @@ class BasicController extends Controller
         foreach($product_categories AS $key => $record){
             $d = DB::table("products AS p")
             ->select("p.id AS product_id", "p.name AS product_name", "p.cost AS product_cost", "p.price AS product_price", "mu.name AS unit_name", "mu.abbr AS abbr",
-            DB::raw("(SELECT SUM(IFNULL(qty, 0) * cost) FROM inventories i WHERE type = 1 AND product_id = p.id AND module_id = 1 AND i.reference_id IN (" . implode(",", $drArray) . " AND depot_id = ".$depot_id.")) AS cost"),
-            DB::raw("(SELECT SUM(IFNULL(qty, 0)) FROM inventories i WHERE type = 1 AND product_id = p.id AND module_id = 1 AND i.reference_id IN (" . implode(",", $drArray) . " AND depot_id = ".$depot_id.")) AS received"))
+            DB::raw("IFNULL((SELECT SUM(IFNULL(qty, 0) * cost) FROM inventories i WHERE type = 1 AND product_id = p.id AND module_id = 1 AND i.reference_id IN (" . implode(",", $drArray) . " AND depot_id = ".$depot_id.")), 0) AS cost"),
+            DB::raw("IFNULL((SELECT SUM(IFNULL(qty, 0)) FROM inventories i WHERE type = 1 AND product_id = p.id AND module_id = 1 AND i.reference_id IN (" . implode(",", $drArray) . " AND depot_id = ".$depot_id.")), 0) AS received"))
             ->join('product_categories AS pc', 'p.category', '=', 'pc.id')
             ->join('measurement_units AS mu', 'p.measurement_unit', '=', 'mu.id')->whereRaw('p.star = 1')
             ->where("p.category", $record->id)
