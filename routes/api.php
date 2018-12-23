@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 //Route::resource('users', 'API\ApiController');
-Route::middleware('auth:api', 'throttle:1800,1')->group( function () {
+Route::middleware('auth:api')->group( function () {
 	//Route::resource('users', 'API\ApiController');
 	Route::get('/getDepot', 'API\ApiController@getDepot');
 	Route::get('/checkKey', 'API\ApiController@checkKey');
