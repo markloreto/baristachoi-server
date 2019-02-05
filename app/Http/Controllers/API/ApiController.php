@@ -37,6 +37,14 @@ class ApiController extends BaseController
         return $this->sendResponse($records->toArray(), 'getLogin');
     }
 
+    public function getDealersQuickList(Request $request){
+        $data = $request->all();
+        $depot_id = $data["depot_id"];
+
+        $depot = DB::table('staffs')->select('id', 'thumbnail', 'name')->where([['depot_id', $depot_id], ['role_id', 3]])->get();
+        return $this->sendResponse($records->toArray(), 'getDealersQuickList');
+    }
+
     public function setLogin(Request $request){
         $data = $request->all();
         $depot_id = $data["depot_id"];
