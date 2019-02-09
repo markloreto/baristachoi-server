@@ -215,9 +215,9 @@ class ApiController extends BaseController
                 }
             }
             if($key == "dealer_id"){
-                $fd = DB::table("converted_synchs")->where([['sync_id', $record['dealer_id']],['table', $table]])->count();
+                $fd = DB::table("converted_synchs")->where([['sync_id', $value],['table', $table]])->count();
                 if($fd){
-                    $fd = DB::table("converted_synchs")->select('converted_id', 'id')->where('sync_id', $syncId)->first();
+                    $fd = DB::table("converted_synchs")->select('converted_id', 'id')->where('sync_id', $value)->first();
                     $fid = (int) $fd->converted_id;
                     $record['dealer_id'] = $fid;
                 }
