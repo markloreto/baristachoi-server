@@ -214,6 +214,9 @@ class ApiController extends BaseController
                     $record['created_date'] = substr($value, 0, -4); //
                 }
             }
+            if($key == "dealer_id"){
+                $record['dealer_id'] = (string) $record['dealer_id'];
+            }
         }
 
         $syncId = $record["id"];
