@@ -25,6 +25,11 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function dealerVersion(){
+        $json = json_encode(array('version' => 5), JSON_FORCE_OBJECT);
+        return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
+    }
+
     public function getLogin(Request $request){
         $data = $request->all();
         $depot_id = $data["depot_id"];

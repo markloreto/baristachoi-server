@@ -52,6 +52,9 @@ Route::middleware('auth:api')->group( function () {
 
 	//test
 	Route::post('/test', 'API\ApiController@test');
+
+	//Version Check
+	Route::get('/dealerVersion', 'API\ApiController@dealerVersion');
 	
 });
 
