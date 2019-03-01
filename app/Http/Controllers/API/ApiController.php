@@ -26,8 +26,8 @@ class ApiController extends BaseController
     }
 
     public function dealerVersion(){
-        $json = json_encode(array('version' => 0.5, "changelog" => array(
-            array("INFO", "First official release"), array("SYSTEM CHANGES", "Establishments now hass it's own table")
+        $json = json_encode(array('version' => 0.7, "changelog" => array(
+            array("ADDED", "In-App Tutorial"), array("Added", "Reset In-App Tutorial")
         )), JSON_FORCE_OBJECT);
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
     }
