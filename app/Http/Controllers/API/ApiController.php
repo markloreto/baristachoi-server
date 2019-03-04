@@ -218,6 +218,7 @@ class ApiController extends BaseController
         $table = $data["table"];
         $recordIds = array();
         foreach($records AS $record){
+            print_r($record);
             //get long ID
             $syncId = $record["id"];
             //staff ID
