@@ -305,7 +305,7 @@ class ApiController extends BaseController
                 $moduleTableName = $moduleTable["table"];
                 $moduleId = $moduleTable["module_id"];
                 foreach($moduleTable["data"] AS $moduleData){
-                    $moduleSyncId = $moduleTable["id"];
+                    $moduleSyncId = $moduleData["id"];
                     $moduleTable["reference_id"] = $id;
 
                     unset($moduleData["id"]);
