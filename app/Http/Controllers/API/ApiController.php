@@ -211,6 +211,81 @@ class ApiController extends BaseController
 
     public function syncPush(Request $request){
         $data = $request->all();
+        $records = $data["records"];
+        $table = $data["table"];
+        $recordIds = array();
+        foreach($records AS $record){
+            //get long ID
+            $syncId = $record["id"];
+            //staff ID
+            $staff_id = $record["staff_id"];
+            //relational tables
+            $relationalTables = $record["tables"];
+            //modules tables
+            $moduleTables = $record["modules"];
+            //check for new or update only
+            $mode = (intval($record["sync"]) == 0) ? "new" : "update";
+            //remove uneccessary properties
+            unset($record["id"]);
+            unset($record["sync"]);
+            unset($record["tables"]);
+            //Retrieve Converted IDs if any
+            if(isset($record["client_id"])){
+                $s = DB::table("converted_synchs")->select('converted_id')->where([['sync_id', $record["client_id"]],['table', 'clients']])->first();
+                $record["client_id"] = $s->converted_id;
+            }
+
+            $id = DB::table($table)->insertGetId($record);
+            DB::table('converted_synchs')->insert(
+                ['table' => $table, 'sync_id' => $syncId, 'converted_id' => $id]
+            );
+            array_push($recordIds, array("table" => $table, "id" => $syncId));
+
+            \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
+
+            foreach($relationalTables AS $relationalTable){
+                $relationalTableName = $relationalTable["table"];
+                $relationalCol = $relationalTable["relationalCol"];
+                foreach($relationalTable["data"] => $relationalData){
+                    $relationalSyncId = $relationalData["id"];
+                    $relationalData[$relationalCol] = $id;
+
+                    unset($relationalData["id"]);
+                    unset($relationalData["sync"]);
+
+                    $relId = DB::table($relationalTableName)->insertGetId($relationalData);
+                    DB::table('converted_synchs')->insert(
+                        ['table' => $relationalTableName, 'sync_id' => $relationalSyncId 'converted_id' => $relId]
+                    );
+                    array_push($recordIds, array("table" => $relationalTableName, "id" => $relationalSyncId));
+                }
+            }
+
+            foreach($moduleTables AS $moduleTable){
+                $moduleTableName = $moduleTable["table"];
+                $moduleId = $moduleTable["module_id"];
+                foreach($moduleTable["data"] => $moduleData){
+                    $moduleSyncId = $moduleTable["id"];
+                    $moduleTable["reference_id"] = $id;
+
+                    unset($moduleData["id"]);
+                    unset($moduleData["sync"]);
+
+                    $relId = DB::table($moduleTableName)->insertGetId($moduleData);
+                    DB::table('converted_synchs')->insert(
+                        ['table' => $moduleTableName, 'sync_id' => $moduleSyncId 'converted_id' => $relId]
+                    );
+                    array_push($recordIds, array("table" => $moduleTableName, "id" => $moduleSyncId));
+                }
+            }
+
+        }
+
+        return $this->sendResponse($recordIds, 'records retrieved successfully.');
+    }
+
+    public function syncPushOld(Request $request){
+        $data = $request->all();
         $table = $data["table"];
         $record = $data["record"];
         $staff_id = (int) $data["staff_id"];
