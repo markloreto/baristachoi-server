@@ -336,7 +336,7 @@ class ApiController extends BaseController
 
         } */
 
-        return $this->sendResponse($$records, 'records retrieved successfully.');
+        return $this->sendResponse($records, 'records retrieved successfully.');
     }
 
     public function syncPushOld(Request $request){
