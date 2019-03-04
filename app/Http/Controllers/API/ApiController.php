@@ -217,7 +217,7 @@ class ApiController extends BaseController
         $records = $data["records"];
         $table = $data["table"];
         $recordIds = array();
-        /* foreach($records AS $record){
+        foreach($records AS $record){
             //get long ID
             $syncId = $record["id"];
             //staff ID
@@ -232,6 +232,7 @@ class ApiController extends BaseController
             unset($record["id"]);
             unset($record["sync"]);
             unset($record["tables"]);
+            unset($record["modules"]);
             //Retrieve Converted IDs if any
             if(isset($record["client_id"])){
                 $s = DB::table("converted_synchs")->select('converted_id')->where([['sync_id', $record["client_id"]],['table', 'clients']])->first();
@@ -334,9 +335,9 @@ class ApiController extends BaseController
                 }
             }
 
-        } */
+        }
 
-        return $this->sendResponse($records, 'records retrieved successfully.');
+        return $this->sendResponse($recordIds, 'records retrieved successfully.');
     }
 
     public function syncPushOld(Request $request){
