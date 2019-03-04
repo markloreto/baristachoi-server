@@ -235,13 +235,31 @@ class ApiController extends BaseController
                 $record["client_id"] = $s->converted_id;
             }
 
-            $id = DB::table($table)->insertGetId($record);
-            DB::table('converted_synchs')->insert(
-                ['table' => $table, 'sync_id' => $syncId, 'converted_id' => $id]
-            );
-            array_push($recordIds, array("table" => $table, "id" => $syncId));
+            $alreadyConverted = DB::table("converted_synchs")->where([['sync_id', $syncId],['table', $table]])->count();
 
-            \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
+            if($alreadyConverted){
+                $convertedID = DB::table("converted_synchs")->select('converted_id')->where([['sync_id', $syncId],['table', $table]])->first();
+                $id = $convertedID->converted_id;
+
+                DB::table($table)->where('id', $id)
+                ->update($record);
+
+                DB::table("sync_records")->where([
+                    ["name", $table],
+                    ["data_id", $id],
+                    ["staff_id", "!=", $staff_id]
+                ])->delete();
+            }else{
+                $id = DB::table($table)->insertGetId($record);
+                DB::table('converted_synchs')->insert(
+                    ['table' => $table, 'sync_id' => $syncId, 'converted_id' => $id]
+                );
+                array_push($recordIds, array("table" => $table, "id" => $syncId));
+
+                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
+            }
+
+            
 
             foreach($relationalTables AS $relationalTable){
                 $relationalTableName = $relationalTable["table"];
@@ -253,11 +271,29 @@ class ApiController extends BaseController
                     unset($relationalData["id"]);
                     unset($relationalData["sync"]);
 
-                    $relId = DB::table($relationalTableName)->insertGetId($relationalData);
+                    $alreadyConverted = DB::table("converted_synchs")->where([['sync_id', $relationalSyncId],['table', $relationalTableName]])->count();
+
+                    if($alreadyConverted){
+                        $convertedID = DB::table("converted_synchs")->select('converted_id')->where([['sync_id', $relationalSyncId],['table', $relationalTableName]])->first();
+                        $conId = $convertedID->converted_id;
+        
+                        DB::table($relationalTableName)->where('id', $conId)
+                        ->update($relationalData);
+        
+                        DB::table("sync_records")->where([
+                            ["name", $relationalTableName],
+                            ["data_id", $conId],
+                            ["staff_id", "!=", $staff_id]
+                        ])->delete();
+                    }else{
+                        $relId = DB::table($relationalTableName)->insertGetId($relationalData);
                     DB::table('converted_synchs')->insert(
                         ['table' => $relationalTableName, 'sync_id' => $relationalSyncId 'converted_id' => $relId]
                     );
                     array_push($recordIds, array("table" => $relationalTableName, "id" => $relationalSyncId));
+                    }
+
+                    
                 }
             }
 
@@ -271,11 +307,27 @@ class ApiController extends BaseController
                     unset($moduleData["id"]);
                     unset($moduleData["sync"]);
 
-                    $relId = DB::table($moduleTableName)->insertGetId($moduleData);
-                    DB::table('converted_synchs')->insert(
-                        ['table' => $moduleTableName, 'sync_id' => $moduleSyncId 'converted_id' => $relId]
-                    );
-                    array_push($recordIds, array("table" => $moduleTableName, "id" => $moduleSyncId));
+                    $alreadyConverted = DB::table("converted_synchs")->where([['sync_id', $moduleSyncId],['table', $moduleTableName]])->count();
+
+                    if($alreadyConverted){
+                        $convertedID = DB::table("converted_synchs")->select('converted_id')->where([['sync_id', $moduleSyncId],['table', $moduleTableName]])->first();
+                        $conId = $convertedID->converted_id;
+        
+                        DB::table($moduleTableName)->where('id', $conId)
+                        ->update($moduleData);
+        
+                        DB::table("sync_records")->where([
+                            ["name", $moduleTableName],
+                            ["data_id", $conId],
+                            ["staff_id", "!=", $staff_id]
+                        ])->delete();
+                    }else{
+                        $relId = DB::table($moduleTableName)->insertGetId($moduleData);
+                        DB::table('converted_synchs')->insert(
+                            ['table' => $moduleTableName, 'sync_id' => $moduleSyncId 'converted_id' => $relId]
+                        );
+                        array_push($recordIds, array("table" => $moduleTableName, "id" => $moduleSyncId));
+                    }
                 }
             }
 
