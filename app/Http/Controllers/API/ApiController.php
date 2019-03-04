@@ -217,8 +217,7 @@ class ApiController extends BaseController
         $records = $data["records"];
         $table = $data["table"];
         $recordIds = array();
-        foreach($records AS $record){
-            print_r($record);
+        /* foreach($records AS $record){
             //get long ID
             $syncId = $record["id"];
             //staff ID
@@ -335,9 +334,9 @@ class ApiController extends BaseController
                 }
             }
 
-        }
+        } */
 
-        return $this->sendResponse($recordIds, 'records retrieved successfully.');
+        return $this->sendResponse($$records, 'records retrieved successfully.');
     }
 
     public function syncPushOld(Request $request){
