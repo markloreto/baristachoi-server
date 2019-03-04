@@ -267,7 +267,7 @@ class ApiController extends BaseController
             foreach($relationalTables AS $relationalTable){
                 $relationalTableName = $relationalTable["table"];
                 $relationalCol = $relationalTable["relationalCol"];
-                foreach($relationalTable["data"] => $relationalData){
+                foreach($relationalTable["data"] AS $relationalData){
                     $relationalSyncId = $relationalData["id"];
                     $relationalData[$relationalCol] = $id;
 
@@ -303,7 +303,7 @@ class ApiController extends BaseController
             foreach($moduleTables AS $moduleTable){
                 $moduleTableName = $moduleTable["table"];
                 $moduleId = $moduleTable["module_id"];
-                foreach($moduleTable["data"] => $moduleData){
+                foreach($moduleTable["data"] AS $moduleData){
                     $moduleSyncId = $moduleTable["id"];
                     $moduleTable["reference_id"] = $id;
 
