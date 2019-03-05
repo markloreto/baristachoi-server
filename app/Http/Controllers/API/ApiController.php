@@ -235,8 +235,10 @@ class ApiController extends BaseController
             unset($record["modules"]);
             //Retrieve Converted IDs if any
             if(isset($record["client_id"])){
-                $s = DB::table("converted_synchs")->select('converted_id')->where([['sync_id', $record["client_id"]],['table', 'clients']])->first();
+                if($record["client_id"] != null){
+                    $s = DB::table("converted_synchs")->select('converted_id')->where([['sync_id', $record["client_id"]],['table', 'clients']])->first();
                 $record["client_id"] = $s->converted_id;
+                }
             }
 
             $alreadyConverted = DB::table("converted_synchs")->where([['sync_id', $syncId],['table', $table]])->count();
