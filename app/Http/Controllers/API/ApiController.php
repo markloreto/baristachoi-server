@@ -255,6 +255,8 @@ class ApiController extends BaseController
                     ["data_id", $id],
                     ["staff_id", "!=", $staff_id]
                 ])->delete();
+
+                array_push($recordIds, array("table" => $table, "id" => $syncId));
             }else{
                 $id = DB::table($table)->insertGetId($record);
                 DB::table('converted_synchs')->insert(
@@ -291,6 +293,8 @@ class ApiController extends BaseController
                             ["data_id", $conId],
                             ["staff_id", "!=", $staff_id]
                         ])->delete();
+
+                        array_push($recordIds, array("table" => $relationalTableName, "id" => $relationalSyncId));
                     }else{
                         $relId = DB::table($relationalTableName)->insertGetId($relationalData);
                         DB::table('converted_synchs')->insert(
@@ -327,6 +331,7 @@ class ApiController extends BaseController
                             ["data_id", $conId],
                             ["staff_id", "!=", $staff_id]
                         ])->delete();
+                        array_push($recordIds, array("table" => $moduleTableName, "id" => $moduleSyncId));
                     }else{
                         $relId = DB::table($moduleTableName)->insertGetId($moduleData);
                         DB::table('converted_synchs')->insert(
