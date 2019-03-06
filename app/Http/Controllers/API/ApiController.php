@@ -219,6 +219,11 @@ class ApiController extends BaseController
         $skip = (int) $data["skip"];
         $staff_id = (int) $data["staff_id"];
         $depot_id = (int) $data["depot_id"];
+        $realIds = (isset($data["realIds"])) ? $data["realIds"] : array();
+        //relational tables
+        $relationalTables = $data["tables"];
+        //modules tables
+        $moduleTables = $data["modules"];
 
         if($all){
             if(Schema::hasColumn($table, 'depot_id')){
@@ -253,19 +258,70 @@ class ApiController extends BaseController
                 })->skip($skip)->take(10)->get();
             }
         }
-        
-        $results = json_decode(json_encode($records), true);
-        foreach($results as $result){
-            if($staff_id != null)
-                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $result["id"]]);
-        }
+
+        $records = $records->toArray();
+        $rels = array();
+        $mods = array();
 
         foreach($records as $record){
-            $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $record->id],['table', $table]])->first();
-            $record->id = $resId->sync_id;
+            if($staff_id != null)
+                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
+
+            foreach($relationalTables AS $relationalTable){
+                $relationalTableName = $relationalTable["table"];
+                $relationalCol = $relationalTable["relationalCol"];
+                $res = DB::table($relationalTable["table"])->where($relationalTable["relationalCol"], $record["id"])->get();
+                $res = $res->toArray();
+                foreach($res AS $re){
+                    $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $re["id"]],['table', $relationalTableName]])->first();
+                    $re["id"] = (int) $resId->sync_id;
+                    array_push($rels, $re);
+                }
+            }
+
+            foreach($moduleTables AS $moduleTable){
+                $moduleTableName = $moduleTable["table"];
+                $moduleId = $moduleTable["module_id"];
+                $res = DB::table($moduleTable["table"])->where([["module_id", $moduleId], ["reference_id", $record["id"]]])->get();
+                $res = $res->toArray();
+                foreach($res AS $re){
+                    $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $re["id"]],['table', $moduleTableName]])->first();
+                    $re["id"] = (int) $resId->sync_id;
+                    array_push($mods, $re);
+                }
+            }
+
+            $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $record["id"]],['table', $table]])->first();
+            $record["id"] = (int) $resId->sync_id;
+
+            foreach($realIds AS $realId){
+                if($record[$realId["col"]] != null){
+                    $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $record[$realId["col"]]],['table', $realId["table"]]])->first();
+                    $record[$realId["col"]] = $resId->sync_id;
+                }
+            }
         }
 
-        return $this->sendResponse($records->toArray(), 'records retrieved successfully.');
+        $results = array("records" => $records, "modules" => $mods, "relations" => $rels);
+    
+
+        /* foreach($records as $record){
+            if($staff_id != null)
+                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record->id]);
+
+            $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $record->id],['table', $table]])->first();
+            $record->id = (int) $resId->sync_id;
+
+            if($table == "machines"){
+                if($record->client_id != null){
+                    $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $record->client_id],['table', 'clients']])->first();
+                    $record->client_id = $resId->sync_id;
+                }
+                
+            }
+        } */
+
+        return $this->sendResponse($results, 'records retrieved successfully.');
     }
 
     public function syncPushDealers(Request $request){
