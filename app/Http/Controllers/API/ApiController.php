@@ -267,10 +267,10 @@ class ApiController extends BaseController
             if($staff_id != null)
                 \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
 
-            foreach($relationalTables AS $relationalTable){
-                $relationalTableName = $relationalTable["table"];
-                $relationalCol = $relationalTable["relationalCol"];
-                $res = DB::table($relationalTable["table"])->where($relationalTable["relationalCol"], $record["id"])->get();
+            foreach($relationalTables["tables"] AS $relationalTable){
+                $relationalTableName = $relationalTable;
+                $relationalCol = $relationalTables["relationalCol"];
+                $res = DB::table($relationalTable)->where($relationalCol, $record["id"])->get();
                 $res = $res->toArray();
                 foreach($res AS $re){
                     $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $re["id"]],['table', $relationalTableName]])->first();
@@ -279,10 +279,10 @@ class ApiController extends BaseController
                 }
             }
 
-            foreach($moduleTables AS $moduleTable){
-                $moduleTableName = $moduleTable["table"];
-                $moduleId = $moduleTable["module_id"];
-                $res = DB::table($moduleTable["table"])->where([["module_id", $moduleId], ["reference_id", $record["id"]]])->get();
+            foreach($moduleTables["tables"] AS $moduleTable){
+                $moduleTableName = $moduleTable;
+                $moduleId = $moduleTables["module_id"];
+                $res = DB::table($moduleTable)->where([["module_id", $moduleId], ["reference_id", $record["id"]]])->get();
                 $res = $res->toArray();
                 foreach($res AS $re){
                     $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $re["id"]],['table', $moduleTableName]])->first();
