@@ -259,11 +259,12 @@ class ApiController extends BaseController
             }
         }
 
-        $records = $records->toArray();
+        //$records = $records->toArray();
+        $records = json_decode(json_encode($records), true);
         $rels = array();
         $mods = array();
 
-        foreach($records as $record){
+        foreach($records AS $record){
             if($staff_id != null)
                 \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
 
