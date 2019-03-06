@@ -276,6 +276,7 @@ class ApiController extends BaseController
                 foreach($res AS $re){
                     $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $re->id],['table', $relationalTableName]])->first();
                     $re->id = (int) $resId->sync_id;
+                    $re->$relationalCol = $record["id"];
                     array_push($rels, $re);
                 }
             }
@@ -287,6 +288,7 @@ class ApiController extends BaseController
                 foreach($res AS $re){
                     $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $re->id],['table', $moduleTableName]])->first();
                     $re->id = (int) $resId->sync_id;
+                    $re->reference_id = $record["id"];
                     array_push($mods, $re);
                 }
             }
