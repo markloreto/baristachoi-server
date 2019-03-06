@@ -221,7 +221,7 @@ class ApiController extends BaseController
         $depot_id = (int) $data["depot_id"];
         $realIds = (isset($data["realIds"])) ? $data["realIds"] : array();
         //relational tables
-        $relationalTables = (isset($data["tables"])) ? $data["tables"] : array();
+        $relationalTables = (isset($data["relTables"])) ? $data["relTables"] : array();
         //modules tables
         $moduleTables = (isset($data["modules"])) ? $data["modules"] : array();
 
