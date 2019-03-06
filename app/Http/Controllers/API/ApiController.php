@@ -212,7 +212,63 @@ class ApiController extends BaseController
         return $this->sendResponse($records->toArray(), 'records retrieved successfully.');
     }
 
-    public function syncPush(Request $request){
+    public function syncPullDealers(Request $request){
+        $data = $request->all();
+        $table = $data["table"];
+        $all = ($data["all"] == "true") ? true : false;
+        $skip = (int) $data["skip"];
+        $staff_id = (int) $data["staff_id"];
+        $depot_id = (int) $data["depot_id"];
+
+        if($all){
+            if(Schema::hasColumn($table, 'depot_id')){
+                $records = DB::table($table)->where('depot_id', $depot_id)->skip($skip)->take(10)->get();
+            }
+            else if(Schema::hasColumn($table, 'staff_id')){
+                $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(10)->get();
+            }else{
+                $records = DB::table($table)->skip($skip)->take(10)->get();
+            }
+        }
+        else{
+            if(Schema::hasColumn($table, 'depot_id')){
+                $records = DB::table($table)->where('depot_id', $depot_id)->whereNotExists(function ($query) use ($table, $staff_id) {
+                    $query->select(DB::raw(1))
+                          ->from('sync_records')
+                          ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
+                })->skip($skip)->take(10)->get();
+            }
+            else if(Schema::hasColumn($table, 'staff_id')){
+                $records = DB::table($table)->where('staff_id', $staff_id)->whereNotExists(function ($query) use ($table, $staff_id) {
+                    $query->select(DB::raw(1))
+                          ->from('sync_records')
+                          ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
+                })->skip($skip)->take(10)->get();
+            }
+            else{
+                $records = DB::table($table)->whereNotExists(function ($query) use ($table, $staff_id) {
+                    $query->select(DB::raw(1))
+                          ->from('sync_records')
+                          ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
+                })->skip($skip)->take(10)->get();
+            }
+        }
+        
+        $results = json_decode(json_encode($records), true);
+        foreach($results as $result){
+            if($staff_id != null)
+                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $result["id"]]);
+        }
+
+        foreach($records as $record){
+            $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $record->id],['table', $table]])->first();
+            $record->id = $resId->sync_id;
+        }
+
+        return $this->sendResponse($records->toArray(), 'records retrieved successfully.');
+    }
+
+    public function syncPushDealers(Request $request){
         $data = $request->all();
         $records = $data["records"];
         $table = $data["table"];
@@ -347,7 +403,7 @@ class ApiController extends BaseController
         return $this->sendResponse($recordIds, 'records retrieved successfully.');
     }
 
-    public function syncPushOld(Request $request){
+    public function syncPush(Request $request){
         $data = $request->all();
         $table = $data["table"];
         $record = $data["record"];

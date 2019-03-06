@@ -21,9 +21,11 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/getDealersQuickList', 'API\ApiController@getDealersQuickList');
 	Route::get('/getProductCategories', 'API\ApiController@getProductCategories');
 	Route::post('/syncPull', 'API\ApiController@syncPull');
+	Route::post('/syncPullDealers', 'API\ApiController@syncPullDealers');
 	Route::post('/syncPullCount', 'API\ApiController@syncPullCount');
 
 	Route::post('/syncPush', 'API\ApiController@syncPush');
+	Route::post('/syncPushDealers', 'API\ApiController@syncPushDealers');
 	Route::post('/syncDelete', 'API\ApiController@syncDelete');
 	Route::post('/getLogin', 'API\ApiController@getLogin');
 	Route::post('/setLogin', 'API\ApiController@setLogin');
