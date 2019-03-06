@@ -297,7 +297,7 @@ class ApiController extends BaseController
             }
 
             
-            $record["id"] = $origId
+            $record["id"] = $origId;
 
             foreach($realIds AS $realId){
                 if($record[$realId["col"]] != null){
