@@ -263,8 +263,9 @@ class ApiController extends BaseController
         $records = json_decode(json_encode($records), true);
         $rels = array();
         $mods = array();
+        $newRecord = array();
 
-        foreach($records AS $record){
+        foreach($records AS $key => $record){
             if($staff_id != null)
                 \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
 
@@ -299,9 +300,10 @@ class ApiController extends BaseController
                     $record[$realId["col"]] = $resId->sync_id;
                 }
             }
+            array_push($newRecord, $record);
         }
 
-        $results = array("records" => $records, "modules" => $mods, "relations" => $rels);
+        $results = array("records" => $newRecord, "modules" => $mods, "relations" => $rels);
     
 
         /* foreach($records as $record){
