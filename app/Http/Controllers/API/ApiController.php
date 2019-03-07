@@ -280,6 +280,7 @@ class ApiController extends BaseController
                     $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $re->id],['table', $relationalTableName]])->first();
                     $re->id = (int) $resId->sync_id;
                     $re->{$relationalCol} = $origId;
+                    $re->table = $relationalTableName;
                     array_push($rels, $re);
                 }
             }
@@ -292,12 +293,14 @@ class ApiController extends BaseController
                     $resId = DB::table("converted_synchs")->select('sync_id')->where([['converted_id', $re->id],['table', $moduleTableName]])->first();
                     $re->id = (int) $resId->sync_id;
                     $re->reference_id = $origId;
+                    $re->table = $moduleTableName;
                     array_push($mods, $re);
                 }
             }
 
             
             $record["id"] = $origId;
+            $record["table"] = $table;
 
             foreach($realIds AS $realId){
                 if($record[$realId["col"]] != null){
@@ -384,9 +387,7 @@ class ApiController extends BaseController
 
                 \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
             }
-
             
-
             foreach($relationalTables AS $relationalTable){
                 $relationalTableName = $relationalTable["table"];
                 $relationalCol = $relationalTable["relationalCol"];
