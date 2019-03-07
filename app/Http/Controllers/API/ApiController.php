@@ -221,9 +221,9 @@ class ApiController extends BaseController
         $depot_id = (int) $data["depot_id"];
         $realIds = (isset($data["realIds"])) ? $data["realIds"] : array();
         //relational tables
-        $relationalTables = (isset($data["relTables"])) ? $data["relTables"] : array();
+        $relationalTables = $data["relTables"];
         //modules tables
-        $moduleTables = (isset($data["modules"])) ? $data["modules"] : array();
+        $moduleTables = $data["modules"];
 
         if($all){
             if(Schema::hasColumn($table, 'depot_id')){
