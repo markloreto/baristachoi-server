@@ -267,7 +267,7 @@ class ApiController extends BaseController
 
         foreach($records AS $key => $record){
             if($staff_id != null)
-                DB::table("sync_records2")->updateOrInsert(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"], ['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
+                DB::table("sync_records2")->updateOrInsert(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]], ['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
                 //\App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
 
             $resIdP = DB::table("converted_synchs2")->select('sync_id')->where([['converted_id', $record["id"]],['table', $table]])->first();
