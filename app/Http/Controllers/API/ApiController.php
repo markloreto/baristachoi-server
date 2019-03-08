@@ -267,7 +267,8 @@ class ApiController extends BaseController
 
         foreach($records AS $key => $record){
             if($staff_id != null)
-                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
+                DB::table("sync_records2")->updateOrInsert(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
+                //\App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $record["id"]]);
 
             $resIdP = DB::table("converted_synchs2")->select('sync_id')->where([['converted_id', $record["id"]],['table', $table]])->first();
             $origId = (int) $resIdP->sync_id;
@@ -385,7 +386,8 @@ class ApiController extends BaseController
                 );
                 array_push($recordIds, array("table" => $table, "id" => $syncId));
 
-                \App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
+                //\App\SyncRecord::firstOrCreate(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
+                DB::table("sync_records2")->updateOrInsert(['name' => $table, 'staff_id' => $staff_id, 'data_id' => $id]);
             }
             
             foreach($relationalTables AS $relationalTable){
