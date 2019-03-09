@@ -23,6 +23,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/syncPull', 'API\ApiController@syncPull');
 	Route::post('/syncPullDealers', 'API\ApiController@syncPullDealers');
 	Route::post('/syncPullCount', 'API\ApiController@syncPullCount');
+	Route::post('/transferMachines', 'API\ApiController@transferMachines');
 
 	Route::post('/syncPush', 'API\ApiController@syncPush');
 	Route::post('/syncPushDealers', 'API\ApiController@syncPushDealers');

@@ -25,6 +25,22 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function transferMachines(Request $request){
+        $data = $request->all();
+        $transferFrom = $data["transferFrom"];
+        $transferTo = $data["transferTo"];
+        $ids = $data["ids"];
+
+        foreach($ids AS $id){
+            $res = DB::table("converted_synchs2")->select('converted_id')->where([['sync_id', $id],['table', "machines"]])->first();
+            $converted_id = $res->converted_id;
+            DB::table("machine_transfers")->updateOrInsert(['transferFrom' => $transferFrom, 'transferTo' => $transferTo, 'machine_id' => $converted_id], ['transferFrom' => $transferFrom, 'transferTo' => $transferTo, 'machine_id' => $converted_id]);
+        }
+
+        return $this->sendResponse($ids, 'transferMachines retrieved successfully.');
+
+    }
+
     public function dealerVersion(){
         $arr = array(); 
         $arr["version"] = 0.9;
