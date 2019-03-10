@@ -68,11 +68,11 @@ class ApiController extends BaseController
             $transfers = DB::table("machine_transfers")->where([['transferFrom', $fromId], ['transferTo', $staff_id],['status', "pending"]])->get();
             foreach($transfers AS $transfer){
                 DB::table("machines")->where('id', $transfer->machine_id)
-                ->update(['staff_id', $staff_id]);
+                ->update(['staff_id' => $staff_id]);
             }
 
             DB::table("machine_transfers")->where([["transferFrom", $fromId], ["transferTo", $staff_id], ["status", "pending"]])
-                ->update(['status', "complete"]);
+                ->update(['status' => "complete"]);
         }
 
         return $this->sendResponse($transfersCount, 'checkMachineTransfers retrieved successfully.');
