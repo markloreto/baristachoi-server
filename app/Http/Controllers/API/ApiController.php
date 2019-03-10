@@ -38,7 +38,34 @@ class ApiController extends BaseController
         }
 
         return $this->sendResponse($ids, 'transferMachines retrieved successfully.');
+    }
 
+    public function checkMachineTransfers(Request $request){
+        $data = $request->all();
+        $staff_id = $data["staff_id"];
+        $from = null;
+
+        $transfersCount = DB::table("machine_transfers")->where([['transferTo', $staff_id],['status', "pending"]])->count();
+        if($transfersCount){
+            $a = DB::table("machine_transfers")->select("transferFrom")->where([['transferTo', $staff_id],['status', "pending"]])->first();
+            $transferToId = $a->transferFrom;
+            $name = DB::table("staffs")->select("name")->where("id", $transferToId)->first();
+            $from = $name->name;
+        }
+
+        return $this->sendResponse(array("from" => $from, "counts" => $transfersCount), 'checkMachineTransfers retrieved successfully.');
+    }
+
+    public function goMachineTransfers(Request $request){
+        $data = $request->all();
+        $staff_id = $data["staff_id"];
+
+        $transfersCount = DB::table("machine_transfers")->where([['transferTo', $staff_id],['status', "pending"]])->count();
+        if($transfersCount){
+            $transfers = DB::table("machine_transfers")->where([['transferTo', $staff_id],['status', "pending"]])->get();
+        }
+
+        return $this->sendResponse($transfersCount, 'checkMachineTransfers retrieved successfully.');
     }
 
     public function dealerVersion(){

@@ -24,6 +24,8 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/syncPullDealers', 'API\ApiController@syncPullDealers');
 	Route::post('/syncPullCount', 'API\ApiController@syncPullCount');
 	Route::post('/transferMachines', 'API\ApiController@transferMachines');
+	Route::get('/checkMachineTransfers', 'API\ApiController@checkMachineTransfers');
+	Route::get('/goMachineTransfers', 'API\ApiController@goMachineTransfers');
 
 	Route::post('/syncPush', 'API\ApiController@syncPush');
 	Route::post('/syncPushDealers', 'API\ApiController@syncPushDealers');
