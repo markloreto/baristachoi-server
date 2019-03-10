@@ -78,7 +78,7 @@ class ApiController extends BaseController
         return $this->sendResponse($transfersCount, 'checkMachineTransfers retrieved successfully.');
     }
 
-    public function completeMachineTransfers(){
+    public function completeMachineTransfers(Request $request){
         $data = $request->all();
         $staff_id = $data["staff_id"];
         $ids = [];
