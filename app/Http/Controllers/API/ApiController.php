@@ -82,7 +82,7 @@ class ApiController extends BaseController
         $data = $request->all();
         $staff_id = $data["staff_id"];
         $ids = [];
-        $to = null
+        $to = null;
         
         $q = DB::table("machine_transfers")->where([["transferFrom", $staff_id], ["status", "complete"]]);
         if($q->count){
