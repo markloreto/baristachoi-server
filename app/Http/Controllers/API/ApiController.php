@@ -63,9 +63,9 @@ class ApiController extends BaseController
         $staff_id = $data["staff_id"];
         $fromId = $data["fromId"];
 
-        $transfersCount = DB::table("machine_transfers")->where([['transferTo', $staff_id],['status', "pending"]])->count();
+        $transfersCount = DB::table("machine_transfers")->where([['transferFrom', $fromId], ['transferTo', $staff_id], ['status', "pending"]])->count();
         if($transfersCount){
-            $transfers = DB::table("machine_transfers")->where([['transferTo', $staff_id],['status', "pending"]])->get();
+            $transfers = DB::table("machine_transfers")->where([['transferFrom', $fromId], ['transferTo', $staff_id],['status', "pending"]])->get();
             foreach($transfers AS $transfer){
                 DB::table("machines")->where('id', $transfer->machine_id)
                 ->update(['staff_id', $staff_id]);
