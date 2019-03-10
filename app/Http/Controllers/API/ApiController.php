@@ -85,7 +85,7 @@ class ApiController extends BaseController
         $to = null;
         
         $q = DB::table("machine_transfers")->where([["transferFrom", $staff_id], ["status", "complete"]]);
-        if($q->count){
+        if($q->count()){
             $transfers = $q->get();
             $c = $q->first();
             $to = DB::table("staffs")->select("name")->where("id", $c->transferTo)->first();
