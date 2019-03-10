@@ -44,28 +44,59 @@ class ApiController extends BaseController
         $data = $request->all();
         $staff_id = $data["staff_id"];
         $from = null;
+        $fromId = null
 
         $transfersCount = DB::table("machine_transfers")->where([['transferTo', $staff_id],['status', "pending"]])->count();
         if($transfersCount){
-            $a = DB::table("machine_transfers")->select("transferFrom")->where([['transferTo', $staff_id],['status', "pending"]])->first();
-            $transferToId = $a->transferFrom;
-            $name = DB::table("staffs")->select("name")->where("id", $transferToId)->first();
+            $a = DB::table("machine_transfers")->where([['transferTo', $staff_id],['status', "pending"]])->first();
+            $transferToId = $a->transferTo;
+            $transferFromId = $a->transferFrom;
+            $name = DB::table("staffs")->select("name")->where("id", $transferFromId)->first();
             $from = $name->name;
         }
 
-        return $this->sendResponse(array("from" => $from, "counts" => $transfersCount), 'checkMachineTransfers retrieved successfully.');
+        return $this->sendResponse(array("from" => $from, "counts" => $transfersCount, "fromId" => $transferFromId), 'checkMachineTransfers retrieved successfully.');
     }
 
     public function goMachineTransfers(Request $request){
         $data = $request->all();
         $staff_id = $data["staff_id"];
+        $fromId = $data["fromId"];
 
         $transfersCount = DB::table("machine_transfers")->where([['transferTo', $staff_id],['status', "pending"]])->count();
         if($transfersCount){
             $transfers = DB::table("machine_transfers")->where([['transferTo', $staff_id],['status', "pending"]])->get();
+            foreach($transfers AS $transfer){
+                DB::table("machines")->where('id', $transfer->machine_id)
+                ->update(['staff_id', $staff_id]);
+            }
+
+            DB::table("machine_transfers")->where([["transferFrom", $fromId], ["transferTo", $staff_id], ["status", "pending"]])
+                ->update(['status', "complete"]);
         }
 
         return $this->sendResponse($transfersCount, 'checkMachineTransfers retrieved successfully.');
+    }
+
+    public function completeMachineTransfers(){
+        $data = $request->all();
+        $staff_id = $data["staff_id"];
+        $ids = [];
+        $to = null
+        
+        $q = DB::table("machine_transfers")->where([["transferFrom", $staff_id], ["status", "complete"]]);
+        if($q->count){
+            $transfers = $q->get();
+            $c = $q->first();
+            $to = DB::table("staffs")->select("name")->where("id", $c->transferTo)->first();
+            foreach($transfers AS $transfer){
+                $res = DB::table("converted_synchs2")->select('sync_id')->where([['converted_id', $transfer->machine_id],['table', "machines"]])->first();
+                array_push($ids, $res->sync_id);
+                DB::table('machine_transfers')->where('id', $transfer->id)->delete();
+            }
+        }
+
+        return $this->sendResponse(array("to" => $to, "transferred" => $ids), 'checkMachineTransfers retrieved successfully.');
     }
 
     public function dealerVersion(){

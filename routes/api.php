@@ -26,6 +26,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/transferMachines', 'API\ApiController@transferMachines');
 	Route::get('/checkMachineTransfers', 'API\ApiController@checkMachineTransfers');
 	Route::get('/goMachineTransfers', 'API\ApiController@goMachineTransfers');
+	Route::get('/completeMachineTransfers', 'API\ApiController@completeMachineTransfers');
 
 	Route::post('/syncPush', 'API\ApiController@syncPush');
 	Route::post('/syncPushDealers', 'API\ApiController@syncPushDealers');
