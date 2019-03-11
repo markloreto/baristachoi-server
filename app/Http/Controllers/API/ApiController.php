@@ -109,7 +109,7 @@ class ApiController extends BaseController
             array("ADDED", "transfer machines to other dealer"),
             array("CHANGES", "Enhanced Key Input")
         );
-        $json = json_encode($arr, JSON_FORCE_OBJECT);
+        $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
     }
 
