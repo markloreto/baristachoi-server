@@ -101,7 +101,7 @@ class ApiController extends BaseController
 
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 0.9.5;
+        $arr["version"] = 1;
         $arr["changelog"] = array(
             array("ADDED", "Synching Notification"), 
             array("ADDED", "Import Records during installation"),
