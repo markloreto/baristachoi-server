@@ -45,6 +45,8 @@ class ApiController extends BaseController
         $staff_id = $data["staff_id"];
         $from = null;
         $fromId = null;
+        $transferFromId = null;
+        $transferToId = null;
 
         $transfersCount = DB::table("machine_transfers")->where([['transferTo', $staff_id], ['status', "pending"]])->count();
         if($transfersCount){
