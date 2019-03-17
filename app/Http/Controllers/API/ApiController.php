@@ -306,24 +306,24 @@ class ApiController extends BaseController
         $moduleTables = $data["modules"];
 
         if($all){
-            if(Schema::hasColumn($table, 'depot_id')){
+            /* if(Schema::hasColumn($table, 'depot_id')){
                 $records = DB::table($table)->where('depot_id', $depot_id)->skip($skip)->take(10)->get();
-            }
-            else if(Schema::hasColumn($table, 'staff_id')){
+            } */
+            if(Schema::hasColumn($table, 'staff_id')){
                 $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(10)->get();
             }else{
                 $records = DB::table($table)->skip($skip)->take(10)->get();
             }
         }
         else{
-            if(Schema::hasColumn($table, 'depot_id')){
+            /* if(Schema::hasColumn($table, 'depot_id')){
                 $records = DB::table($table)->where('depot_id', $depot_id)->whereNotExists(function ($query) use ($table, $staff_id) {
                     $query->select(DB::raw(1))
                           ->from('sync_records2')
                           ->whereRaw("sync_records2.name = ? AND sync_records2.staff_id = ? AND sync_records2.data_id = " . $table . ".id", [$table, $staff_id]);
                 })->skip($skip)->take(10)->get();
-            }
-            else if(Schema::hasColumn($table, 'staff_id')){
+            } */
+            if(Schema::hasColumn($table, 'staff_id')){
                 $records = DB::table($table)->where('staff_id', $staff_id)->whereNotExists(function ($query) use ($table, $staff_id) {
                     $query->select(DB::raw(1))
                           ->from('sync_records2')
