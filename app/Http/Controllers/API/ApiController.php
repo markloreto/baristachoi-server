@@ -103,13 +103,14 @@ class ApiController extends BaseController
 
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 1;
+        $arr["version"] = 1.3;
         $arr["changelog"] = array(
-            array("ADDED", "Synching Notification"), 
-            array("ADDED", "Import Records during installation"),
-            array("CHANGES", "Password field on Depot key from text field"),
+            array("ADDED", "RSO for reloading stocks (manual only)"), 
+            array("ADDED", "Machine Profile"),
+            array("ADDED", "Transaction and Transaction Guard"),
             array("ADDED", "transfer machines to other dealer"),
-            array("CHANGES", "Enhanced Key Input")
+            array("ADDED", "Map: Selection Mode"),
+            array("ADDED", "Map: Filter Mode")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
