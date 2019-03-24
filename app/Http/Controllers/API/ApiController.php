@@ -105,12 +105,9 @@ class ApiController extends BaseController
         $arr = array(); 
         $arr["version"] = 1.3;
         $arr["changelog"] = array(
-            array("ADDED", "RSO for reloading stocks (manual only)"), 
-            array("ADDED", "Machine Profile"),
-            array("ADDED", "Transaction and Transaction Guard"),
-            array("ADDED", "transfer machines to other dealer"),
-            array("ADDED", "Map: Selection Mode"),
-            array("ADDED", "Map: Filter Mode")
+            array("ADDED", "Function to go to the root page"), 
+            array("CHANGE", "Checkmark Marker"),
+            array("ENHANCED", "Product Download for old phones")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
@@ -252,12 +249,12 @@ class ApiController extends BaseController
 
         if($all){
             if(Schema::hasColumn($table, 'depot_id')){
-                $records = DB::table($table)->where('depot_id', $depot_id)->skip($skip)->take(10)->get();
+                $records = DB::table($table)->where('depot_id', $depot_id)->skip($skip)->take(3)->get();
             }
             else if(Schema::hasColumn($table, 'staff_id')){
-                $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(10)->get();
+                $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(3)->get();
             }else{
-                $records = DB::table($table)->skip($skip)->take(10)->get();
+                $records = DB::table($table)->skip($skip)->take(3)->get();
             }
         }
         else{
@@ -266,21 +263,21 @@ class ApiController extends BaseController
                     $query->select(DB::raw(1))
                           ->from('sync_records')
                           ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
-                })->skip($skip)->take(10)->get();
+                })->skip($skip)->take(3)->get();
             }
             else if(Schema::hasColumn($table, 'staff_id')){
                 $records = DB::table($table)->where('staff_id', $staff_id)->whereNotExists(function ($query) use ($table, $staff_id) {
                     $query->select(DB::raw(1))
                           ->from('sync_records')
                           ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
-                })->skip($skip)->take(10)->get();
+                })->skip($skip)->take(3)->get();
             }
             else{
                 $records = DB::table($table)->whereNotExists(function ($query) use ($table, $staff_id) {
                     $query->select(DB::raw(1))
                           ->from('sync_records')
                           ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
-                })->skip($skip)->take(10)->get();
+                })->skip($skip)->take(3)->get();
             }
         }
         
@@ -447,9 +444,9 @@ class ApiController extends BaseController
             $alreadyConverted = DB::table("converted_synchs2")->where([['sync_id', $syncId],['table', $table]])->count();
 
             if($alreadyConverted){
-                $convertedID = DB::table("converted_synchs2")->select('converted_id')->where([['sync_id', $syncId],['table', $table]])->first();
+                
                 $id = $convertedID->converted_id;
-
+                $convertedMainID = $id;
                 DB::table($table)->where('id', $id)
                 ->update($record);
 
@@ -474,6 +471,9 @@ class ApiController extends BaseController
             foreach($relationalTables AS $relationalTable){
                 $relationalTableName = $relationalTable["table"];
                 $relationalCol = $relationalTable["relationalCol"];
+
+                DB::table($relationalTableName)->where($relationalTable["relationalCol"], $convertedMainID)->delete();
+                
                 foreach($relationalTable["data"] AS $relationalData){
                     $relationalSyncId = $relationalData["id"];
                     $relationalData[$relationalCol] = $id;
@@ -481,7 +481,7 @@ class ApiController extends BaseController
                     unset($relationalData["id"]);
                     unset($relationalData["sync"]);
 
-                    $alreadyConverted = DB::table("converted_synchs2")->where([['sync_id', $relationalSyncId],['table', $relationalTableName]])->count();
+                    /* $alreadyConverted = DB::table("converted_synchs2")->where([['sync_id', $relationalSyncId],['table', $relationalTableName]])->count();
 
                     if($alreadyConverted){
                         $convertedID = DB::table("converted_synchs2")->select('converted_id')->where([['sync_id', $relationalSyncId],['table', $relationalTableName]])->first();
@@ -497,13 +497,13 @@ class ApiController extends BaseController
                         ])->delete();
 
                         array_push($recordIds, array("table" => $relationalTableName, "id" => $relationalSyncId));
-                    }else{
+                    }else{ */
                         $relId = DB::table($relationalTableName)->insertGetId($relationalData);
                         DB::table('converted_synchs2')->insert(
                             ['table' => $relationalTableName, 'sync_id' => $relationalSyncId, 'converted_id' => $relId]
                         );
                         array_push($recordIds, array("table" => $relationalTableName, "id" => $relationalSyncId));
-                    }
+                    /* } */
 
                     
                 }
@@ -512,6 +512,9 @@ class ApiController extends BaseController
             foreach($moduleTables AS $moduleTable){
                 $moduleTableName = $moduleTable["table"];
                 $moduleId = $moduleTable["module_id"];
+
+                DB::table($moduleTableName)->where([["reference_id", $id], ["module_id", $moduleId]])->delete();
+
                 foreach($moduleTable["data"] AS $moduleData){
                     $moduleSyncId = $moduleData["id"];
                     $moduleData["reference_id"] = $id;
@@ -519,7 +522,7 @@ class ApiController extends BaseController
                     unset($moduleData["id"]);
                     unset($moduleData["sync"]);
 
-                    $alreadyConverted = DB::table("converted_synchs2")->where([['sync_id', $moduleSyncId],['table', $moduleTableName]])->count();
+                    /* $alreadyConverted = DB::table("converted_synchs2")->where([['sync_id', $moduleSyncId],['table', $moduleTableName]])->count();
 
                     if($alreadyConverted){
                         $convertedID = DB::table("converted_synchs2")->select('converted_id')->where([['sync_id', $moduleSyncId],['table', $moduleTableName]])->first();
@@ -534,13 +537,13 @@ class ApiController extends BaseController
                             ["staff_id", "!=", $staff_id]
                         ])->delete();
                         array_push($recordIds, array("table" => $moduleTableName, "id" => $moduleSyncId));
-                    }else{
+                    }else{ */
                         $relId = DB::table($moduleTableName)->insertGetId($moduleData);
                         DB::table('converted_synchs2')->insert(
                             ['table' => $moduleTableName, 'sync_id' => $moduleSyncId, 'converted_id' => $relId]
                         );
                         array_push($recordIds, array("table" => $moduleTableName, "id" => $moduleSyncId));
-                    }
+                    /* } */
                 }
             }
 
