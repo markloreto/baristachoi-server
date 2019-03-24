@@ -445,7 +445,7 @@ class ApiController extends BaseController
             $alreadyConverted = DB::table("converted_synchs2")->where([['sync_id', $syncId],['table', $table]])->count();
 
             if($alreadyConverted){
-                
+                $convertedID = DB::table("converted_synchs2")->select('converted_id')->where([['sync_id', $syncId],['table', $table]])->first();
                 $id = $convertedID->converted_id;
                 $convertedMainID = $id;
                 DB::table($table)->where('id', $id)
