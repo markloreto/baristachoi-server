@@ -447,7 +447,7 @@ class ApiController extends BaseController
             if($alreadyConverted){
                 $convertedID = DB::table("converted_synchs2")->select('converted_id')->where([['sync_id', $syncId],['table', $table]])->first();
                 $id = $convertedID->converted_id;
-                $convertedMainID = $id;
+
                 DB::table($table)->where('id', $id)
                 ->update($record);
 
@@ -473,7 +473,7 @@ class ApiController extends BaseController
                 $relationalTableName = $relationalTable["table"];
                 $relationalCol = $relationalTable["relationalCol"];
 
-                DB::table($relationalTableName)->where($relationalTable["relationalCol"], $convertedMainID)->delete();
+                DB::table($relationalTableName)->where($relationalTable["relationalCol"], $id)->delete();
                 
                 foreach($relationalTable["data"] AS $relationalData){
                     $relationalSyncId = $relationalData["id"];
