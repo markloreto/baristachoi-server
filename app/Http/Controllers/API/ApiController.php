@@ -248,12 +248,12 @@ class ApiController extends BaseController
 
         if($all){
             if(Schema::hasColumn($table, 'depot_id')){
-                $records = DB::table($table)->where('depot_id', $depot_id)->skip($skip)->take(10)->get();
+                $records = DB::table($table)->where('depot_id', $depot_id)->skip($skip)->take(3)->get();
             }
             else if(Schema::hasColumn($table, 'staff_id')){
-                $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(10)->get();
+                $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(3)->get();
             }else{
-                $records = DB::table($table)->skip($skip)->take(10)->get();
+                $records = DB::table($table)->skip($skip)->take(3)->get();
             }
         }
         else{
@@ -262,21 +262,21 @@ class ApiController extends BaseController
                     $query->select(DB::raw(1))
                           ->from('sync_records')
                           ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
-                })->skip($skip)->take(10)->get();
+                })->skip($skip)->take(3)->get();
             }
             else if(Schema::hasColumn($table, 'staff_id')){
                 $records = DB::table($table)->where('staff_id', $staff_id)->whereNotExists(function ($query) use ($table, $staff_id) {
                     $query->select(DB::raw(1))
                           ->from('sync_records')
                           ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
-                })->skip($skip)->take(10)->get();
+                })->skip($skip)->take(3)->get();
             }
             else{
                 $records = DB::table($table)->whereNotExists(function ($query) use ($table, $staff_id) {
                     $query->select(DB::raw(1))
                           ->from('sync_records')
                           ->whereRaw("sync_records.name = ? AND sync_records.staff_id = ? AND sync_records.data_id = " . $table . ".id", [$table, $staff_id]);
-                })->skip($skip)->take(10)->get();
+                })->skip($skip)->take(3)->get();
             }
         }
         
