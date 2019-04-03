@@ -107,8 +107,8 @@ class ApiController extends BaseController
         $arr["changelog"] = array(
             array("ADDED", "Callsheet Title"),
             array("ADDED", "Reporting Contacts"),
-            array("ADDED", "First Call")
-            array("ADDED", "Last Call")
+            array("ADDED", "First Call"),
+            array("ADDED", "Last Call"),
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
