@@ -103,7 +103,7 @@ class ApiController extends BaseController
 
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 1.8;
+        $arr["version"] = 1.9;
         $arr["changelog"] = array(
             array("ADDED", "Checks for Invalid Date/Time"),
             array("ADDED", "Checks for GPS Status"),
