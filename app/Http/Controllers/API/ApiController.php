@@ -103,15 +103,14 @@ class ApiController extends BaseController
 
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 1.9;
+        $arr["version"] = 2;
         $arr["changelog"] = array(
-            array("ADDED", "Checks for Invalid Date/Time"),
-            array("ADDED", "Checks for GPS Status"),
-            array("FIXED", "Visited machines indicator"),
-            array("ADDED", "Bank Deposits"),
-            array("ADDED", "SMS Commands"),
-            array("ADDED", "Daily Callsheet Summary Report"),
-            array("ADDED", "DISR Report")
+            array("ADDED", "Import KML/KMZ files from other app sources"),
+            array("ADDED", "Disable transaction guard thru SMS command"),
+            array("CHANGES", "Changed GPS minimum transaction range to 40 meters"),
+            array("ADDED", "Export spreadsheet report from machine such as callsheets and orders"),
+            array("FIXED", "Auto refresh report when removing a deposit"),
+            array("FIXED", "Hangs when filtering a selected day whithout machines in the database")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
