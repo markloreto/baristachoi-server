@@ -19,6 +19,15 @@ class BasicController extends Controller
     public function generatePaymentCode($days){
         $mytime = Carbon::now();
         $string = str_random(6);
+        $isExist = DB::table("payment_codes")->where('code', $string)->count();
+        if($isExist){
+            $string = "";
+        }
+        else{
+            DB::table('payment_codes')->insert(
+                ['table' => $string]
+            );
+        }
         return response()->json(["code" => $string, "days" => $days, "generate_date" =>  $mytime->toDateTimeString()]);
     }
 
