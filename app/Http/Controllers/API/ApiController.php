@@ -44,10 +44,9 @@ class ApiController extends BaseController
                 $staff_name =  $staffQ->name;
                 $message = ["status" => $status, "until" => $until, "for" => $staff_name];
             }else{
-                DB::table('payment_codes')->where('id', $payment_codes->id)->update(['code' => $code, 'staff_id' => $staff_id, "expiration" => $until]);
                 $until = $mytime->addDays($payment_codes->days);
-                
-    
+                DB::table('payment_codes')->where('id', $payment_codes->id)->update(['code' => $code, 'staff_id' => $staff_id, "expiration" => $until]);
+
                 $message = ["status" => "Active", "until" => $until, "for" => $staff_name];
             }
             
