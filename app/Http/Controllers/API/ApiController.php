@@ -36,7 +36,7 @@ class ApiController extends BaseController
         $mytime = Carbon::now();
 
         $payment_codes = DB::table("payment_codes")->where('code', $code)->first();
-        if(count($payment_codes)){
+        if($payment_codes){
             if($payment_codes->staff_id){
                 $status = ($mytime->diffInMinutes(Carbon::parse($payment_codes->expiration))) ? "Active" : "Inactive";
                 $until = ($status == "Active") ? $mytime->diffForHumans(Carbon::parse($payment_codes->expiration)) : "Expired " + $payment_codes->expiration;
