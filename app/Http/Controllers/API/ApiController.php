@@ -39,7 +39,7 @@ class ApiController extends BaseController
         if($payment_codes){
             if($payment_codes->staff_id){
                 $status = ($mytime->diffInMinutes(Carbon::parse($payment_codes->expiration))) ? "Active" : "Inactive";
-                $until = ($status == "Active") ? $mytime->diffForHumans(Carbon::parse($payment_codes->expiration), true, false, 5, " and ") : "Expired " + $payment_codes->expiration;
+                $until = ($status == "Active") ? $mytime->diffForHumans(Carbon::parse($payment_codes->expiration), true, false, 5) : "Expired " + $payment_codes->expiration;
                 $staffQ = DB::table("staffs")->where('id', $payment_codes->staff_id)->first();
                 $staff_name =  $staffQ->name;
                 $message = ["status" => $status, "until" => $until, "for" => $staff_name];
@@ -47,8 +47,10 @@ class ApiController extends BaseController
                 $addMinutes = 0;
                 $activeCode = DB::table('payment_codes')->whereDate('expiration', '>', $mytime)
                 ->where("staff_id", $staff_id)->orderBy('id', 'desc')->first();
+                $status = "Reloaded";
                 if($activeCode){
                     $addMinutes += $mytime->diffInMinutes($activeCode->expiration);
+                    $status = "Renewed";
                 }
 
                 $until = Carbon::now()->addDays($payment_codes->days)->addMinutes($addMinutes);
@@ -60,7 +62,7 @@ class ApiController extends BaseController
             
         }
         else{
-            $message = ["status" => "", "until" => "", "for" => ""];
+            $message = ["status" => "Invalid", "until" => "", "for" => ""];
         }
 
         return $this->sendResponse($message, '...');
