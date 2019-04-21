@@ -57,7 +57,7 @@ class ApiController extends BaseController
 
                 DB::table('payment_codes')->where('id', $payment_codes->id)->update(['code' => $code, 'staff_id' => $staff_id, "expiration" => $until]);
 
-                $message = ["status" => "Active", "until" => Carbon::now()->diffForHumans($until, true, false, 5), "for" => $staff_name, "addMinutes" => $addMinutes];
+                $message = ["status" => $status, "until" => Carbon::now()->diffForHumans($until, true, false, 5), "for" => $staff_name, "addMinutes" => $addMinutes];
             }
             
         }
