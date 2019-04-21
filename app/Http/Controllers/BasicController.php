@@ -16,6 +16,11 @@ use Carbon\Carbon;
 class BasicController extends Controller
 {
     //
+    public function generateCode($days){
+        $string = str_random(40);
+        return $string;
+    }
+
     public function abc($depot_id, $year, $month){
         $date = Carbon::parse("$year-$month");
         $depot_id = $depot_id;
