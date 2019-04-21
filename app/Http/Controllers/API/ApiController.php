@@ -39,7 +39,7 @@ class ApiController extends BaseController
         if($payment_codes){
             if($payment_codes->staff_id){
                 $status = ($mytime->diffInMinutes(Carbon::parse($payment_codes->expiration))) ? "Active" : "Inactive";
-                $until = ($status == "Active") ? $mytime->diffForHumans(Carbon::parse($payment_codes->expiration), ["parts" => 4]) : "Expired " + $payment_codes->expiration;
+                $until = ($status == "Active") ? $mytime->diffForHumans(Carbon::parse($payment_codes->expiration), true, false, 6) : "Expired " + $payment_codes->expiration;
                 $staffQ = DB::table("staffs")->where('id', $payment_codes->staff_id)->first();
                 $staff_name =  $staffQ->name;
                 $message = ["status" => $status, "until" => $until, "for" => $staff_name];
