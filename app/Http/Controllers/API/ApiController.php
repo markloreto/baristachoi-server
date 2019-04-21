@@ -47,7 +47,7 @@ class ApiController extends BaseController
                 $until = $mytime->addDays($payment_codes->days);
 
                 $activeCode = DB::table('payment_codes')->whereDate('expiration', '>', $mytime->toDateString())
-                ->where("staff_id" => $staff_id)->orderBy('id', 'desc')->first();
+                ->where("staff_id", $staff_id)->orderBy('id', 'desc')->first();
                 $addMinutes = 0;
                 if($activeCode){
                     $addMinutes += $mytime->diffInMinutes($activeCode->expiration);
