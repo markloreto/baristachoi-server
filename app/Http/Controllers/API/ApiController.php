@@ -45,9 +45,19 @@ class ApiController extends BaseController
                 $message = ["status" => $status, "until" => $until, "for" => $staff_name];
             }else{
                 $until = $mytime->addDays($payment_codes->days);
+
+                $activeCode = DB::table('payment_codes')->whereDate('expiration', '>', $mytime->toDateString())
+                ->where("staff_id" => $staff_id)->orderBy('id', 'desc')->first();
+                $addMinutes = 0;
+                if($activeCode){
+                    $addMinutes += $mytime->diffInMinutes($activeCode->expiration);
+                }
+
+                $until->addMinutes($addMinutes);
+
                 DB::table('payment_codes')->where('id', $payment_codes->id)->update(['code' => $code, 'staff_id' => $staff_id, "expiration" => $until]);
 
-                $message = ["status" => "Active", "until" => $until, "for" => $staff_name];
+                $message = ["status" => "Active", "until" => $mytime->diffForHumans($until), "for" => $staff_name];
             }
             
         }
