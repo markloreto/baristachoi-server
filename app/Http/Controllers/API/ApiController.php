@@ -25,6 +25,40 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function insertPaymentCode(Request $request){
+        $data = $request->all();
+        $staff_id = $data["staff_id"];
+
+        $staffQ = DB::table("staffs")->where('id', $staff_id)->first();
+        $staff_name =  $staffQ->name;
+
+        $code = $data["code"];
+        $mytime = Carbon::now();
+
+        $payment_codes = DB::table("payment_codes")->where('code', $string)->first();
+        if(count($payment_codes)){
+            if($payment_codes->staff_id){
+                $status = ($mytime->diffInMinutes(Carbon::parse($payment_codes->expiration))) ? "Active" : "Inactive";
+                $until = ($status == "Active") ? $mytime->diffForHumans(Carbon::parse($payment_codes->expiration)) : "Expired " + $payment_codes->expiration;
+                $staffQ = DB::table("staffs")->where('id', $payment_codes->staff_id)->first();
+                $staff_name =  $staffQ->name;
+                $message = ["status" => $status, "until" => $until, "for" => $staff_name];
+            }else{
+                DB::table('payment_codes')->where('id', $payment_codes->id)->update(['code' => $string, 'staff_id' => $staff_id, "expiration" => $until]);
+                $until = $mytime->addDays($payment_codes->days);
+                
+    
+                $message = ["status" => "Active", "until" => $until, "for" => $staff_name];
+            }
+            
+        }
+        else{
+            $message = ["status" => "", "until" => "", "for" => ""];
+        }
+
+        return $this->sendResponse($message, '...');
+    }
+
     public function transferMachines(Request $request){
         $data = $request->all();
         $transferFrom = $data["transferFrom"];

@@ -33,6 +33,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/syncDelete', 'API\ApiController@syncDelete');
 	Route::post('/getLogin', 'API\ApiController@getLogin');
 	Route::post('/setLogin', 'API\ApiController@setLogin');
+	Route::post('/insertPaymentCode', 'API\ApiController@insertPaymentCode');
 
 	Route::resource('staff', 'API\StaffController');
 
