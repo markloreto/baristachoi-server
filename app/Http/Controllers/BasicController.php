@@ -19,7 +19,7 @@ class BasicController extends Controller
     public function generatePaymentCode($days){
         $mytime = Carbon::now();
         $string = str_random(6);
-        response()->json(["code" => $string, "days" => $days, "generate_date" =>  $mytime->toDateTimeString()]);
+        return response()->json(["code" => $string, "days" => $days, "generate_date" =>  $mytime->toDateTimeString()]);
     }
 
     public function abc($depot_id, $year, $month){
