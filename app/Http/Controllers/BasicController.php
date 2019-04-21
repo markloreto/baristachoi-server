@@ -16,9 +16,10 @@ use Carbon\Carbon;
 class BasicController extends Controller
 {
     //
-    public function generateCode($days){
-        $string = str_random(40);
-        return $string;
+    public function generatePaymentCode($days){
+        $mytime = Carbon\Carbon::now();
+        $string = str_random(6);
+        response()->json(["code" => $string, "days" => $days, "generate_date" =>  $mytime->toDateTimeString()]);
     }
 
     public function abc($depot_id, $year, $month){

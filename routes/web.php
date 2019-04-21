@@ -23,4 +23,4 @@ Route::group(['prefix' => 'admin'], function () {
 //Route::get('foo', 'API\ApiController@importOldServer');
 
 Route::get('chrono/abc/{depot_id}/{year}/{month}', 'BasicController@abc');
-Route::get('generateCode/{days}', 'BasicController@generateCode');
+Route::get('generatePaymentCode/{days}', 'BasicController@generatePaymentCode');
