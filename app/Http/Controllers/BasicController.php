@@ -25,7 +25,7 @@ class BasicController extends Controller
         }
         else{
             DB::table('payment_codes')->insert(
-                ['table' => $string]
+                ['code' => $string]
             );
         }
         return response()->json(["code" => $string, "days" => $days, "generate_date" =>  $mytime->toDateTimeString()]);
