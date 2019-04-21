@@ -48,14 +48,14 @@ class ApiController extends BaseController
                 $activeCode = DB::table('payment_codes')->whereDate('expiration', '>', $mytime)
                 ->where("staff_id", $staff_id)->orderBy('id', 'desc')->first();
                 if($activeCode){
-                    $addMinutes += $mytime->diffInMinutes($activeCode->expiration);
+                    $addMinutes += Carbon::now()->diffInMinutes($activeCode->expiration);
                 }
 
-                $until = $mytime->addDays($payment_codes->days)->addMinutes($addMinutes);
+                $until = Carbon::now()->addDays($payment_codes->days)->addMinutes($addMinutes);
 
                 DB::table('payment_codes')->where('id', $payment_codes->id)->update(['code' => $code, 'staff_id' => $staff_id, "expiration" => $until]);
 
-                $message = ["status" => "Active", "until" => $mytime->diffForHumans($until), "for" => $staff_name];
+                $message = ["status" => "Active", "until" => Carbon::now()->diffForHumans($until), "for" => $staff_name];
             }
             
         }
