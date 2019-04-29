@@ -25,6 +25,13 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function getMachines(Request $request){
+        $data = $request->all();
+        $records = DB::table("machines")->select('id', 'lat', 'lng')->get();
+        return $this->sendResponse($records->toArray(), '');
+
+    }
+
     public function insertPaymentCode(Request $request){
         $data = $request->all();
         $staff_id = $data["staff_id"];
