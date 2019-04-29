@@ -28,7 +28,7 @@ class ApiController extends BaseController
     public function getMachines(Request $request){
         $data = $request->all();
         $records = DB::table("machines")->select('id', 'lat', 'lng')->get();
-        return $this->sendResponse($records->toArray(), '');
+        return $this->sendResponse($records->toArray(), 'Machines');
 
     }
 
