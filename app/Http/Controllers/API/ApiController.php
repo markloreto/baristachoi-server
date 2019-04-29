@@ -27,7 +27,7 @@ class ApiController extends BaseController
 
     public function getMachines(Request $request){
         $data = $request->all();
-        $records = DB::table("machines")->select('id', 'lat', 'lng')->get();
+        $records = DB::table("machines")->select('id', 'lat', 'lng')->whereNotNull('lat')->get();
         return $this->sendResponse($records->toArray(), 'Machines');
 
     }
