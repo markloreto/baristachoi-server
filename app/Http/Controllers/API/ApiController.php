@@ -32,6 +32,19 @@ class ApiController extends BaseController
 
     }
 
+    public function paymentStatus(Request $request){
+        $data = $request->all();
+        $staff_id = $data["staff_id"];
+        $payment_codes = DB::table("payment_codes")->where('staff_id', $staff_id)->orderBy('id', 'desc')->first();
+        if($payment_codes){
+            $message = ["exp" => $payment_codes->expiration];
+        }else{
+            $message = ["exp" => null];
+        }
+
+        return $this->sendResponse($message, '...');
+    }
+
     public function insertPaymentCode(Request $request){
         $data = $request->all();
         $staff_id = $data["staff_id"];
