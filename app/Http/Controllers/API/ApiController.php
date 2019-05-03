@@ -166,12 +166,10 @@ class ApiController extends BaseController
 
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 2.3;
+        $arr["version"] = 2.4;
         $arr["changelog"] = array(
-            array("ADDED", "Monthly and Daily Powder Blend Sold"),
-            array("FIXED", "SMS Report on adding new machines"),
-            array("FIXED", "SMS Manual Report for Daily Callsheet Summary"),
-            array("ADDED", "Reset Database for Sales and RSO")
+            array("FIXED", "Manual Update and Auto Updates"),
+            array("FIXED", "Downloading map greater than 900 tiles")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
