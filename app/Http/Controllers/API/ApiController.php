@@ -209,7 +209,7 @@ class ApiController extends BaseController
             ['body' => $body]
         );
 
-        return $this->sendResponse($response, 'setLogin');
+        return $this->sendResponse(json_decode($response, true), 'setLogin');
     }
 
     public function setLogin(Request $request){
