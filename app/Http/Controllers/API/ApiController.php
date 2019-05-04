@@ -195,6 +195,23 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'getDealersQuickList');
     }
 
+    public function postProxy(Request $request){
+        $data = $request->all();
+        $endPoint = $data["endpoint"];
+        $body = $data["body"];
+        $client = new Client([
+            'headers' => [ 
+                'Content-Type' => 'application/json'
+            ]
+        ]);
+
+        $response = $client->post($endPoint,
+            ['body' => $body]
+        );
+
+        return $this->sendResponse($response, 'setLogin');
+    }
+
     public function setLogin(Request $request){
         $data = $request->all();
         $depot_id = $data["depot_id"];
