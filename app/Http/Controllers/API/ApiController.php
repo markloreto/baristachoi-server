@@ -201,13 +201,12 @@ class ApiController extends BaseController
         $body = $data["body"];
         $client = new Client([
             'headers' => [ 
-                'Content-Type' => 'application/json',
-                'Access-Control-Allow-Origin' => '*'
+                'Content-Type' => 'application/json'
             ]
         ]);
 
         $response = $client->post($endPoint,
-            ['body' => json_encode($body)])
+            ['body' => json_encode($body)]
         );
 
         return $this->sendResponse($response, 'setLogin');
