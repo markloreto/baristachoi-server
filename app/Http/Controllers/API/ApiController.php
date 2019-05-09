@@ -201,7 +201,8 @@ class ApiController extends BaseController
         $body = $data["body"];
         $client = new Client([
             'headers' => [ 
-                'Content-Type' => 'application/json'
+                'Content-Type' => 'application/json',
+                'Access-Control-Allow-Origin' => '*'
             ]
         ]);
 
