@@ -11,7 +11,7 @@ use Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 use App\Services\PayUService\Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7;
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Stream\Stream;
 use Carbon\Carbon;
 //
