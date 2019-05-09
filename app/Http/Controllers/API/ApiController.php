@@ -206,10 +206,10 @@ class ApiController extends BaseController
         ]);
 
         $response = $client->post($endPoint,
-            ['body' => json_decode(json_encode($body))]
+            ['body' => json_encode($body))
         );
 
-        return $this->sendResponse(json_decode($response), 'setLogin');
+        return $this->sendResponse($response, 'setLogin');
     }
 
     public function setLogin(Request $request){
