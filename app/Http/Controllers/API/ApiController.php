@@ -206,7 +206,7 @@ class ApiController extends BaseController
         ]);
 
         $response = $client->post($endPoint,
-            ['body' => json_encode(json_decode($body, true))]
+            ['body' => $body]
         );
 
         print_r($response->getBody());
