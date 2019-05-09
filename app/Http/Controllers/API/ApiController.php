@@ -11,7 +11,6 @@ use Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 use App\Services\PayUService\Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Stream\Stream;
 use Carbon\Carbon;
 //
@@ -211,12 +210,11 @@ class ApiController extends BaseController
             ['body' => $body]
         );
 
+       /*  echo $response->getBody()->read(4);
         echo $response->getBody()->read(4);
-        echo $response->getBody()->read(4);
-        echo $response->getBody()->read(1024);
-        var_export($response->eof());
+        echo $response->getBody()->read(1024); */
 
-        return $this->sendResponse(json_encode($response), 'setLogin');
+        return $this->sendResponse(json_decode($response->getBody()->read(1024)), 'setLogin');
     }
 
     public function setLogin(Request $request){
