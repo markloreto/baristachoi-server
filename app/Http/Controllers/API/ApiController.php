@@ -167,10 +167,9 @@ class ApiController extends BaseController
 
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 2.8;
+        $arr["version"] = 2.9;
         $arr["changelog"] = array(
-            array("FIXED", "Updating RSO"),
-            array("ADDED", "SMS Settings: Auto send proximity deliveries and Auto send receipt")
+            array("FIXED", "Time display time in SMS reports and in-app reports")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
