@@ -524,6 +524,13 @@ class ApiController extends BaseController
                 }
             }
 
+            if(isset($record["machine_id"])){
+                if($record["machine_id"] != null){
+                    $s = DB::table("converted_synchs2")->select('converted_id')->where([['sync_id', $record["machine_id"]],['table', 'machines']])->first();
+                $record["machine_id"] = $s->converted_id;
+                }
+            }
+
             $alreadyConverted = DB::table("converted_synchs2")->where([['sync_id', $syncId],['table', $table]])->count();
 
             if($alreadyConverted){
