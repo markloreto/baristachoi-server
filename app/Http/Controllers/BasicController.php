@@ -17,7 +17,7 @@ class BasicController extends Controller
 {
     //
     public function attachmentView($id){
-        $attachment = DB::table("payment_codes")->where('id', $id)->first();
+        $attachment = DB::table("attachments")->where('id', $id)->first();
         $img = Image::make($attachment->b64);
         print_r($img);
     }
