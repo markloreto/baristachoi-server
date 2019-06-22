@@ -19,8 +19,8 @@ class BasicController extends Controller
     public function attachmentView($id){
         $attachment = DB::table("attachments")->where('id', $id)->first();
         $img = Image::make($attachment->b64);
-        echo $img->response('jpg', 70);
-        print_r($img);
+        return $img->response('jpg', 70);
+        //print_r($img);
     }
 
     public function generatePaymentCode($days){
