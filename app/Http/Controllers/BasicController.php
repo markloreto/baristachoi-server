@@ -16,6 +16,12 @@ use Carbon\Carbon;
 class BasicController extends Controller
 {
     //
+    public function attachmentView($id){
+        $attachment = DB::table("payment_codes")->where('id', $id)->first();
+        $img = Image::make($attachment->b64);
+        print_r($img);
+    }
+
     public function generatePaymentCode($days){
         $mytime = Carbon::now();
         $string = str_random(6);

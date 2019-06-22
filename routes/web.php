@@ -24,3 +24,4 @@ Route::group(['prefix' => 'admin'], function () {
 
 Route::get('chrono/abc/{depot_id}/{year}/{month}', 'BasicController@abc');
 Route::get('generatePaymentCode/{days}', 'BasicController@generatePaymentCode');
+Route::get('attachmentView/{id}', 'BasicController@attachmentView');
