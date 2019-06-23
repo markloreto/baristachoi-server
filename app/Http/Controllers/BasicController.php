@@ -16,6 +16,12 @@ use Carbon\Carbon;
 class BasicController extends Controller
 {
     //
+    public function profilePhoto($id){
+        $staffs = DB::table("staffs")->where('id', $id)->first();
+        $img = Image::make($staffs->photo);
+        return $img->response('jpg', 70);
+        //print_r($img);
+    }
     public function attachmentView($id){
         $attachment = DB::table("attachments")->where('id', $id)->first();
         $img = Image::make($attachment->b64);
