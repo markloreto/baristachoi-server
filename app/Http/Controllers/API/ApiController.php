@@ -437,14 +437,14 @@ class ApiController extends BaseController
             if(isset($record["client_id"])){
                 if($record["client_id"] != null){
                     $s = DB::table("converted_synchs2")->select('sync_id')->where([['converted_id', $record["client_id"]],['table', 'clients']])->first();
-                $record["client_id"] = $s->converted_id;
+                $record["client_id"] = $s->sync_id;
                 }
             }
 
             if(isset($record["machine_id"])){
                 if($record["machine_id"] != null){
                     $s = DB::table("converted_synchs2")->select('sync_id')->where([['converted_id', $record["machine_id"]],['table', 'machines']])->first();
-                $record["machine_id"] = $s->converted_id;
+                $record["machine_id"] = $s->sync_id;
                 }
             }
             
