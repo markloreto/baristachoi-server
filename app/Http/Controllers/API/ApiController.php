@@ -392,7 +392,7 @@ class ApiController extends BaseController
             if($table == "clients"){
                 $records = DB::table($table)->where('depot_id', $depot_id)->skip($skip)->take(10)->get();
             }
-            if(Schema::hasColumn($table, 'staff_id')){
+            else if(Schema::hasColumn($table, 'staff_id')){
                 $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(10)->get();
             }else{
                 $records = DB::table($table)->skip($skip)->take(10)->get();
