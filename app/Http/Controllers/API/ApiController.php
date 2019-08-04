@@ -167,11 +167,9 @@ class ApiController extends BaseController
 
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 3.1;
+        $arr["version"] = 3.2;
         $arr["changelog"] = array(
-            array("FIXED", "number of machine markers on map multiplies"),
-            array("ADDED", "Special Account tag for client"),
-            array("ADDED", "Client location for purchasers and meet ups as new transaction guard")
+            array("FIXED", "Powder Blends Sold")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
@@ -390,7 +388,7 @@ class ApiController extends BaseController
 
         if($all){
             if($table == "clients"){
-                $records = DB::table($table)->where('depot_id', $depot_id)->skip($skip)->take(10)->get();
+                $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(10)->get();
             }
             else if(Schema::hasColumn($table, 'staff_id')){
                 $records = DB::table($table)->where('staff_id', $staff_id)->skip($skip)->take(10)->get();
@@ -400,7 +398,7 @@ class ApiController extends BaseController
         }
         else{
             if($table == "clients"){
-                $records = DB::table($table)->where('depot_id', $depot_id)->whereNotExists(function ($query) use ($table, $staff_id) {
+                $records = DB::table($table)->where('staff_id', $staff_id)->whereNotExists(function ($query) use ($table, $staff_id) {
                     $query->select(DB::raw(1))
                           ->from('sync_records2')
                           ->whereRaw("sync_records2.name = ? AND sync_records2.staff_id = ? AND sync_records2.data_id = " . $table . ".id", [$table, $staff_id]);
