@@ -89,6 +89,15 @@ class ApiController extends BaseController
         return $this->sendResponse($message, '...');
     }
 
+    public function clientDetails(Request $request){
+        $data = $request->all();
+        $clientId = $data["clientId"];
+
+        $records = DB::table("clients")->where('id', $clientId)->first();
+        return $this->sendResponse($records->toArray(), 'Machines');
+
+    }
+
     public function transferMachines(Request $request){
         $data = $request->all();
         $transferFrom = $data["transferFrom"];
@@ -169,7 +178,10 @@ class ApiController extends BaseController
         $arr = array(); 
         $arr["version"] = 3.4;
         $arr["changelog"] = array(
-            array("COMPATIBILITY", "Added Compatibility for 2 GIG RAM Devices. This will fixed App closing issue when adding new machines or clients")
+            array("ADDED", "Features to download location services for low-end and High-end devices if no detected files"),
+            array("ADDED", "Auto Detection for new offline map"),
+            array("ADDED", "Offline map downloads, installation and uninstallation page settings"),
+            array("ADDED", "Client page")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
