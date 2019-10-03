@@ -89,6 +89,11 @@ class ApiController extends BaseController
         return $this->sendResponse($message, '...');
     }
 
+    public function pullClientDetails(Request $request){
+        $data = $request->all();
+        $clientId = $data["clientId"];
+    }
+
     public function clientDetails(Request $request){
         $data = $request->all();
         $clientId = $data["clientId"];
@@ -399,6 +404,7 @@ class ApiController extends BaseController
         $relationalTables = $data["relTables"];
         //modules tables
         $moduleTables = $data["modules"];
+        $singleData = $data["singleData"];
 
         if($all){
             if($table == "clients"){
@@ -432,6 +438,13 @@ class ApiController extends BaseController
                           ->from('sync_records2')
                           ->whereRaw("sync_records2.name = ? AND sync_records2.staff_id = ? AND sync_records2.data_id = " . $table . ".id", [$table, $staff_id]);
                 })->skip($skip)->take(10)->get();
+            }
+
+            if(count($singleData) == 2){
+                if($table == $singleData[0]){
+                    $sData = DB::table($table)->where("id", $singleData[1])->first();
+                    array_push($records, $sData);
+                }
             }
         }
 
