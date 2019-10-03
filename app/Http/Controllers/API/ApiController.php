@@ -442,7 +442,7 @@ class ApiController extends BaseController
 
             if(count($singleData) == 2){
                 if($table == $singleData[0]){
-                    $sData = DB::table($table)->where("id", $singleData[1])->first();
+                    $sData = DB::table($table)->where("id", $singleData[1])->get();
                     $records = $sData;
                 }
             }
