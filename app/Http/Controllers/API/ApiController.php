@@ -93,7 +93,9 @@ class ApiController extends BaseController
         $data = $request->all();
         $clientId = $data["clientId"];
 
-        $records = DB::table("clients")->where('id', $clientId)->first();
+        $realId = DB::table("converted_synchs2")->select('converted_id')->where([['sync_id', $clientId],['table', "clients"]])->first();
+
+        $records = DB::table("clients")->where('id', $realId)->first();
         return $this->sendResponse($records->toArray(), 'Machines');
 
     }
