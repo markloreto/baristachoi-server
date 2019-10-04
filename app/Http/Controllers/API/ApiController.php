@@ -186,9 +186,12 @@ class ApiController extends BaseController
         $arr["version"] = 3.4;
         $arr["changelog"] = array(
             array("ADDED", "Features to download location services for low-end and High-end devices if no detected files"),
-            array("ADDED", "Auto Detection for new offline map"),
             array("ADDED", "Offline map downloads, installation and uninstallation page settings"),
-            array("ADDED", "Client page")
+            array("ADDED", "New offline map to download and install: Norther Cebu, Southern Cebu, Pangasinan West, Pangasinan East, Ilocos Sur and Ilocos Norte"),
+            array("ADDED", "Auto Detection for new offline map"),
+            array("ADDED", "Client page"),
+            array("ADDED", "Transfer client for centralized client data")
+            
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
