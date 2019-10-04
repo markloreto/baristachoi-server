@@ -183,8 +183,9 @@ class ApiController extends BaseController
 
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 3.4;
+        $arr["version"] = 3.5;
         $arr["changelog"] = array(
+            array("REDUCED", "Installer size to 80% now only 21MB"),
             array("ADDED", "Features to download location services for low-end and High-end devices if no detected files"),
             array("ADDED", "Offline map downloads, installation and uninstallation page settings"),
             array("ADDED", "New offline map to download and install: Norther Cebu, Southern Cebu, Pangasinan West, Pangasinan East, Ilocos Sur and Ilocos Norte"),
