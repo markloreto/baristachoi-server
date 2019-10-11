@@ -183,16 +183,10 @@ class ApiController extends BaseController
 
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 3.5;
+        $arr["version"] = 3.6;
         $arr["changelog"] = array(
-            array("REDUCED", "Installer size to 80% now only 21MB"),
-            array("ADDED", "Features to download location services for low-end and High-end devices if no detected files"),
-            array("ADDED", "Offline map downloads, installation and uninstallation page settings"),
-            array("ADDED", "New offline map to download and install: Norther Cebu, Southern Cebu, Pangasinan West, Pangasinan East, Ilocos Sur and Ilocos Norte"),
-            array("ADDED", "Auto Detection for new offline map"),
-            array("ADDED", "Client page"),
-            array("ADDED", "Transfer client for centralized client data")
-            
+            array("ADDED", "Checking for invalid characters such as special characters and emoticons in client inputs. this will fix synching errors"),
+            array("ADDED", "New offline maps: Aurora, Tarlac and Zambales Provinces")   
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
