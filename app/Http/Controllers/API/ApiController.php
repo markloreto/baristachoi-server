@@ -181,6 +181,7 @@ class ApiController extends BaseController
         return $this->sendResponse(array("to" => $to, "transferred" => $ids), 'checkMachineTransfers retrieved successfully.');
     }
 
+    
     public function dealerVersion(){
         $arr = array(); 
         $arr["version"] = 3.8;
