@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/test2', 'API\ApiController@test2');
+Route::post('/serverLogin', 'API\ApiController@serverLogin');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
 	//Route::resource('users', 'API\ApiController');
