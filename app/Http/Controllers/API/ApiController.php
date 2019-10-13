@@ -937,6 +937,20 @@ class ApiController extends BaseController
         return $this->sendResponse($monthData, 'depotTotalMachines');
     }
 
+    public function test2(Request $request){
+        $data = $request->all();
+        $year = 2018;
+        
+
+        /* $records = DB::table('machines')->select(DB::raw('count(id) as `data`'),DB::raw("CONCAT_WS('-', YEAR(created_at), LPAD(MONTH(created_at), 2, '0')) as monthyear"))
+        ->groupby('monthyear')
+        ->orderBy("monthyear")
+        ->whereYear('created_at', '=', 2018)
+        ->get(); */
+       
+        return $this->sendResponse($year, 'depotTotalMachines');
+    }
+
 
     //Temp
     public function importOldServer(){
