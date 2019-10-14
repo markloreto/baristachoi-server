@@ -13,6 +13,7 @@ use App\Services\PayUService\Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Stream\Stream;
 use Carbon\Carbon;
+use Hash
 //
 class ApiController extends BaseController
 {
@@ -965,6 +966,27 @@ class ApiController extends BaseController
             
        
         return $this->sendResponse(array("withAccess" => $record, "apiAccess" => $apiAccess, "userData" => $userData), 'serverLogin22');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $data = $request->all();
+        $username = $data["username"];
+        $password = $data["password"];
+        $key = $data["key"];
+        $keyCorrect = false;
+
+        $isExist = DB::table("staffs")->where('username', $username)->count();
+        if($isExist){
+            $depotId = DB::table("staffs")->select("depot_id", "id")->where('username', $username)->first();
+            $hashed = DB::table("depots")->select("key")->where('id', $depotId->depot_id)->first();
+            if (Hash::check($key, $hashed->key)) {
+                $keyCorrect = true
+                DB::table("staffs")->where('id', $depotId->id)->update(['passcode' => $password]);
+            }
+        }
+
+        return $this->sendResponse(array("userExist" => $isExist, "keyCorrect" => $keyCorrect), 'serverLogin22');
     }
 
 
