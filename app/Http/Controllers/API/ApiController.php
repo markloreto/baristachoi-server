@@ -981,12 +981,12 @@ class ApiController extends BaseController
             $depotId = DB::table("staffs")->select("depot_id", "id")->where('username', $username)->first();
             $hashed = DB::table("depots")->select("key")->where('id', $depotId->depot_id)->first();
             if (Hash::check($key, $hashed->key)) {
-                $keyCorrect = true
+                $keyCorrect = true;
                 DB::table("staffs")->where('id', $depotId->id)->update(['passcode' => $password]);
             }
         }
 
-        return $this->sendResponse(array("userExist" => $isExist, "keyCorrect" => $keyCorrect), 'serverLogin22');
+        return $this->sendResponse(array("userExist" => $isExist, "keyCorrect" => $keyCorrect), 'resetPassword');
     }
 
 
