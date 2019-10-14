@@ -953,6 +953,11 @@ class ApiController extends BaseController
             ->join('roles AS r', 's.role_id', '=', 'r.id')
             ->first();
 
+            $resizedThumbnail = Image::make($userData->thumbnail);
+            $resizedThumbnail->resize(100, 100);
+
+            $userData->thumbnail = (string) $resizedThumbnail->encode('data-url');
+
             //$userData = DB::table("staffs")->where([['username', $username], ['passcode', $password]])->first();
             
         }
