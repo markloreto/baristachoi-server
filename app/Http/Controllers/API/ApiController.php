@@ -949,7 +949,7 @@ class ApiController extends BaseController
         if($record){
             $apiAccess = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjJmZjQxODQzYjQ3ZTI0MWNmMzQ2Y2NkYmZlMzU2MzkwMGJkODBhMjgzYzg5OWM0NDA3Y2U2ZjcwOGM2N2Y0YzIwOTQ5NzE3MmI0Y2EyMzc3In0.eyJhdWQiOiI0IiwianRpIjoiMmZmNDE4NDNiNDdlMjQxY2YzNDZjY2RiZmUzNTYzOTAwYmQ4MGEyODNjODk5YzQ0MDdjZTZmNzA4YzY3ZjRjMjA5NDk3MTcyYjRjYTIzNzciLCJpYXQiOjE1NzA4NDkwOTYsIm5iZiI6MTU3MDg0OTA5NiwiZXhwIjoxNjAyNDcxNDk2LCJzdWIiOiIxIiwic2NvcGVzIjpbIioiXX0.QB1aSw3vZKFnwFELrLhnLoTO4tS-2SnS-z8m0TTjkVRFrwGUglPZtvFm9uZP0fbexxaDavcKlNUdNsVpoD0Nv7cI-sJh-eiiPqxC0ewQEoH2XO6wJ3Z7Jz1Lwd3LSgQVm6CSpouKfM0G0jR_4mcpdbOS4yA1_0-VsAVdThbniNAQlAB9rXSJaEVX_YdqnL0aGTQqgGNYFGd153HNU-yrO2JpcwglAwXi3ELdGqDeDhw_WtQjNqzGzhXR5Ie5Qeh3V4nC_KJmb4F1ZQapPywOAVgZwtN4aLQQvO50nZWU_p5354br7pn3KJvUYStnmev3oO0o6awhoEssJe2n0N6o6qCw5K6LwHooT9rYLbdZFR3GIyM4WgpwF-dng3SzXxGvMdDciQ3xe4ynsTQ5oSFqDAXY-upgbCdvHQWO_ulVNGXK14VOfiiJM0hDNn3HIqwS6WK5wkMbL9yyOXlMOW3kaVSrGsiPTN9gOthCMrdLqdd6LLP92KDMGl_sC54iKIsBeCa5KNAyFQKd6w-RGo1FGb68JHwvvL8ToI4go4t4-4guEg7Nk8OVXmYrqU1mUd-vsxcPtU-_pX86pjLYgMgcJ8Lsj3D-D_U-YK53AJriz0KVvijURfjeGZLHVZ7rL1IpgPJJ3bvWv4FlDSaq9Oo8Cm4W9kIvH6hCoe_G3UKH_dY";
             
-            $userData = DB::table('staffs AS s')->select('s.*', 'r.display_name')->where([['username', $username], ['passcode', $password]])
+            $userData = DB::table('staffs AS s')->select('s.*', 'r.display_name AS role_name')->where([['username', $username], ['passcode', $password]])
             ->join('roles AS r', 's.role_id', '=', 'r.id')
             ->first();
 
