@@ -13,7 +13,6 @@ use App\Services\PayUService\Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Stream\Stream;
 use Carbon\Carbon;
-use Hash
 //
 class ApiController extends BaseController
 {
