@@ -986,7 +986,7 @@ class ApiController extends BaseController
             }
         }
 
-        return $this->sendResponse(array("userExist" => $isExist, "keyCorrect" => $keyCorrect), 'resetPassword');
+        return $this->sendResponse(array("userExist" => $isExist, "keyCorrect" => $keyCorrect), 'resetPassword2');
     }
 
 
