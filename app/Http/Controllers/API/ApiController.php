@@ -956,14 +956,15 @@ class ApiController extends BaseController
             $resizedThumbnail = Image::make($userData->thumbnail);
             $resizedThumbnail->resize(100, 100);
 
-            $userData->thumbnail = (string) $resizedThumbnail->encode('data-url');
+            $userData->thumbnail = (string) $resizedThumbnail->encode('data-url');;
+
 
             //$userData = DB::table("staffs")->where([['username', $username], ['passcode', $password]])->first();
             
         }
             
        
-        return $this->sendResponse(array("withAccess" => $record, "apiAccess" => $apiAccess, "userData" => $userData), 'serverLogin');
+        return $this->sendResponse(array("withAccess" => $record, "apiAccess" => $apiAccess, "userData" => $userData), 'serverLogin2');
     }
 
 
