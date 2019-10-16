@@ -27,16 +27,6 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
     
-    public function apn(Request $request){
-        $data = $request->all();
-
-        DB::table('log_tests')->insert(
-            ['message' => json_encode($data)]
-
-        );
-        return $this->sendResponse($data, 'apn');
-    }
-
     public function getMachines(Request $request){
         $data = $request->all();
         $records = DB::table("machines")->select('id', 'lat', 'lng')->whereNotNull('lat')->get();
@@ -934,26 +924,71 @@ class ApiController extends BaseController
         return $this->sendResponse($records, 'machinesNearby');
     }
 
-    public function test(Request $request){
+    public function paypalPay(Request $request){
         $data = $request->all();
-        $year = 2018;
 
-        $to_name = "Chrono";
-        $to_email = "markyctrigger27@gmail.com";
-        $data = array("name" => "Mark", "body" => "A test mail");
-        Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
-            $message->to($to_email, $to_name)->subject('Test Mail');
-            $message->from("operations@sugbu.me", "Weeee");
+        DB::table('log_tests')->insert(
+            ['message' => json_encode($data)]
 
-        });
-        
+        );
 
-        /* $records = DB::table('machines')->select(DB::raw('count(id) as `data`'),DB::raw("CONCAT_WS('-', YEAR(created_at), LPAD(MONTH(created_at), 2, '0')) as monthyear"))
-        ->groupby('monthyear')
-        ->orderBy("monthyear")
-        ->whereYear('created_at', '=', 2018)
-        ->get(); */
-       
+        if($data["payment_status"] == "Completed"){
+            $mytime = Carbon::now();
+            
+
+            $qty = intval($data["quantity"]);
+
+            $codes = "";
+            $days = 0;
+
+            $isTrue = false;
+            $string = "";
+
+            for ($x = 0; $x <= $qty; $x++) {
+                do {
+                    $string = str_random(6);
+                    $isExist = DB::table("payment_codes")->where('code', $string)->count();
+
+                    if($data["option_selection1"] == "1 Month")
+                        $days = 30;
+                    if($data["option_selection1"] == "3 Months")
+                        $days = 90;
+                    if($data["option_selection1"] == "6 Months")
+                        $days = 180;
+                    if($data["option_selection1"] == "1 Year")
+                        $days = 360;
+                    
+
+                    if($isExist){
+                        $isTrue = true;
+                    }
+                    else{
+                        $isTrue = false;
+                        DB::table('payment_codes')->insert(
+                            ['code' => $string, "days" => $days]
+                        );
+                    }
+                } while ($isTrue);
+
+                $codes .= "<div><strong>" . $string . "</strong></div>";
+            }
+
+            $to_name = $data["first_name"] . " " . $data["last_name"];
+            $to_email = $data["payer_email"];
+
+            $data = array(
+                "name" => $data["first_name"], 
+                "body" => "<div>Here's your <strong>Payment Code</strong> and will expire <strong>" . $data["option_selection1"] . "</strong> after use:</div>" . $codes . "<br/>",
+                "expiration" => $data["option_selection1"]
+            );
+
+            Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
+                $message->to($to_email, $to_name)->subject($qty . ' Payment Code' . (($qty > 1) ? "s" : ""));
+                $message->from("techsupport@sugbu.me", "Payment Codes");
+
+            });
+        }
+   
         return $this->sendResponse($data, 'depotTotalMachines');
     }
 
