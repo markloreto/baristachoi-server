@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 Route::post('/serverLogin', 'API\ApiController@serverLogin');
 Route::post('/resetPassword', 'API\ApiController@resetPassword');
-Route::post('/paypalPay', 'API\ApiController@paypalPay');
+Route::post('/paypalPay2', 'API\ApiController@paypalPay2');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
 	//Route::resource('users', 'API\ApiController');

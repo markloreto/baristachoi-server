@@ -924,7 +924,7 @@ class ApiController extends BaseController
         return $this->sendResponse($records, 'machinesNearby');
     }
 
-    public function paypalPay(Request $request){
+    public function paypalPay2(Request $request){
         $data = $request->all();
 
         DB::table('log_tests')->insert(
@@ -988,7 +988,7 @@ class ApiController extends BaseController
             });
         }
    
-        return $this->sendResponse($data, 'depotTotalMachines');
+        return $this->sendResponse($data, 'paypalPay2');
     }
 
     public function serverLogin(Request $request){
