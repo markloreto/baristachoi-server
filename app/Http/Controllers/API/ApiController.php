@@ -943,7 +943,7 @@ class ApiController extends BaseController
         $data = array("name" => "Mark", "body" => "A test mail");
         Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
             $message->to($to_email, $to_name)->subject('Test Mail');
-            $message->from("techsupport@sugbu.me", "Weeee");
+            $message->from("operations@sugbu.me", "Weeee");
 
         });
         
