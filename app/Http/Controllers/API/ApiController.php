@@ -938,13 +938,14 @@ class ApiController extends BaseController
         $data = $request->all();
         $year = 2018;
 
-        $objDemo = new \stdClass();
-        $objDemo->demo_one = 'Demo One Value';
-        $objDemo->demo_two = 'Demo Two Value';
-        $objDemo->sender = 'SenderUserName';
-        $objDemo->receiver = 'ReceiverUserName';
- 
-        Mail::to("markyctrigger27@gmail.com")->send(new DemoEmail($objDemo));
+        $to_name = "Chrono";
+        $to_email = "markyctrigger27@gmail.com";
+        $data = array("name" => "Mark", "body" => "A test mail");
+        Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
+            $message->to($to_email, $to_name)->subject('Test Mail');
+            $message->from("techsupport@sugbu.me", "Weeee");
+
+        });
         
 
         /* $records = DB::table('machines')->select(DB::raw('count(id) as `data`'),DB::raw("CONCAT_WS('-', YEAR(created_at), LPAD(MONTH(created_at), 2, '0')) as monthyear"))
