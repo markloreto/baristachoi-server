@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 Route::post('/serverLogin', 'API\ApiController@serverLogin');
 Route::post('/resetPassword', 'API\ApiController@resetPassword');
+Route::post('/apn', 'API\ApiController@apn');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
 	//Route::resource('users', 'API\ApiController');

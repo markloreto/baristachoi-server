@@ -25,6 +25,11 @@ class ApiController extends BaseController
 
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
+    
+    public function apn(Request $request){
+        $data = $request->all();
+        return $this->sendResponse($data, 'apn');
+    }
 
     public function getMachines(Request $request){
         $data = $request->all();
