@@ -28,6 +28,11 @@ class ApiController extends BaseController
     
     public function apn(Request $request){
         $data = $request->all();
+
+        DB::table('log_tests')->insert(
+            ['message' => json_encode($data)]
+            
+        );
         return $this->sendResponse($data, 'apn');
     }
 
