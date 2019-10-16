@@ -954,7 +954,7 @@ class ApiController extends BaseController
         ->whereYear('created_at', '=', 2018)
         ->get(); */
        
-        return $this->sendResponse($monthData, 'depotTotalMachines');
+        return $this->sendResponse($data, 'depotTotalMachines');
     }
 
     public function serverLogin(Request $request){
