@@ -944,7 +944,7 @@ class ApiController extends BaseController
             $isTrue = false;
             $string = "";
 
-            for ($x = 0; $x <= $qty; $x++) {
+            for ($x = 0; $x < $qty; $x++) {
                 do {
                     $string = str_random(6);
                     $isExist = DB::table("payment_codes")->where('code', $string)->count();
@@ -983,7 +983,7 @@ class ApiController extends BaseController
             );
 
             Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
-                $message->to($to_email, $to_name)->subject($qty . ' Payment Code' . (($qty > 1) ? "s" : ""));
+                $message->to($to_email, $to_name)->subject($qty . ' Payment Code');
                 $message->from("techsupport@sugbu.me", "Payment Codes");
 
             });
