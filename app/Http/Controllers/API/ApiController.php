@@ -935,7 +935,7 @@ class ApiController extends BaseController
             $mytime = Carbon::now();
             
 
-            $qty = intval($data["quantity"]);
+            $qty = (int) $data["quantity"];
 
             $codes = "";
             $days = 0;
