@@ -941,7 +941,7 @@ class ApiController extends BaseController
         $to_name = "Chrono";
         $to_email = "markyctrigger27@gmail.com";
         $data = array("name" => "Mark", "body" => "A test mail");
-        Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
+        Mail::send(["markyctrigger27@gmail.com"], $data, function($message) use ($to_name, $to_email) {
             $message->to($to_email, $to_name)->subject('Test Mail');
             $message->from("techsupport@sugbu.me", "Weeee");
 
