@@ -929,7 +929,6 @@ class ApiController extends BaseController
 
         DB::table('log_tests')->insert(
             ['message' => json_encode($data)]
-
         );
 
         if($data["payment_status"] === "Completed"){
@@ -983,8 +982,8 @@ class ApiController extends BaseController
             );
 
             Mail::send('emails.mail', $rec, function($message) use ($to_name, $to_email) {
-                $message->to($to_email, $to_name)->subject($qty . ' Payment Code' . (($qty > 1) ? "s" : ""));
-                $message->from("techsupport@sugbu.me", "Payment Codes");
+                $message->to($to_email, $to_name)->subject('Payment Codes');
+                $message->from("techsupport@sugbu.me", $qty . " Payment Codes");
 
             });
         }
