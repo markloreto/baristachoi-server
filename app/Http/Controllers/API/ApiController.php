@@ -13,6 +13,7 @@ use App\Services\PayUService\Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Stream\Stream;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 //
 class ApiController extends BaseController
 {
@@ -31,7 +32,7 @@ class ApiController extends BaseController
 
         DB::table('log_tests')->insert(
             ['message' => json_encode($data)]
-            
+
         );
         return $this->sendResponse($data, 'apn');
     }
@@ -936,6 +937,14 @@ class ApiController extends BaseController
     public function test(Request $request){
         $data = $request->all();
         $year = 2018;
+
+        $objDemo = new \stdClass();
+        $objDemo->demo_one = 'Demo One Value';
+        $objDemo->demo_two = 'Demo Two Value';
+        $objDemo->sender = 'SenderUserName';
+        $objDemo->receiver = 'ReceiverUserName';
+ 
+        Mail::to("markyctrigger27@gmail.com")->send(new DemoEmail($objDemo));
         
 
         /* $records = DB::table('machines')->select(DB::raw('count(id) as `data`'),DB::raw("CONCAT_WS('-', YEAR(created_at), LPAD(MONTH(created_at), 2, '0')) as monthyear"))

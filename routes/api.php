@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 Route::post('/serverLogin', 'API\ApiController@serverLogin');
 Route::post('/resetPassword', 'API\ApiController@resetPassword');
 Route::post('/apn', 'API\ApiController@apn');
+Route::get('/tets', 'API\ApiController@test');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
 	//Route::resource('users', 'API\ApiController');
@@ -67,7 +68,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/depotDashboardDealers', 'API\ApiController@depotDashboardDealers');
 
 	//test
-	Route::post('/test', 'API\ApiController@test');
+	//Route::post('/test', 'API\ApiController@test');
 
 	//Version Check
 	Route::get('/dealerVersion', 'API\ApiController@dealerVersion');
