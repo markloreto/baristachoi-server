@@ -932,7 +932,7 @@ class ApiController extends BaseController
 
         );
 
-        if($data["payment_status"] == "Completed"){
+        if($data["payment_status"] === "Completed"){
             $mytime = Carbon::now();
             
 
@@ -976,14 +976,14 @@ class ApiController extends BaseController
             $to_name = $data["first_name"] . " " . $data["last_name"];
             $to_email = $data["payer_email"];
 
-            $data = array(
+            $rec = array(
                 "name" => $data["first_name"], 
                 "body" => "<div>Here's your <strong>Payment Code</strong> and will expire <strong>" . $data["option_selection1"] . "</strong> after use:</div>" . $codes . "<br/>",
                 "expiration" => $data["option_selection1"]
             );
 
-            Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
-                $message->to($to_email, $to_name)->subject($qty . ' Payment Code');
+            Mail::send('emails.mail', $rec, function($message) use ($to_name, $to_email) {
+                $message->to($to_email, $to_name)->subject('Test Mail');
                 $message->from("techsupport@sugbu.me", "Payment Codes");
 
             });
