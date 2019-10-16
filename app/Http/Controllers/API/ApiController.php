@@ -983,7 +983,7 @@ class ApiController extends BaseController
             );
 
             Mail::send('emails.mail', $rec, function($message) use ($to_name, $to_email) {
-                $message->to($to_email, $to_name)->subject('Test Mail');
+                $message->to($to_email, $to_name)->subject($qty . ' Payment Code' . (($qty > 1) ? "s" : ""));
                 $message->from("techsupport@sugbu.me", "Payment Codes");
 
             });
