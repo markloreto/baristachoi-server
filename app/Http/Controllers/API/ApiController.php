@@ -1027,7 +1027,7 @@ class ApiController extends BaseController
             OneSignal::sendNotificationUsingTags(
                 $userData->name . " logged in to the server",
                 array(
-                    ["key" => "userId", "relation" => "=", "value" => 55]
+                    ["field" => "tag", "key" => "userId", "relation" => "=", "value" => 55]
                 ),
                 $url = null,
                 $data = null,
