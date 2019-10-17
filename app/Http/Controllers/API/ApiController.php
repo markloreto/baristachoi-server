@@ -14,6 +14,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Stream\Stream;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use OneSignal;
 //
 class ApiController extends BaseController
 {
@@ -32,6 +33,17 @@ class ApiController extends BaseController
         $records = DB::table("machines")->select('id', 'lat', 'lng')->whereNotNull('lat')->get();
         return $this->sendResponse($records->toArray(), 'Machines');
 
+    }
+
+    public function oneSignal(Request $request){
+        $data = $request->all();
+        OneSignal::sendNotificationToAll(
+            "Some Message", 
+            $url = null, 
+            $data = null, 
+            $buttons = null, 
+            $schedule = null
+        );
     }
 
     public function paymentStatus(Request $request){
