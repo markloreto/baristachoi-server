@@ -1024,7 +1024,7 @@ class ApiController extends BaseController
 
             $userData->thumbnail = (string) $resizedThumbnail->encode('data-url');;
 
-            OneSignal::sendNotificationUsingTags(
+            /* OneSignal::sendNotificationUsingTags(
                 $userData->name . " logged in to the server",
                 array(
                     ["field" => "tag", "key" => "userId", "relation" => "=", "value" => 55]
@@ -1033,7 +1033,7 @@ class ApiController extends BaseController
                 $data = null,
                 $buttons = null,
                 $schedule = null
-            );
+            ); */
 
 
             //$userData = DB::table("staffs")->where([['username', $username], ['passcode', $password]])->first();
