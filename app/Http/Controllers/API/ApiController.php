@@ -32,7 +32,7 @@ class ApiController extends BaseController
         $data = $request->all();
 
         $machines = DB::table("machines")->select('id', 'lat', 'lng')->whereNotNull('lat')->get();
-        return $this->sendResponse($records->toArray(), 'Machines');
+        return $this->sendResponse($machines->toArray(), 'machinesOnMap');
     }
     
     public function getMachines(Request $request){
