@@ -27,6 +27,13 @@ class ApiController extends BaseController
 
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
+
+    public function machinesOnMap(Request $request){
+        $data = $request->all();
+
+        $machines = DB::table("machines")->select('id', 'lat', 'lng')->whereNotNull('lat')->get();
+        return $this->sendResponse($records->toArray(), 'Machines');
+    }
     
     public function getMachines(Request $request){
         $data = $request->all();
