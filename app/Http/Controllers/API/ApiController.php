@@ -54,7 +54,7 @@ class ApiController extends BaseController
             $client = DB::table("clients")->where('id', $machine->client_id)->first();
             if($client){
                 $clientContact = DB::table("contacts")->where([["module_id", 3], ["reference_id", $client->id]])->first();
-                $clientPhoto = DB::table("attachments")->where([["module_id", 3], ["reference_id", $id]])->first();
+                $clientPhoto = DB::table("attachments")->select('b64_preview')->where([["module_id", 3], ["reference_id", $id]])->first();
             }
             
         }
