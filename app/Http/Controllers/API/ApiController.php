@@ -33,12 +33,19 @@ class ApiController extends BaseController
         $id = $data["id"];
 
         $client = array();
+        $clientContact = array();
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
         $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $id]])->first();
-        if($machine)
+        if($machine){
             $client = DB::table("clients")->where('id', $machine->client_id)->first();
-        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto), 'getMachineProfile');
+            if($client){
+                $clientContact = DB::table("contacts")->where([["module_id", 3], ["reference_id", $client->$id]])->first();
+            }
+            
+        }
+            
+        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact), 'getMachineProfile');
     }
 
     public function machinesOnMap(Request $request){
