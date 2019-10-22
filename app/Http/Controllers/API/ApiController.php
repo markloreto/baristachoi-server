@@ -40,7 +40,7 @@ class ApiController extends BaseController
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
         $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $id]])->first();
         if($machinePhoto){
-            $ct = Image::make($value->photo);
+            $ct = Image::make($machinePhoto->b64);
             $ct->resize(742, null, function ($constraint) {
                 $constraint->aspectRatio();
             });
