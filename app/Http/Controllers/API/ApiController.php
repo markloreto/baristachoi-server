@@ -32,8 +32,9 @@ class ApiController extends BaseController
         $data = $request->all();
         $id = $data["id"];
 
-        $machine = DB::table("machines")->select('id', 'lat', 'lng')->where('id', $id)->whereNotNull('lat')->first();
-        return $this->sendResponse(array("machine" => $machine), 'getMachineProfile');
+        $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
+        $client = DB::table("clients")->where('id', $machine->client_id)->first();
+        return $this->sendResponse(array("machine" => $machine, "client" => $client), 'getMachineProfile');
     }
 
     public function machinesOnMap(Request $request){
