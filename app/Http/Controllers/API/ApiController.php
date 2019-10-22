@@ -55,12 +55,13 @@ class ApiController extends BaseController
             if($client){
                 $clientContact = DB::table("contacts")->where([["module_id", 3], ["reference_id", $client->id]])->first();
                 $clientPhoto = DB::table("attachments")->select('b64_preview')->where([["module_id", 3], ["reference_id", $id]])->first();
-                $resizedThumbnail = Image::make($clientPhoto->b64_preview);
-                $resizedThumbnail->resize(100, 100);
+                if($clientPhoto){
+                    $resizedThumbnail = Image::make($clientPhoto->b64_preview);
+                    $resizedThumbnail->resize(100, 100);
 
-                $clientPhoto = (string) $resizedThumbnail->encode('data-url');
-            }
-            
+                    $clientPhoto = (string) $resizedThumbnail->encode('data-url');
+                }
+            }  
         }
             
         return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers), 'getMachineProfile');
