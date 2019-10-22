@@ -38,6 +38,7 @@ class ApiController extends BaseController
         
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
+        $callsheets = DB::table("callsheets")->where('machine_id', $id)->groupBy('name')->count();
         $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $id]])->first();
         if($machinePhoto){
             $ct = Image::make($machinePhoto->b64);
@@ -65,7 +66,7 @@ class ApiController extends BaseController
             }  
         }
             
-        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers), 'getMachineProfile');
+        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers, "callsheetsCount" => $callsheets), 'getMachineProfile');
     }
 
     public function machinesOnMap(Request $request){
