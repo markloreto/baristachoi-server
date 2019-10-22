@@ -40,7 +40,7 @@ class ApiController extends BaseController
         if($machine){
             $client = DB::table("clients")->where('id', $machine->client_id)->first();
             if($client){
-                $clientContact = DB::table("contacts")->where([["module_id", 3], ["reference_id", $client->$id]])->first();
+                $clientContact = DB::table("contacts")->where([["module_id", 3], ["reference_id", $client->id]])->first();
             }
             
         }
