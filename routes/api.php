@@ -37,6 +37,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/clientDetails', 'API\ApiController@clientDetails');
 	Route::get('/pullClientDetails', 'API\ApiController@pullClientDetails');
 	Route::post('/machinesOnMap', 'API\ApiController@machinesOnMap');
+	Route::post('/getMachineProfile', 'API\ApiController@getMachineProfile');
 
 	Route::post('/syncPush', 'API\ApiController@syncPush');
 	Route::post('/syncPushDealers', 'API\ApiController@syncPushDealers');
