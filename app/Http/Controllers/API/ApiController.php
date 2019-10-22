@@ -58,7 +58,7 @@ class ApiController extends BaseController
                 $resizedThumbnail = Image::make($clientPhoto->b64_preview);
                 $resizedThumbnail->resize(100, 100);
 
-                $clientPhoto = (string) $resizedThumbnail->encode('data-url');;
+                $clientPhoto = (string) $resizedThumbnail->encode('data-url');
             }
             
         }
