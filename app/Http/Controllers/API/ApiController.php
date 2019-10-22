@@ -39,8 +39,8 @@ class ApiController extends BaseController
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
         $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $id]])->first();
-        $wifiTriggers = DB::table("wifi_triggers")->where('machine_id', $id)->get();
-        $cellTriggers = DB::table("cell_triggers")->where('machine_id', $id)->get();
+        $wifiTriggers = DB::table("wifi_triggers")->where('machine_id', $id)->count();
+        $cellTriggers = DB::table("cell_triggers")->where('machine_id', $id)->count();
         if($machine){
             $client = DB::table("clients")->where('id', $machine->client_id)->first();
             if($client){
