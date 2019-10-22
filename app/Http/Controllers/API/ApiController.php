@@ -38,7 +38,7 @@ class ApiController extends BaseController
         
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
-        $callsheets = DB::table("callsheets")->select('name', DB::raw('count(*) as total'))->where('machine_id', $id)->groupBy('name')->count();
+        $callsheets = DB::table("callsheets")->select('name', DB::raw('count(*) as total'))->where('machine_id', $id)->groupBy('name')->get();
         $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $id]])->first();
         if($machinePhoto){
             $ct = Image::make($machinePhoto->b64);
