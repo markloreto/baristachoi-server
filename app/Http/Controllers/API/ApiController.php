@@ -44,7 +44,7 @@ class ApiController extends BaseController
         }
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
-        $dealer = DB::table("staffs")->select("name", "contact", "thumbnail")->where('id', $machine->staff_id)->first();
+        $dealer = DB::table("staffs")->select("name", "contact", "thumbnail", "email")->where('id', $machine->staff_id)->first();
         $establishments = DB::table("establishments")->where('machine_id', $id)->get();
         $callsheets = DB::table("callsheets")->select('name', DB::raw('ifnull(count(*), 0) as total'))->where('machine_id', $id)->groupBy('name')->get();
         $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $id]])->first();
