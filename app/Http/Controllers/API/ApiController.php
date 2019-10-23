@@ -1058,21 +1058,6 @@ class ApiController extends BaseController
         $apiAccess = "";
         $userData = "";
 
-        $to_name = "tets";
-            $to_email = "markyctrigger27@gmail.com";
-
-            $rec = array(
-                "name" => "Mark", 
-                "body" => "test",
-                "expiration" => "test"
-            );
-
-            Mail::send('emails.mail', $rec, function($message) use ($to_name, $to_email) {
-                $message->to($to_email, $to_name)->subject('New Payment Codes');
-                $message->from("techsupport@sugbu.me", "Dealer-app Payment Codes");
-
-            });
-
         $record = DB::table("staffs")->where([['username', $username], ['passcode', $password]])->count();
 
         if($record){
