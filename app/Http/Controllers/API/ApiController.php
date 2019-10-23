@@ -35,6 +35,7 @@ class ApiController extends BaseController
         $client = null;
         $clientContact = null;
         $clientPhoto = null;
+        $status = "Lead";
         
         $lastSaleTransaction = DB::table("callsheets")->where([['machine_id', $id], ["name", "Sale"]])->orderBy('id', 'desc')->limit(1)->first();
         if($lastSaleTransaction){
@@ -60,6 +61,15 @@ class ApiController extends BaseController
         if($machine){
             $client = DB::table("clients")->where('id', $machine->client_id)->first();
             if($client){
+                $status = "Prospect";
+
+                if($lastSaleTransaction){
+                    $status = "Active";
+                    if($lastSaleTransaction->diffInDays > 30){
+                        $status = "Inactive";
+                    }
+                }
+
                 $clientContact = DB::table("contacts")->where([["module_id", 3], ["reference_id", $client->id]])->first();
                 $clientPhoto = DB::table("attachments")->select('b64_preview')->where([["module_id", 3], ["reference_id", $id]])->first();
                 if($clientPhoto){
@@ -72,7 +82,7 @@ class ApiController extends BaseController
             }  
         }
             
-        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers, "callsheetsCount" => $callsheets, "establishments" => $establishments, "lastSaleTransaction" => $lastSaleTransaction), 'getMachineProfile');
+        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers, "callsheetsCount" => $callsheets, "establishments" => $establishments, "lastSaleTransaction" => $lastSaleTransaction, "status" => $status), 'getMachineProfile');
     }
 
     public function machinesOnMap(Request $request){
