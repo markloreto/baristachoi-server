@@ -39,7 +39,7 @@ class ApiController extends BaseController
         $lastSaleTransaction = DB::table("callsheets")->where([['machine_id', $id], ["name", "Sale"]])->orderBy('id', 'desc')->limit(1)->first();
         if($lastSaleTransaction){
             $myTime = Carbon::now();
-            $lastSaleTransaction->diff = $myTime->diffForHumans($lastSaleTransaction->created_at, true, false, 5);
+            $lastSaleTransaction->diffInDays = $myTime->diffInDays($lastSaleTransaction->created_at);
         }
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
