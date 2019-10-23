@@ -36,6 +36,7 @@ class ApiController extends BaseController
         $clientContact = null;
         $clientPhoto = null;
         
+        $lastSaleTransaction = DB::table("callsheets")->where([['machine_id', $id], ["name", "Sale"]])->orderBy('id', 'desc')->limit(1)->get();
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
         $establishments = DB::table("establishments")->where('machine_id', $id)->get();
@@ -67,7 +68,7 @@ class ApiController extends BaseController
             }  
         }
             
-        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers, "callsheetsCount" => $callsheets, "establishments" => $establishments), 'getMachineProfile');
+        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers, "callsheetsCount" => $callsheets, "establishments" => $establishments, "lastSaleTransaction" => $lastSaleTransaction), 'getMachineProfile');
     }
 
     public function machinesOnMap(Request $request){
