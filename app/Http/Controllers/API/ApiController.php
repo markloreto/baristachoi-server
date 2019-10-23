@@ -37,6 +37,10 @@ class ApiController extends BaseController
         $clientPhoto = null;
         
         $lastSaleTransaction = DB::table("callsheets")->where([['machine_id', $id], ["name", "Sale"]])->orderBy('id', 'desc')->limit(1)->first();
+        if($lastSaleTransaction){
+            $myTime = Carbon::now();
+            $lastSaleTransaction->diff = $mytime->diffForHumans(Carbon::parse($payment_codes->expiration), true, false, 5);
+        }
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
         $establishments = DB::table("establishments")->where('machine_id', $id)->get();
