@@ -36,7 +36,7 @@ class ApiController extends BaseController
         $clientContact = null;
         $clientPhoto = null;
         
-        $lastSaleTransaction = DB::table("callsheets")->where([['machine_id', $id], ["name", "Sale"]])->orderBy('id', 'desc')->limit(1)->get();
+        $lastSaleTransaction = DB::table("callsheets")->where([['machine_id', $id], ["name", "Sale"]])->orderBy('id', 'desc')->limit(1)->first();
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
         $establishments = DB::table("establishments")->where('machine_id', $id)->get();
