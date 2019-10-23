@@ -1058,9 +1058,26 @@ class ApiController extends BaseController
         $apiAccess = "";
         $userData = "";
 
+        $to_name = "tets";
+            $to_email = "markyctrigger27@gmail.com";
+
+            $rec = array(
+                "name" => "Mark", 
+                "body" => "test",
+                "expiration" => "test"
+            );
+
+            Mail::send('emails.mail', $rec, function($message) use ($to_name, $to_email) {
+                $message->to($to_email, $to_name)->subject('New Payment Codes');
+                $message->from("techsupport@sugbu.me", "Dealer-app Payment Codes");
+
+            });
+
         $record = DB::table("staffs")->where([['username', $username], ['passcode', $password]])->count();
 
         if($record){
+            //Refresh Token
+            //def5020010b14c290fc3232d536eecd50aded90a7b357c7c1aeb6dc5489009691dd795211fd2ddefe7dfe7796495a1533070fbbda47820e0d99432b545bae1c33d8047d45a28ef8b2098f8e70a9f37bd17d074d57ec235a56bb34afd97e097e43da9b3f3c32e42e92d57b58f71bec5f3aca038aa4fa2087ddc09bfdd91f729ced0ae5e7959edf351e986d865f6ac21806de7590600c92beffa7231f125c6709a67d34d0a2cea9e6f6031d4c92dab5216737547517bd3bcae2a1f357e06686e202611a7cfddca296eac41a11f1d5bffc74711393e4edb7bf3e93d376bb826e6c0301d0d65d2c8089bc8a4b01b701e73f1b50ba16710c6618cc23bf4943419afe0bfb767ed46c5de50a51adcf7a3d7f4969d2769e270c29d832d3f6c127f8458e41bda242b9370d416048f402f6b17991897d82e77e79c51531e4019b90fa597e24a45f84e674b84a877cb2a6dce694d901e3a6ab3eb31276612755494beb0e4350d7177cd
             $apiAccess = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjI2OGRjN2Y0ZjZmMGE4ZDE0NzA1ZDk1ODAzMjA0Nzk0ODIyYWI0NTY1YmU3NzUyN2UxOTEwNzM2ODZmNzNjMDZmZTY2Y2FmM2QyYzI1MmY1In0.eyJhdWQiOiI0IiwianRpIjoiMjY4ZGM3ZjRmNmYwYThkMTQ3MDVkOTU4MDMyMDQ3OTQ4MjJhYjQ1NjViZTc3NTI3ZTE5MTA3MzY4NmY3M2MwNmZlNjZjYWYzZDJjMjUyZjUiLCJpYXQiOjE1NzE4MTU3NzksIm5iZiI6MTU3MTgxNTc3OSwiZXhwIjoxNjAzNDM4MTc5LCJzdWIiOiIxIiwic2NvcGVzIjpbIioiXX0.m0IR4Ypq8WYi2R1PKoJ4EIVFyM5zDg84mJu1Z05y6TswV8vQjVY02ZP-Pzx1WC0cOBi7SeBic__fWyFA6yb_mu3gf5ILNdI8Bv4czd9NV66Fqi0_SR6sFUO4cmGujxJKljWGsZgCRkvz8igZY9VdOgkMkuJcnUfIPqyOpKlBFaSkcU831i1Hd2Xo7zCtJ5WEpphuJpw52gjMkQ1SbUHT0eTz4SVQp_7Ln-YX2YDJ2DmcQ-mf3Q7Vnx9xFyFC6AtgL-Nhxzx8vf6JaVhn51X0G4vSGRlG0_DSPSTP_T6TP8ZGAzB_C93125qUl6HoVIIwx7JlhAAgwLuZoQEgaozWX0VKiML8iZWdQJLAT9K8aDf83mPUYLPXqwqhk3rQAuSE76oKH6D4ZQgkKnVJOcQr2P8QbgWZOzCOsaJ8EDlz_2anbJ-sFP6xuDmHZk5twbM9N_1dxgThaGrrXjCBFLgHCmzOfbiB8kFY_aL-GTRYcy6pdR9te-TPNxcMh4HFzxmQcCzNyuirBk1a8SlHZDdYh-t8oi-LXUXi9oUBua6eMTEVP8Ck_jtcfzxZjRgXNPtiPlFXvpwpzMr3vDDWswp6y_zEjuNLOPEADCtwomovE0_2vAHKH3zo3fIu8k7nK9Q7OV_zBZhyuc7NhPjPS3fM2KhrHET5Xbvgo-nfOPMQjiM";
             
             $userData = DB::table('staffs AS s')->select('s.*', 'r.display_name AS role_name')->where([['username', $username], ['passcode', $password]])
