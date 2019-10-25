@@ -37,7 +37,7 @@ class ApiController extends BaseController
             array_push($wherearray, ['machine_id', $data["machineId"]]);
         }
 
-        $c = DB::table("callsheets")->where($wherearray)->orderBy('id', 'desc')->limit($limit)
+        $c = DB::table("callsheets")->where($wherearray)->orderBy('id', 'desc')->limit($limit);
 
         $callsheets = $c->get();
         $count = $c->count();
