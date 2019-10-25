@@ -1104,7 +1104,7 @@ class ApiController extends BaseController
         $apiAccess = "";
         $userData = "";
 
-        $record = DB::table("staffs")->where([['username', $username], ['passcode', $password]])->count();
+        $record = DB::table("staffs")->where([['username', $username], ['passcode', $password]])->count();;
 
         if($record){
             //Refresh Token
