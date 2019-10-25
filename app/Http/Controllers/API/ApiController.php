@@ -51,6 +51,7 @@ class ApiController extends BaseController
         $client = null;
         $clientContact = null;
         $clientPhoto = null;
+        $clientLocation = null;
         $status = "Lead";
         
         $lastSaleTransaction = DB::table("callsheets")->where([['machine_id', $id], ["name", "Sale"]])->orderBy('id', 'desc')->limit(1)->first();
@@ -95,6 +96,10 @@ class ApiController extends BaseController
                     }
                 }
 
+                if($client->brgy_id){
+                    $clientLocation = DB::table("locations")->where('id_3', $client->brgy_id)->first();
+                }
+
                 $clientContact = DB::table("contacts")->where([["module_id", 3], ["reference_id", $client->id]])->first();
                 $clientPhoto = DB::table("attachments")->select('b64_preview')->where([["module_id", 3], ["reference_id", $id]])->first();
                 if($clientPhoto){
@@ -107,7 +112,7 @@ class ApiController extends BaseController
             }  
         }
             
-        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers, "callsheetsCount" => $callsheets, "establishments" => $establishments, "lastSaleTransaction" => $lastSaleTransaction, "status" => $status, "dealer" => $dealer, "depot" => $depot), 'getMachineProfile');
+        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers, "callsheetsCount" => $callsheets, "establishments" => $establishments, "lastSaleTransaction" => $lastSaleTransaction, "status" => $status, "dealer" => $dealer, "depot" => $depot, "clientLocation" => $clientLocation), 'getMachineProfile');
     }
 
     public function machinesOnMap(Request $request){
