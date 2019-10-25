@@ -37,8 +37,11 @@ class ApiController extends BaseController
             array_push($wherearray, ['machine_id', $data["machineId"]]);
         }
 
-        $callsheets = DB::table("callsheets")->where($wherearray)->orderBy('id', 'desc')->limit($limit)->get();
-        return $this->sendResponse($callsheets, 'getCallsheets');
+        $c = DB::table("callsheets")->where($wherearray)->orderBy('id', 'desc')->limit($limit)
+
+        $callsheets = $c->get();
+        $count = $c->count();
+        return $this->sendResponse(array("calls" => $callsheets, "count" => $count), 'getCallsheets');
     }
 
     public function getMachineProfile(Request $request){
