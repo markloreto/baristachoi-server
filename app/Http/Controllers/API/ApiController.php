@@ -97,7 +97,7 @@ class ApiController extends BaseController
                 }
 
                 if($client->brgy_id){
-                    $clientLocation = DB::table("locations")->select(DB::raw("ASGeoJSON(SHAPE) AS geo, region, province, name_2 AS municipal, name_3 AS brgy, varname_3, id_3 as brgyID"))->where('id_3', $client->brgy_id)->first();
+                    $clientLocation = DB::table("locations")->select(DB::raw("ST_AsGeoJSON(SHAPE) AS geo, region, province, name_2 AS municipal, name_3 AS brgy, varname_3, id_3 as brgyID"))->where('id_3', $client->brgy_id)->first();
                 }
 
                 $clientContact = DB::table("contacts")->where([["module_id", 3], ["reference_id", $client->id]])->first();
