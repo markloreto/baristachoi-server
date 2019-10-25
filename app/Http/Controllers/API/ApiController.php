@@ -28,6 +28,19 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function getCallsheets(Request $request){
+        $data = $request->all();
+        $limit = $data["limit"];
+        $wherearray = array();
+
+        if(isset($data["machineId"])){
+            array_push($wherearray, ['machine_id', $data["machineId"]]);
+        }
+
+        $callsheets = DB::table("callsheets")->where($wherearray)->orderBy('id', 'desc')->limit($limit)->get();
+        return $this->sendResponse($callsheets, 'getCallsheets');
+    }
+
     public function getMachineProfile(Request $request){
         $data = $request->all();
         $id = $data["id"];
