@@ -60,6 +60,7 @@ class ApiController extends BaseController
         }
 
         $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
+        $depot = DB::table("depots")->select("name")->where('id', $machine->depot_id)->first();
         $dealer = DB::table("staffs")->select("name", "contact", "thumbnail", "email")->where('id', $machine->staff_id)->first();
         if($dealer->thumbnail){
             $resizedThumbnail = Image::make($dealer->thumbnail);
@@ -106,7 +107,7 @@ class ApiController extends BaseController
             }  
         }
             
-        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers, "callsheetsCount" => $callsheets, "establishments" => $establishments, "lastSaleTransaction" => $lastSaleTransaction, "status" => $status, "dealer" => $dealer), 'getMachineProfile');
+        return $this->sendResponse(array("machine" => $machine, "client" => $client, "machinePhoto" => $machinePhoto, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "wifiTriggers" => $wifiTriggers, "cellTriggers" => $cellTriggers, "callsheetsCount" => $callsheets, "establishments" => $establishments, "lastSaleTransaction" => $lastSaleTransaction, "status" => $status, "dealer" => $dealer, "depot" => $depot), 'getMachineProfile');
     }
 
     public function machinesOnMap(Request $request){
