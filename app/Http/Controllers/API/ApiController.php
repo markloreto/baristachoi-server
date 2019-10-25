@@ -291,9 +291,9 @@ class ApiController extends BaseController
     
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 3.9;
+        $arr["version"] = 4;
         $arr["changelog"] = array(
-            array("ADDED", "Checks for number with 09173242410... sorry :(")  
+            array("CHANGED", "Server")  
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
