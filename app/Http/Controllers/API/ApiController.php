@@ -315,7 +315,14 @@ class ApiController extends BaseController
         $data = $request->all();
         $depot_id = $data["depot_id"];
 
-        $depot = DB::table('staffs')->select('id', 'thumbnail', 'name')->where([['depot_id', $depot_id], ['role_id', 3]])->get();
+        $depotV = DB::table('staffs')->select('id', 'thumbnail', 'name');
+        
+        if(is_array($depot_id)){
+            $depot = $depotV->where('role_id', 3)->whereIn("depot_id", $depot_id)->get();
+        }else{
+            $depot = $depotV->where([['depot_id', $depot_id], ['role_id', 3]])->get();
+        }
+
         return $this->sendResponse($depot->toArray(), 'getDealersQuickList');
     }
 
