@@ -32,7 +32,7 @@ class ApiController extends BaseController
         $data = $request->all();
         $region = $data["region"];
 
-        $province = DB::table("locations")->distinct()->select("id_1 AS val", "province")->where('region', $region)->get();
+        $province = DB::table("locations")->distinct()->select("id_1 AS value", "province AS label")->where('region', $region)->get();
         return $this->sendResponse($province, 'getProvinceList');
     }
 
