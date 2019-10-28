@@ -28,6 +28,14 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function getProvinceList(Request $request){
+        $data = $request->all();
+        $region = $data["region"];
+
+        $province = DB::table("locations")->distinct()->select("id_1 AS val", "province")->where('region', $region)->get();
+        return $this->sendResponse($province, 'getProvinceList');
+    }
+
     public function getCallsheets(Request $request){
         $data = $request->all();
         $limit = $data["limit"];
