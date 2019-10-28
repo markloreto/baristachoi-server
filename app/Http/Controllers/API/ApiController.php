@@ -48,7 +48,7 @@ class ApiController extends BaseController
         $data = $request->all();
         $municipalId = $data["municipalId"];
 
-        $brgys = DB::table("locations")->distinct()->select("id_3 AS value", "name_3 AS label", "nl_name_3 AS alias")->where('id_2', $municipalId)->get();
+        $brgys = DB::table("locations")->distinct()->select("id_3 AS value", "name_3 AS label", "varname_3 AS alias")->where('id_2', $municipalId)->get();
         return $this->sendResponse($brgys, 'getBrgyList');
     }
 
