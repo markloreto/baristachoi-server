@@ -36,6 +36,14 @@ class ApiController extends BaseController
         return $this->sendResponse($province, 'getProvinceList');
     }
 
+    public function getMunicipalList(Request $request){
+        $data = $request->all();
+        $municipalId = $data["municipalId"];
+
+        $municipals = DB::table("locations")->distinct()->select("id_2 AS value", "name_2 AS label")->where('id_1', $municipalId)->get();
+        return $this->sendResponse($municipals, 'getMunicipalList');
+    }
+
     public function getCallsheets(Request $request){
         $data = $request->all();
         $limit = $data["limit"];
