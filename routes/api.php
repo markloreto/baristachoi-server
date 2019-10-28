@@ -26,6 +26,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::match(['get', 'post'], '/getDealersQuickList', 'API\ApiController@getDealersQuickList');
 	Route::post('/getProvinceList', 'API\ApiController@getProvinceList');
 	Route::post('/getMunicipalList', 'API\ApiController@getMunicipalList');
+	Route::post('/getBrgyList', 'API\ApiController@getBrgyList');
 	Route::get('/getProductCategories', 'API\ApiController@getProductCategories');
 	Route::post('/syncPull', 'API\ApiController@syncPull');
 	Route::post('/syncPullDealers', 'API\ApiController@syncPullDealers');

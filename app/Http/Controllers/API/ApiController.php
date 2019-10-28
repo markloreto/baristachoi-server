@@ -38,10 +38,18 @@ class ApiController extends BaseController
 
     public function getMunicipalList(Request $request){
         $data = $request->all();
+        $provinceId = $data["provinceId"];
+
+        $municipals = DB::table("locations")->distinct()->select("id_2 AS value", "name_2 AS label")->where('id_1', $provinceId)->get();
+        return $this->sendResponse($municipals, 'getMunicipalList');
+    }
+
+    public function getBrgyList(Request $request){
+        $data = $request->all();
         $municipalId = $data["municipalId"];
 
-        $municipals = DB::table("locations")->distinct()->select("id_2 AS value", "name_2 AS label")->where('id_1', $municipalId)->get();
-        return $this->sendResponse($municipals, 'getMunicipalList');
+        $brgys = DB::table("locations")->distinct()->select("id_3 AS value", "name_3 AS label", "nl_name_3 AS alias")->where('id_2', $municipalId)->get();
+        return $this->sendResponse($brgys, 'getBrgyList');
     }
 
     public function getCallsheets(Request $request){
