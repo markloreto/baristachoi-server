@@ -59,7 +59,7 @@ class ApiController extends BaseController
             $machineFilter->whereIn('delivery', $delivery);
         }
 
-        $expDate = Carbon::now()->subDays(30));
+        $expDate = Carbon::now()->subDays(30);
         foreach($status AS $value){
             if($value == "Prospect"){
                 $machineFilter->where('client_id', '<>', '', 'and');
