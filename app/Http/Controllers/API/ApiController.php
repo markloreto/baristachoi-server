@@ -40,7 +40,7 @@ class ApiController extends BaseController
             $machineFilter->whereIn('depot_id', $depot);
         }
 
-        $machineFilter->select('id', 'lat', 'lng')->get();
+        $machineFilter = $machineFilter->select('id', 'lat', 'lng')->get();
 
         return $this->sendResponse($machineFilter->toArray(), 'machineFilter');
     }
