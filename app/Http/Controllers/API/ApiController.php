@@ -35,6 +35,7 @@ class ApiController extends BaseController
         $machineFrom = $data["machineFrom"];
         $machineTo = $data["machineTo"];
         $delivery = $data["delivery"];
+        $status = $data["status"];
 
         $whereArray = [];
 
@@ -58,7 +59,15 @@ class ApiController extends BaseController
             $machineFilter->whereIn('delivery', $delivery);
         }
 
-        $machineFilter = $machineFilter->select('id', 'lat', 'lng')->get();
+        $expDate = Carbon::now()->subDays(30));
+        foreach($status AS $value){
+            if($value == "Prospect"){
+                $machineFilter->where('client_id', '<>', '', 'and');
+                //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
+            }
+        }
+
+        $machineFilter = $machineFilter->select('id', 'lat', 'lng', 'client_id')->get();
 
         return $this->sendResponse($machineFilter, 'machineFilter');
     }
