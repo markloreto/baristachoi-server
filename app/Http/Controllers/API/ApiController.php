@@ -39,7 +39,7 @@ class ApiController extends BaseController
 
         $whereArray = [];
 
-        $machineFilter = DB::table("machines")->whereNotNull('lat');
+        $machineFilter = DB::table("machines");
 
         //depot Filter
         if(count($depot)){
@@ -71,7 +71,7 @@ class ApiController extends BaseController
             }
         }
 
-        $machineFilter = $machineFilter->select('id', 'lat', 'lng', 'client_id')->get();
+        $machineFilter = $machineFilter->select('id', 'lat', 'lng', 'client_id')->whereNotNull('lat')->get();
 
         return $this->sendResponse($machineFilter, 'machineFilter');
     }
