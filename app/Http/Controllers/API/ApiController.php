@@ -39,7 +39,7 @@ class ApiController extends BaseController
 
         $whereArray = [];
 
-        $machineFilter = DB::table("machines");
+        $machineFilter = DB::table("machines")->whereNotNull('lat');
 
         //depot Filter
         if(count($depot)){
@@ -62,16 +62,20 @@ class ApiController extends BaseController
         $expDate = Carbon::now()->subDays(30);
         foreach($status AS $value){
             if($value == "Prospect"){
-                $machineFilter->OrWhereNotNull('client_id');
+                $machine->where(function ($query) {
+                    $query->OrWhereNotNull('client_id');
+                });
                 //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
             }
             if($value == "Lead"){
-                $machineFilter->OrWhereNull('client_id');
+                $machine->where(function ($query) {
+                    $query->OrWhereNull('client_id');
+                });
                 //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
             }
         }
 
-        $machineFilter = $machineFilter->select('id', 'lat', 'lng', 'client_id')->whereNotNull('lat')->get();
+        $machineFilter = $machineFilter->select('id', 'lat', 'lng', 'client_id')->get();
 
         return $this->sendResponse($machineFilter, 'machineFilter');
     }
