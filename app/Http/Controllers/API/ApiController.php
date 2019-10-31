@@ -50,7 +50,7 @@ class ApiController extends BaseController
         }
 
         if($machineFrom){
-            $machineFilter->whereBetween('created_at', [$machineFrom." 00:00:00", $machineTo." 23:59:59"])
+            $machineFilter->whereBetween('created_at', [$machineFrom." 00:00:00", $machineTo." 23:59:59"]);
         }
 
         $machineFilter = $machineFilter->select('id', 'lat', 'lng')->get();
