@@ -66,7 +66,7 @@ class ApiController extends BaseController
                 //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
             }
             if($value == "Lead"){
-                $machineFilter->OrWheretNull('client_id');
+                $machineFilter->OrWhereNull('client_id');
                 //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
             }
         }
