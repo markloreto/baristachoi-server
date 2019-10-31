@@ -32,6 +32,8 @@ class ApiController extends BaseController
         $data = $request->all();
         $depot = $data["depot"];
         $dealerIds = $data["dealerIds"];
+        $machineFrom = $data["machineFrom"];
+        $machineTo = $data["machineTo"];
 
         $whereArray = [];
 
@@ -45,6 +47,10 @@ class ApiController extends BaseController
         //dealer filter
         if(count($dealerIds)){
             $machineFilter->whereIn('staff_id', $dealerIds);
+        }
+
+        if($machineFrom){
+            $machineFilter->whereBetween('created_at', [$machineFrom." 00:00:00", $machineTo." 23:59:59"])
         }
 
         $machineFilter = $machineFilter->select('id', 'lat', 'lng')->get();
