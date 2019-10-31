@@ -62,13 +62,13 @@ class ApiController extends BaseController
         $expDate = Carbon::now()->subDays(30);
         foreach($status AS $value){
             if($value == "Prospect"){
-                $machineFilter->where(function ($query) {
+                $machineFilter->orWhere(function ($query) {
                     $query->OrWhereNotNull('client_id');
                 });
                 //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
             }
             if($value == "Lead"){
-                $machineFilter->where(function ($query) {
+                $machineFilter->orWhere(function ($query) {
                     $query->OrWhereNull('client_id');
                 });
                 //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
