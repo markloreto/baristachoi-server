@@ -42,7 +42,7 @@ class ApiController extends BaseController
 
         $machineFilter = $machineFilter->select('id', 'lat', 'lng')->get();
 
-        return $this->sendResponse($machineFilter->toArray(), 'machineFilter');
+        return $this->sendResponse($machineFilter, 'machineFilter');
     }
 
     public function getProvinceList(Request $request){
