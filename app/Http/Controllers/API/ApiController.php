@@ -31,6 +31,8 @@ class ApiController extends BaseController
     public function machineFilter(Request $request){
         $data = $request->all();
         $depot = $data["depot"];
+        $dealerIds = $data["dealerIds"];
+
         $whereArray = [];
 
         $machineFilter = DB::table("machines")->whereNotNull('lat');
@@ -38,6 +40,11 @@ class ApiController extends BaseController
         //depot Filter
         if(count($depot)){
             $machineFilter->whereIn('depot_id', $depot);
+        }
+
+        //dealer filter
+        if(count($dealerIds)){
+            $machineFilter->whereIn('staff_id', $dealerIds);
         }
 
         $machineFilter = $machineFilter->select('id', 'lat', 'lng')->get();
