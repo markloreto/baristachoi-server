@@ -28,6 +28,23 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function machineFilter(Request $request){
+        $data = $request->all();
+        $depot = $data["depot"];
+        $whereArray = [];
+
+        $machineFilter = DB::table("machines")->whereNotNull('lat');
+
+        //depot Filter
+        if(count($depot)){
+            $machineFilter->whereIn('depot_id', $depot);
+        }
+
+        $machineFilter->select('id', 'lat', 'lng')->get();
+
+        return $this->sendResponse($machineFilter, 'machineFilter');
+    }
+
     public function getProvinceList(Request $request){
         $data = $request->all();
         $region = $data["region"];
