@@ -107,7 +107,7 @@ class ApiController extends BaseController
 
             if (in_array("Active", $status)){
                 $active = clone $machineFilter;
-                $active = $active->havingRaw("totalCallsheets > 0")->get();
+                $active = $active->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->get();
             }
 
             if (in_array("Inactive", $status)){
