@@ -84,7 +84,7 @@ class ApiController extends BaseController
              });
         }
 
-        if(isset($selectedRegion)){
+        if($selectedRegion != ""){
             array_push($whereArray, ["m.region", $selectedRegion]);
         }
 
