@@ -78,7 +78,7 @@ class ApiController extends BaseController
                 $machineFilter->havingRaw("totalSalesCallsheets = 0");
             }
 
-            $machineFilter->where(function ($query) use ($status) {
+            $machineFilter->where(function ($query) use ($status, $expDate) {
                 if(in_array("Active", $status)){
                     $query->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
                 }
