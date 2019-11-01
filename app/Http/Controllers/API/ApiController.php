@@ -40,6 +40,8 @@ class ApiController extends BaseController
         $establishments = $data["establishments"];
         $selectedRegion = $data["selectedRegion"];
         $selectedProvince = $data["selectedProvince"];
+        $selectedMunicipal = $data["selectedMunicipal"];
+        $selectedBrgy = $data["selectedBrgy"];
 
         $whereArray = [];
         $lead = [];
@@ -95,6 +97,16 @@ class ApiController extends BaseController
             //array_push($whereArray, ["m.region", $selectedRegion]);
         }
 
+        if($selectedMunicipal){
+            $machineFilter->where("m.municipal", $selectedMunicipal);;
+            //array_push($whereArray, ["m.region", $selectedRegion]);
+        }
+
+        if($selectedBrgy){
+            $machineFilter->where("m.brgy", $selectedBrgy);;
+            //array_push($whereArray, ["m.region", $selectedRegion]);
+        }
+
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
             if(in_array("Lead", $status) && in_array("Prospect", $status) && in_array("Active", $status) && in_array("Inactive", $status)){
@@ -139,7 +151,7 @@ class ApiController extends BaseController
         $data = $request->all();
         $region = $data["region"];
 
-        $province = DB::table("locations")->distinct()->select("province AS value", "province AS label")->where('region', $region)->get();
+        $province = DB::table("locations")->distinct()->select("id_1 AS value", "province AS label")->where('region', $region)->get();
         return $this->sendResponse($province, 'getProvinceList');
     }
 
