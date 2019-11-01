@@ -39,42 +39,46 @@ class ApiController extends BaseController
 
         $whereArray = [];
 
-        $machineFilter = DB::table("machines")->whereNotNull('lat');
+        $machineFilter = DB::table("machines AS m")->whereNotNull('m.lat')->join('callsheets AS cs', 'm.id', '=', 'cs.machine_id');
 
         //depot Filter
         if(count($depot)){
-            $machineFilter->whereIn('depot_id', $depot);
+            $machineFilter->whereIn('m.depot_id', $depot);
         }
 
         //dealer filter
         if(count($dealerIds)){
-            $machineFilter->whereIn('staff_id', $dealerIds);
+            $machineFilter->whereIn('m.staff_id', $dealerIds);
         }
 
+        //date filter
         if($machineFrom){
-            $machineFilter->whereBetween('created_at', [$machineFrom." 00:00:00", $machineTo." 23:59:59"]);
+            $machineFilter->whereBetween('m.created_at', [$machineFrom." 00:00:00", $machineTo." 23:59:59"]);
         }
 
+        //deliver filter
         if(count($delivery)){
-            $machineFilter->whereIn('delivery', $delivery);
+            $machineFilter->whereIn('m.delivery', $delivery);
         }
+
 
         $expDate = Carbon::now()->subDays(30);
         if(count($status)){
             $machineFilter->where(function ($query) use ($status) {
                 foreach($status AS $value){
                     if($value == "Prospect"){
-                        $query->OrWhereNotNull('client_id');
+                        $query->OrWhereNotNull('m.client_id');
+                        //$query->selectRaw('count(SELECT id FROM persons WHERE persons.user_id = users.id)')
                     }
                     if($value == "Lead"){
-                        $query->OrWhereNull('client_id');
+                        $query->OrWhereNull('m.client_id');
                     }
                 }
             });
             //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
         }
 
-        $machineFilter = $machineFilter->select('id', 'lat', 'lng', 'client_id')->get();
+        $machineFilter = $machineFilter->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->get();
 
         return $this->sendResponse($machineFilter, 'machineFilter');
     }
