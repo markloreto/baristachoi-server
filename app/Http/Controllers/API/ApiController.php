@@ -37,6 +37,7 @@ class ApiController extends BaseController
         $delivery = $data["delivery"];
         $status = $data["status"];
         $machineType = $data["machineType"];
+        $establishments = $data["establishments"];
 
         $whereArray = [];
         $lead = [];
@@ -70,6 +71,16 @@ class ApiController extends BaseController
         //machine Type
         if(count($machineType)){
             $machineFilter->whereIn("m.machine_type", $machineType);
+        }
+
+        //machine Type
+        if(count($establishments)){
+            $machineFilter->whereIn('m.id', function($query) use ($establishments){
+                $query->select('e.machine_id')
+                  ->from("establishments AS e")
+                  ->whereIn('e.name', $establishments)
+                  ->whereRaw('e.machine_id = m.id');
+             });
         }
 
         if(count($status)){
