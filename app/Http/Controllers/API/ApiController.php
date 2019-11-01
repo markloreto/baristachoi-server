@@ -39,7 +39,7 @@ class ApiController extends BaseController
 
         $whereArray = [];
 
-        $machineFilter = DB::table("machines AS m")->whereNotNull('m.lat');
+        $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->whereNotNull('m.lat');
 
         //depot Filter
         if(count($depot)){
@@ -64,12 +64,15 @@ class ApiController extends BaseController
 
         $expDate = Carbon::now()->subDays(30);
         if(count($status)){
-            $machineFilter->where(function ($query) use ($status, $machineFilter) {
+            if (in_array("Prospect", $status)) {
+                $machineFilter->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id AND cs.name = "Sale") as totalCallsheets'));
+                $machineFilter->havingRaw("totalCallsheets = 0");
+            }
+
+            $machineFilter->where(function ($query) use ($status) {
                 foreach($status AS $value){
                     if($value == "Prospect"){
                         $query->OrWhereNotNull('m.client_id');
-                        $machineFilter->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id AND cs.name = "Sale") as totalCallsheets'));
-                        $machineFilter->havingRaw("totalCallsheets = 0");
                     }
                     if($value == "Lead"){
                         $query->OrWhereNull('m.client_id');
@@ -79,7 +82,7 @@ class ApiController extends BaseController
             //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
         }
 
-        $machineFilter = $machineFilter->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->get();
+        $machineFilter = $machineFilter->get();
 
         return $this->sendResponse($machineFilter, 'machineFilter');
     }
