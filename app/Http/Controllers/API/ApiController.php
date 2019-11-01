@@ -66,33 +66,8 @@ class ApiController extends BaseController
             $machineFilter->whereIn('m.delivery', $delivery);
         }
 
-        /* if(count($status)){
-            $expDate = Carbon::now()->subDays(30);
-            $prospect = "";
-
-            if(in_array("Active", $status)){
-                $machineFilter->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
-            }
-            
-
-            if(in_array("Prospect", $status) || in_array("Active", $status) || in_array("Inactive", $status)){
-                $machineFilter = $machineFilter->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'));
-                $machineFilter->havingRaw("totalCallsheets > 0" . $prospect);
-            }
-
-            $machineFilter->where(function ($query) use ($status) {
-                
-                if (in_array("Prospect", $status) || in_array("Active", $status) || in_array("Inactive", $status)) {
-                    $query->OrWhereNotNull('m.client_id');
-                }else{
-                    //Lead
-                    $query->OrWhereNull('m.client_id');
-                }
-            });
-        } */
-
         if(count($status)){
-            $expDate = Carbon::now()->subDays(30);
+            $expDate = Carbon::now()->addDays(30);
             if (in_array("Lead", $status)){
                 $lead = clone $machineFilter;
                 $lead = $lead->whereNull('m.client_id')->get();
@@ -107,7 +82,7 @@ class ApiController extends BaseController
 
             if (in_array("Active", $status)){
                 $active = clone $machineFilter;
-                $active = $active/* ->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31') */->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->get();
+                $active = $active->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->get();
             }
 
             if (in_array("Inactive", $status)){
