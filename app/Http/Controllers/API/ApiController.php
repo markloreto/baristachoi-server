@@ -71,6 +71,7 @@ class ApiController extends BaseController
 
             if(in_array("Active", $status)){
                 //$machineFilter->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
+                $machineFilter = $machineFilter->addSelect(DB::raw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) as difDiyt'));
             }
 
             if(/* in_array("Prospect", $status) ||  */in_array("Active", $status) || in_array("Inactive", $status)){
