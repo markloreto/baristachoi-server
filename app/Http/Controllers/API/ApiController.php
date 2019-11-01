@@ -75,7 +75,7 @@ class ApiController extends BaseController
         }
 
         //machine Type
-        if(isset($establishments)){
+        if($establishments){
             $machineFilter->whereIn('m.id', function($query) use ($establishments){
                 $query->select('e.machine_id')
                   ->from("establishments AS e")
