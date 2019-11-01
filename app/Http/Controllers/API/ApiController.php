@@ -62,28 +62,31 @@ class ApiController extends BaseController
         }
 
 
-        $expDate = Carbon::now()->subDays(30);
+        
+
         if(count($status)){
+            $expDate = Carbon::now()->subDays(30);
+            $prospect = "";
             if (in_array("Prospect", $status)) {
                 
                 
             }
 
             if(in_array("Active", $status)){
-                //$machineFilter->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
-                $machineFilter = $machineFilter->addSelect(DB::raw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) as difDiyt'));
+                $machineFilter->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
+            }
+            //---
+            if(in_array("Prospect", $status)){
+                $prospect = " OR totalSalesCallsheets = 0";
             }
 
-            if(/* in_array("Prospect", $status) ||  */in_array("Active", $status) || in_array("Inactive", $status)){
+            if(in_array("Active", $status) || in_array("Inactive", $status)){
                 $machineFilter = $machineFilter->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id AND cs.name = "Sale") as totalSalesCallsheets'));
-                $machineFilter->havingRaw("totalSalesCallsheets > 0");
+                $machineFilter->havingRaw("totalSalesCallsheets > 0" . $prospect);
             }
 
-            $machineFilter->where(function ($query) use ($status, $expDate) {
-                if(in_array("Active", $status)){
-                    $query->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
-                }
-
+            $machineFilter->where(function ($query) use ($status) {
+                
                 if (in_array("Prospect", $status) || in_array("Active", $status) || in_array("Inactive", $status)) {
                     $query->OrWhereNotNull('m.client_id');
                 }else{
