@@ -40,6 +40,7 @@ class ApiController extends BaseController
         $whereArray = [];
         $lead = [];
         $default = [];
+        $prospect = [];
 
         $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->whereNotNull('m.lat');
 
@@ -92,13 +93,17 @@ class ApiController extends BaseController
             if (in_array("Lead", $status)){
                 $lead = $machineFilter->whereNull('m.client_id')->get();
             }
+
+            if (in_array("Prospect", $status)){
+                $prospect = $machineFilter->whereNotNull('m.client_id')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0" . $prospect)->get();
+            }
         }
 
         else{
             $default = $machineFilter->get();
         }
 
-        return $this->sendResponse(array("default" => $default, "lead" => $lead), 'machineFilter');
+        return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect), 'machineFilter');
     }
 
     public function getProvinceList(Request $request){
