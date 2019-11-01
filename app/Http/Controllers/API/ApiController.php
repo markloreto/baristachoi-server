@@ -108,7 +108,7 @@ class ApiController extends BaseController
             //array_push($whereArray, ["m.region", $selectedRegion]);
         }
 
-        $machineFilter->where("accuracy", "<=", $accuracy);
+        $machineFilter->where("accuracy", "<=", $accuracy)->orWhereNull("accuracy");
 
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
