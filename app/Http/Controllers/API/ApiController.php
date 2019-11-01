@@ -85,7 +85,8 @@ class ApiController extends BaseController
         }
 
         if($selectedRegion != ""){
-            array_push($whereArray, ["m.region", $selectedRegion]);
+            $machineFilter->where("m.region", $selectedRegion);;
+            //array_push($whereArray, ["m.region", $selectedRegion]);
         }
 
         if(count($status)){
