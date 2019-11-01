@@ -39,7 +39,7 @@ class ApiController extends BaseController
 
         $whereArray = [];
 
-        $machineFilter = DB::table("machines AS m")->whereNotNull('m.lat')->join('callsheets AS cs', 'm.id', '=', 'cs.machine_id');
+        $machineFilter = DB::table("machines AS m")->whereNotNull('m.lat');
 
         //depot Filter
         if(count($depot)){
@@ -68,7 +68,7 @@ class ApiController extends BaseController
                 foreach($status AS $value){
                     if($value == "Prospect"){
                         $query->OrWhereNotNull('m.client_id');
-                        //$query->selectRaw('count(SELECT id FROM persons WHERE persons.user_id = users.id)')
+                        $query->havingRaw("(SELECT COUNT(id) FROM callsheets cs WHERE cs.machine_id = m.id) = 0");
                     }
                     if($value == "Lead"){
                         $query->OrWhereNull('m.client_id');
