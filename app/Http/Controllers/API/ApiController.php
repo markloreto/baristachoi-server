@@ -89,7 +89,7 @@ class ApiController extends BaseController
         } */
 
         if(count($status)){
-            if (in_array("Prospect", $status)){
+            if (in_array("Lead", $status)){
                 $lead = $machineFilter->whereNull('m.client_id')->get();
             }
         }
