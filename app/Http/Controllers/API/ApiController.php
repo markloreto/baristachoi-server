@@ -42,6 +42,7 @@ class ApiController extends BaseController
         $selectedProvince = $data["selectedProvince"];
         $selectedMunicipal = $data["selectedMunicipal"];
         $selectedBrgy = $data["selectedBrgy"];
+        $accuracy = $data["accuracy"];
 
         $whereArray = [];
         $lead = [];
@@ -106,6 +107,8 @@ class ApiController extends BaseController
             $machineFilter->where("m.brgy", $selectedBrgy);;
             //array_push($whereArray, ["m.region", $selectedRegion]);
         }
+
+        $machineFilter->where("accuracy", "<=", $accuracy);
 
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
