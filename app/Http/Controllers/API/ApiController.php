@@ -65,18 +65,21 @@ class ApiController extends BaseController
         $expDate = Carbon::now()->subDays(30);
         if(count($status)){
             if (in_array("Prospect", $status)) {
-                $machineFilter = $machineFilter->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id AND cs.name = "Sale") as totalCallsheets'));
-                $machineFilter->havingRaw("totalCallsheets = 0");
+                $machineFilter = $machineFilter->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id AND cs.name = "Sale") as totalSalesCallsheets'));
+                $machineFilter->havingRaw("totalSalesCallsheets = 0");
+            }
+
+            if(in_array("Active", $status)){
+                $machineFilter = $machineFilter->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id AND cs.name = "Sale") as totalSalesCallsheets'));
+                $machineFilter->whereRaw('DATEDIFF('. $expDate .', (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
             }
 
             $machineFilter->where(function ($query) use ($status) {
-                foreach($status AS $value){
-                    if($value == "Prospect"){
-                        $query->OrWhereNotNull('m.client_id');
-                    }
-                    if($value == "Lead"){
-                        $query->OrWhereNull('m.client_id');
-                    }
+                if (in_array("Prospect", $status) || in_array("Active", $status) || in_array("Inactive", $status)) {
+                    $query->OrWhereNotNull('m.client_id');
+                }else{
+                    //Lead
+                    $query->OrWhereNull('m.client_id');
                 }
             });
             //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
