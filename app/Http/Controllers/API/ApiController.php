@@ -92,7 +92,7 @@ class ApiController extends BaseController
         }
 
         else{
-            $default = $machineFilter->get();
+            $default = $machineFilter->get();;
         }
 
         return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive), 'machineFilter');
