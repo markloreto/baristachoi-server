@@ -65,7 +65,7 @@ class ApiController extends BaseController
         $expDate = Carbon::now()->subDays(30);
         if(count($status)){
             if (in_array("Prospect", $status)) {
-                $machineFilter->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id AND cs.name = "Sale") as totalCallsheets'));
+                $machineFilter = $machineFilter->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id AND cs.name = "Sale") as totalCallsheets'));
                 $machineFilter->havingRaw("totalCallsheets = 0");
             }
 
