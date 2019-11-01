@@ -36,6 +36,7 @@ class ApiController extends BaseController
         $machineTo = $data["machineTo"];
         $delivery = $data["delivery"];
         $status = $data["status"];
+        $machineType = $data["machineType"];
 
         $whereArray = [];
         $lead = [];
@@ -64,6 +65,11 @@ class ApiController extends BaseController
         //deliver filter
         if(count($delivery)){
             $machineFilter->whereIn('m.delivery', $delivery);
+        }
+
+        //machine Type
+        if(count($machineType)){
+            $machineFilter->whereIn("m.machine_type", $machineType)
         }
 
         if(count($status)){
