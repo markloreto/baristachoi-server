@@ -68,7 +68,7 @@ class ApiController extends BaseController
                 foreach($status AS $value){
                     if($value == "Prospect"){
                         $query->OrWhereNotNull('m.client_id');
-                        $query->havingRaw("(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0");
+                        //$query->havingRaw("(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0");
                     }
                     if($value == "Lead"){
                         $query->OrWhereNull('m.client_id');
@@ -78,7 +78,7 @@ class ApiController extends BaseController
             //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
         }
 
-        $machineFilter = $machineFilter->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->get();
+        $machineFilter = $machineFilter->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->havingRaw("(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0")->get();
 
         return $this->sendResponse($machineFilter, 'machineFilter');
     }
