@@ -70,7 +70,7 @@ class ApiController extends BaseController
             }
 
             if(in_array("Active", $status)){
-                $machineFilter->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
+                //$machineFilter->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
             }
 
             if(in_array("Prospect", $status) || in_array("Active", $status) || in_array("Inactive", $status)){
@@ -79,6 +79,10 @@ class ApiController extends BaseController
             }
 
             $machineFilter->where(function ($query) use ($status) {
+                if(in_array("Active", $status)){
+                    $query->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31');
+                }
+
                 if (in_array("Prospect", $status) || in_array("Active", $status) || in_array("Inactive", $status)) {
                     $query->OrWhereNotNull('m.client_id');
                 }else{
