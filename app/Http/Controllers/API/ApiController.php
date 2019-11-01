@@ -38,6 +38,7 @@ class ApiController extends BaseController
         $status = $data["status"];
 
         $whereArray = [];
+        $lead = [];
 
         $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->whereNotNull('m.lat');
 
@@ -61,10 +62,7 @@ class ApiController extends BaseController
             $machineFilter->whereIn('m.delivery', $delivery);
         }
 
-
-        
-
-        if(count($status)){
+        /* if(count($status)){
             $expDate = Carbon::now()->subDays(30);
             $prospect = "";
 
@@ -87,12 +85,19 @@ class ApiController extends BaseController
                     $query->OrWhereNull('m.client_id');
                 }
             });
-            //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
+        } */
+
+        if(count($status)){
+            if (in_array("Prospect", $status)){
+                $lead = $machineFilter->whereNull('m.client_id')->get();
+            }
         }
 
-        $machineFilter = $machineFilter->get();
+        else{
+            $default = $machineFilter->get();
+        }
 
-        return $this->sendResponse($machineFilter, 'machineFilter');
+        return $this->sendResponse(array("default" => $default, "lead" => $lead), 'machineFilter');
     }
 
     public function getProvinceList(Request $request){
