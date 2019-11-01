@@ -38,6 +38,7 @@ class ApiController extends BaseController
         $status = $data["status"];
         $machineType = $data["machineType"];
         $establishments = $data["establishments"];
+        $selectedRegion = $data["selectedRegion"];
 
         $whereArray = [];
         $lead = [];
@@ -81,6 +82,10 @@ class ApiController extends BaseController
                   ->whereIn('e.name', $establishments)
                   ->whereRaw('e.machine_id = m.id');
              });
+        }
+
+        if(isset($selectedRegion)){
+            array_push($whereArray, ["m.region", $selectedRegion]);
         }
 
         if(count($status)){
