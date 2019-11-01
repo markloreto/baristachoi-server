@@ -39,6 +39,7 @@ class ApiController extends BaseController
         $machineType = $data["machineType"];
         $establishments = $data["establishments"];
         $selectedRegion = $data["selectedRegion"];
+        $selectedProvince = $data["selectedProvince"];
 
         $whereArray = [];
         $lead = [];
@@ -86,6 +87,11 @@ class ApiController extends BaseController
 
         if($selectedRegion){
             $machineFilter->where("m.region", $selectedRegion);;
+            //array_push($whereArray, ["m.region", $selectedRegion]);
+        }
+
+        if($selectedProvince){
+            $machineFilter->where("m.province", $selectedProvince);;
             //array_push($whereArray, ["m.region", $selectedRegion]);
         }
 
