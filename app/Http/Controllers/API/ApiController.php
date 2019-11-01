@@ -68,7 +68,7 @@ class ApiController extends BaseController
                 foreach($status AS $value){
                     if($value == "Prospect"){
                         $query->OrWhereNotNull('m.client_id');
-                        $query->havingRaw("(SELECT COUNT(id) FROM callsheets cs WHERE cs.machine_id = m.id) = 0");
+                        $query->havingRaw("(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0");
                     }
                     if($value == "Lead"){
                         $query->OrWhereNull('m.client_id');
