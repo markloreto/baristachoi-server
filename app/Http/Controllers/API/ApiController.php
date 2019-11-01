@@ -68,6 +68,7 @@ class ApiController extends BaseController
 
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
+            $expDate2 = Carbon::now()->subDays(30);
             if (in_array("Lead", $status)){
                 $lead = clone $machineFilter;
                 $lead = $lead->whereNull('m.client_id')->get();
@@ -87,7 +88,7 @@ class ApiController extends BaseController
 
             if (in_array("Inactive", $status)){
                 $inactive = clone $machineFilter;
-                $inactive = $inactive->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->get();
+                $inactive = $inactive->whereRaw('DATEDIFF("'. $expDate2 .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->get();
             }
         }
 
