@@ -82,7 +82,7 @@ class ApiController extends BaseController
 
             if (in_array("Active", $status)){
                 $active = clone $machineFilter;
-                $active = $active->whereRaw('DATEDIFF("'. $expDate2 .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->get();
+                $active = $active->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->get();
             }
 
             if (in_array("Inactive", $status)){
