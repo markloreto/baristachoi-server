@@ -69,7 +69,7 @@ class ApiController extends BaseController
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
             if(in_array("Lead", $status) && in_array("Prospect", $status) && in_array("Active", $status) && in_array("Inactive", $status)){
-
+                $default = $machineFilter->get();
             }else{
                 if (in_array("Lead", $status)){
                     $lead = clone $machineFilter;
