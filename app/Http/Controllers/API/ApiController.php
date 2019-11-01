@@ -100,7 +100,9 @@ class ApiController extends BaseController
 
             if (in_array("Prospect", $status)){
                 $prospect = clone $machineFilter;
-                $prospect = $prospect->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->get();
+                $prospect = $prospect->where(function ($query) {
+                    $query->whereNotNull('m.client_id');
+                })->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->get();
             }
 
             if (in_array("Active", $status)){
