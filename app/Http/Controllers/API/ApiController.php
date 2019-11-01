@@ -78,7 +78,7 @@ class ApiController extends BaseController
             //$machineFilter->whereRaw('DATEDIFF(exp_date, current_date) < 31');
         }
 
-        $machineFilter = $machineFilter->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->havingRaw("(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0")->get();
+        $machineFilter = $machineFilter->select('m.id', 'm.lat', 'm.lng', 'm.client_id', DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->get();
 
         return $this->sendResponse($machineFilter, 'machineFilter');
     }
