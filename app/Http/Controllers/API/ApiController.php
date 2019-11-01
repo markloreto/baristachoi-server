@@ -84,7 +84,7 @@ class ApiController extends BaseController
              });
         }
 
-        if($selectedRegion != ""){
+        if($selectedRegion){
             $machineFilter->where("m.region", $selectedRegion);;
             //array_push($whereArray, ["m.region", $selectedRegion]);
         }
