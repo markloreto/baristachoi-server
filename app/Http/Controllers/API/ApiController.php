@@ -39,6 +39,7 @@ class ApiController extends BaseController
 
         $whereArray = [];
         $lead = [];
+        $default = [];
 
         $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->whereNotNull('m.lat');
 
