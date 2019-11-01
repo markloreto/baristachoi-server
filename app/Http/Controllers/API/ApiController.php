@@ -69,7 +69,7 @@ class ApiController extends BaseController
 
         //machine Type
         if(count($machineType)){
-            $machineFilter->whereIn("m.machine_type", $machineType)
+            $machineFilter->whereIn("m.machine_type", $machineType);
         }
 
         if(count($status)){
