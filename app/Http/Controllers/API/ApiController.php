@@ -109,7 +109,7 @@ class ApiController extends BaseController
         }
 
         $machineFilter->where("m.accuracy", "<=", $accuracy)->where(function ($query) {
-            $query->whereNull('m.accuracy');
+            $query->orWhereNull('m.accuracy');
         });
 
         if(count($status)){
