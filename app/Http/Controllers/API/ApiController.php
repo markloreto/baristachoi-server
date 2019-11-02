@@ -44,6 +44,8 @@ class ApiController extends BaseController
         $selectedBrgy = $data["selectedBrgy"];
         $accuracy = $data["accuracy"];
         $accuracyOperator = $data["accuracyOperator"];
+        $wifiTriggerValue = $data["wifiTriggerValue"];
+        $cellTriggerValue = $data["cellTriggerValue"];
 
         $whereArray = [];
         $lead = [];
@@ -113,6 +115,12 @@ class ApiController extends BaseController
             $query->where("m.accuracy", ($accuracyOperator == "greaterThan") ? ">=" : "<=", $accuracy);
             $query->orWhereNull('m.accuracy');
         });
+
+        if($wifiTriggerValue == "Yes"){
+            $machineFilter->where(function ($query) {
+                $query->whereRaw("(SELECT count(*) FROM wifi_triggers w WHERE w.machine_id = m.id) > 0");
+            });
+        }
 
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
