@@ -109,7 +109,7 @@ class ApiController extends BaseController
             //array_push($whereArray, ["m.region", $selectedRegion]);
         }
 
-        $machineFilter->where(function ($query) use ($accuracy) {
+        $machineFilter->where(function ($query) use ($accuracy, $accuracyOperator) {
             $query->where("m.accuracy", ($accuracyOperator == "greaterThan") ? ">=" : "<=", $accuracy);
             $query->orWhereNull('m.accuracy');
         });
