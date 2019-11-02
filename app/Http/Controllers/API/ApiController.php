@@ -122,6 +122,12 @@ class ApiController extends BaseController
             });
         }
 
+        if($wifiTriggerValue == "No"){
+            $machineFilter->where(function ($query) {
+                $query->whereRaw("(SELECT count(*) FROM wifi_triggers w WHERE w.machine_id = m.id) = 0");
+            });
+        }
+
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
             if(in_array("Lead", $status) && in_array("Prospect", $status) && in_array("Active", $status) && in_array("Inactive", $status)){
