@@ -43,6 +43,7 @@ class ApiController extends BaseController
         $selectedMunicipal = $data["selectedMunicipal"];
         $selectedBrgy = $data["selectedBrgy"];
         $accuracy = $data["accuracy"];
+        $accuracyOperator = $data["accuracyOperator"];
 
         $whereArray = [];
         $lead = [];
@@ -109,7 +110,7 @@ class ApiController extends BaseController
         }
 
         $machineFilter->where(function ($query) use ($accuracy) {
-            $query->where("m.accuracy", "<=", $accuracy);
+            $query->where("m.accuracy", ($accuracyOperator == "greaterThan") ? ">=" : "<=", $accuracy);
             $query->orWhereNull('m.accuracy');
         });
 
