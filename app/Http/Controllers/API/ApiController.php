@@ -53,6 +53,7 @@ class ApiController extends BaseController
         $prospect = [];
         $active = [];
         $inactive = [];
+        $verified = $data["verified"];
 
         $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng', 'm.client_id')->whereNotNull('m.lat');
 
@@ -138,6 +139,14 @@ class ApiController extends BaseController
             $machineFilter->where(function ($query) {
                 $query->whereRaw("(SELECT count(*) FROM cell_triggers c WHERE c.machine_id = m.id) = 0");
             });
+        }
+
+        if($verified == "Yes"){
+            $machineFilter->where("m.verified", 1);
+        }
+
+        if($verified == "No"){
+            $machineFilter->where("m.verified", 0);
         }
 
         if(count($status)){
