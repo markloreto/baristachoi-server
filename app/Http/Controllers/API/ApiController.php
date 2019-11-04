@@ -30,7 +30,7 @@ class ApiController extends BaseController
 
     public function fixNoLocations(){
         
-        $noLocs = DB::table("machines")->whereRaw('brgy_id IS NULL AND lat IS NOT NULL')->get();
+        $noLocs = DB::table("machines")->whereRaw('lat IS NOT NULL AND brgy_id IS NULL')->get();
 
         foreach($noLocs AS $noLoc){
             $loc = DB::table("locations")->select(DB::raw("id_3"))->whereRaw("MbrWithin(GeomFromText(?), shape)", ['POINT('.$noLoc->lng.' '.$noLoc->lat.')'])->first();
