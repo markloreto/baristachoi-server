@@ -34,9 +34,12 @@ class ApiController extends BaseController
 
         foreach($noLocs AS $noLoc){
             $loc = DB::table("locations")->select(DB::raw("region, province, name_2 AS municipal, name_3 AS brgy"))->whereRaw("MbrWithin(GeomFromText(?), shape)", ['POINT('.$noLoc->lng.' '.$noLoc->lat.')'])->first();
-            DB::table('machines')
+            if($loc){
+                DB::table('machines')
             ->where('id', $noLoc->id)
             ->update(['region' => $loc->region, 'province' => $loc->province, 'municipal' => $loc->municipal, 'brgy' => $loc->brgy]);
+            }
+            
         }
         return $this->sendResponse($noLoc, 'loc retrieved successfully.');
     }
