@@ -12,14 +12,14 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+Route::get('/fixNoLocations', 'API\ApiController@fixNoLocations');
 Route::post('/serverLogin', 'API\ApiController@serverLogin');
 Route::post('/resetPassword', 'API\ApiController@resetPassword');
 Route::post('/paypalPay2', 'API\ApiController@paypalPay2');
 Route::get('/oneSignal', 'API\ApiController@oneSignal');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
-	Route::get('/fixNoLocations', 'API\ApiController@fixNoLocations');
+	
 	Route::post('/getMachinesSummary', 'API\ApiController@getMachinesSummary');
 	Route::post('/getMachinesTotal', 'API\ApiController@getMachinesTotal');
 	Route::post('/getClientsTotal', 'API\ApiController@getClientsTotal');
