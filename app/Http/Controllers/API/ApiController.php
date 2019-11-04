@@ -33,13 +33,13 @@ class ApiController extends BaseController
         $leadTotal = DB::table("machines")->whereNull('client_id')->count();
         $prospectTotal = DB::table("machines AS m")->where(function ($query) {
             $query->whereNotNull('m.client_id');
-        })->select(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->count();
+        })->whereRaw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0')->count();
         $activeTotal = DB::table("machines AS m")->where(function ($query) {
             $query->whereNotNull('m.client_id');
-        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31')->select(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->count();
+        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0')->count();
         $inactiveTotal = DB::table("machines AS m")->where(function ($query) {
             $query->whereNotNull('m.client_id');
-        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30')->select(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->count();
+        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0')->count();
         $unknownLocationsTotal = DB::table("machines AS m")->whereNotNull('m.lat')->where(function ($query) {
             $query->orWhereNotNull('m.region');
         })->count();
