@@ -28,6 +28,11 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function fixNoLocations(){
+        $loc = DB::table("locations")->select(DB::raw("region, province, name_2 AS municipal, name_3 AS brgy"))->whereRaw("MbrWithin(GeomFromText(?), geometry)", ['POINT(125.517837 7.060798)'])->first();
+        return $this->sendResponse($loc, 'loc retrieved successfully.');
+    }
+
     public function getMachinesSummary(Request $request){
         $expDate = Carbon::now()->addDays(30);
         $leadTotal = DB::table("machines")->whereNull('client_id')->count();
