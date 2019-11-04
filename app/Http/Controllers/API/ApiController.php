@@ -28,9 +28,24 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
-    public function getLeadTotal(Request $request){
+    public function getMachinesSummary(Request $request){
+        $expDate = Carbon::now()->addDays(30);
         $leadTotal = DB::table("machines")->whereNull('client_id')->count();
-        return $this->sendResponse($leadTotal, 'getLeadTotal');
+        $prospectTotal = DB::table("machines AS m")->where(function ($query) {
+            $query->whereNotNull('m.client_id');
+        })->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->count();
+        $activeTotal = DB::table("machines AS m")->where(function ($query) {
+            $query->whereNotNull('m.client_id');
+        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->count();
+        $inactiveTotal = DB::table("machines AS m")->where(function ($query) {
+            $query->whereNotNull('m.client_id');
+        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->count();
+        $unknownLocationsTotal = DB::table("machines AS m")->whereNotNull('m.lat')->where(function ($query) {
+            $query->orWhereNotNull('m.region');
+        })->count();
+        $verifiedTotal = DB::table("machines")->where("verified", 1)->count();
+
+        return $this->sendResponse(array("leadTotal" => $leadTotal, "prospectTotal" => $prospectTotal, "activeTotal" => $activeTotal, "inactiveTotal" => $inactiveTotal, "unknownLocationsTotal" => $unknownLocationsTotal, "verifiedTotal" => $verifiedTotal), 'getMachinesSummary');
     }
 
     public function getMachinesTotal(Request $request){
