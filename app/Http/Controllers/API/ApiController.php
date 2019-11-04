@@ -28,22 +28,6 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
-    public function fixNoLocations(){
-        
-        $noLocs = DB::table("machines")->whereRaw('lat IS NOT NULL AND brgy_id IS NULL')->get();
-
-        foreach($noLocs AS $noLoc){
-            $loc = DB::table("locations")->select(DB::raw("id_3"))->whereRaw("MbrWithin(GeomFromText(?), shape)", ['POINT('.$noLoc->lng.' '.$noLoc->lat.')'])->first();
-            if($loc){
-                DB::table('machines')
-            ->where('id', $noLoc->id)
-            ->update(['brgy_id' => $loc->id_3]);
-            }
-            
-        }
-        return $this->sendResponse($noLoc, 'loc retrieved successfully.');
-    }
-
     public function getMachinesSummary(Request $request){
         $expDate = Carbon::now()->addDays(30);
         $leadTotal = DB::table("machines")->whereNull('client_id')->count();
@@ -1537,5 +1521,21 @@ class ApiController extends BaseController
             }
         });
         
+    }
+
+    public function fixNoLocations(){
+        //Fixes machines with no locations
+        $noLocs = DB::table("machines")->whereRaw('lat IS NOT NULL AND region IS NULL')->get();
+
+        foreach($noLocs AS $noLoc){
+            $loc = DB::table("locations")->select(DB::raw("region, province, name_2 AS municipal, name_3 AS brgy"))->whereRaw("MbrWithin(GeomFromText(?), shape)", ['POINT('.$noLoc->lng.' '.$noLoc->lat.')'])->first();
+            if($loc){
+                DB::table('machines')
+            ->where('id', $noLoc->id)
+            ->update(['region' => $loc->region, 'province' => $loc->province, 'municipal' => $loc->municipal, 'brgy' => $loc->brgy]);
+            }
+            
+        }
+        return $this->sendResponse($noLoc, 'loc retrieved successfully.');
     }
 }

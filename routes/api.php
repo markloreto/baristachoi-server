@@ -12,7 +12,9 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+//fixes
 Route::get('/fixNoLocations', 'API\ApiController@fixNoLocations');
+//End of fixes
 Route::post('/serverLogin', 'API\ApiController@serverLogin');
 Route::post('/resetPassword', 'API\ApiController@resetPassword');
 Route::post('/paypalPay2', 'API\ApiController@paypalPay2');
