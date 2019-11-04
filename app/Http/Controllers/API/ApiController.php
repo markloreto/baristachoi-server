@@ -30,7 +30,8 @@ class ApiController extends BaseController
 
     public function fixNoLocations(){
         $loc = DB::table("locations")->select(DB::raw("region, province, name_2 AS municipal, name_3 AS brgy"))->whereRaw("MbrWithin(GeomFromText(?), shape)", ['POINT(125.517837 7.060798)'])->first();
-        return $this->sendResponse($loc, 'loc retrieved successfully.');
+        $noLoc = DB::table("machines")->whereRaw('lat IS NOT NULL AND region IS NULL')->get();
+        return $this->sendResponse($noLoc, 'loc retrieved successfully.');
     }
 
     public function getMachinesSummary(Request $request){
