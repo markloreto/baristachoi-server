@@ -28,6 +28,11 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function getDepotTotal(Request $request){
+        $depotTotal = DB::table("depots")->count();
+        return $this->sendResponse($depotTotal, 'getDepotTotal');
+    }
+
     public function machineFilter(Request $request){
         $data = $request->all();
         $depot = $data["depot"];
