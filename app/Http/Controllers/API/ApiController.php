@@ -48,24 +48,12 @@ class ApiController extends BaseController
         return $this->sendResponse(array("leadTotal" => $leadTotal, "prospectTotal" => $prospectTotal, "activeTotal" => $activeTotal, "inactiveTotal" => $inactiveTotal, "unknownLocationsTotal" => $unknownLocationsTotal, "verifiedTotal" => $verifiedTotal), 'getMachinesSummary');
     }
 
-    public function getMachinesTotal(Request $request){
+    public function getDashboardFirstBatchTop(Request $request){
         $machinesTotal = DB::table("machines")->count();
-        return $this->sendResponse($machinesTotal, 'getMachinesTotal');
-    }
-
-    public function getClientsTotal(Request $request){
         $clientsTotal = DB::table("clients")->count();
-        return $this->sendResponse($clientsTotal, 'getClientsTotal');
-    }
-
-    public function getDealersTotal(Request $request){
         $dealersTotal = DB::table("staffs")->where("role_id", 3)->count();
-        return $this->sendResponse($dealersTotal, 'getDealersTotal');
-    }
-
-    public function getDepotTotal(Request $request){
         $depotTotal = DB::table("depots")->count();
-        return $this->sendResponse($depotTotal, 'getDepotTotal');
+        return $this->sendResponse(array("machinesTotal" => $machinesTotal, "clientsTotal" => $clientsTotal, "dealersTotal" => $dealersTotal, "depotTotal" => $depotTotal), 'getMachinesTotal');
     }
 
     public function machineFilter(Request $request){

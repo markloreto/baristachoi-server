@@ -23,10 +23,7 @@ Route::get('/oneSignal', 'API\ApiController@oneSignal');
 Route::middleware('auth:api')->group( function () {
 	
 	Route::post('/getMachinesSummary', 'API\ApiController@getMachinesSummary');
-	Route::post('/getMachinesTotal', 'API\ApiController@getMachinesTotal');
-	Route::post('/getClientsTotal', 'API\ApiController@getClientsTotal');
-	Route::post('/getDepotTotal', 'API\ApiController@getDepotTotal');
-	Route::post('/getDealersTotal', 'API\ApiController@getDealersTotal');
+	Route::post('/getDashboardFirstBatchTop', 'API\ApiController@getDashboardFirstBatchTop');
 	//Route::resource('users', 'API\ApiController');
 	Route::get('/getDepot', 'API\ApiController@getDepot');
 	Route::get('/checkKey', 'API\ApiController@checkKey');
