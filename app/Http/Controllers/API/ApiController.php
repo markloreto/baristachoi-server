@@ -30,9 +30,9 @@ class ApiController extends BaseController
 
     public function getTopLocations(){
         $region = DB::table("machines AS m")->select(DB::raw('IFNULL(m.region, "Unknown Region") AS `region`, COUNT(*) AS `total`, (SELECT name FROM depots WHERE id = m.depot_id) AS `depot_name`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('m.depot_id','m.region')->limit(10)->get();
-        $province = DB::table("machines")->select(DB::raw('IFNULL(province, "Unknown Province") AS `province`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province')->limit(10)->get();
-        $municipal = DB::table("machines")->select(DB::raw('IFNULL(municipal, "Unknown Municipal") AS `municipal`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province', 'municipal')->limit(10)->get();
-        $brgy = DB::table("machines")->select(DB::raw('IFNULL(brgy, "Unknown Barangay") AS `brgy`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province', 'municipal', 'brgy')->limit(10)->get();
+        $province = DB::table("machines AS m")->select(DB::raw('IFNULL(m.province, "Unknown Province") AS `province`, COUNT(*) AS `total`, (SELECT name FROM depots WHERE id = m.depot_id) AS `depot_name`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('m.depot_id', 'm.region', 'm.province')->limit(10)->get();
+        $municipal = DB::table("machines AS m")->select(DB::raw('IFNULL(m.municipal, "Unknown Municipal") AS `municipal`, COUNT(*) AS `total`, (SELECT name FROM depots WHERE id = m.depot_id) AS `depot_name`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('m.depot_id', 'm.region', 'm.province', 'm.municipal')->limit(10)->get();
+        $brgy = DB::table("machines AS m")->select(DB::raw('IFNULL(m.brgy, "Unknown Barangay") AS `brgy`, COUNT(*) AS `total`, (SELECT name FROM depots WHERE id = m.depot_id) AS `depot_name`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('m.depot_id', 'm.region', 'm.province', 'm.municipal', 'm.brgy')->limit(10)->get();
         return $this->sendResponse(array("region" => $region, "province" => $province, "municipal" => $municipal, "brgy" => $brgy), 'getTypeofMachinesCount');;
     }
 
