@@ -33,7 +33,7 @@ class ApiController extends BaseController
         $province = DB::table("machines")->select(DB::raw('IFNULL(province, "Unknown Province") AS `province`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province')->get();
         $municipal = DB::table("machines")->select(DB::raw('IFNULL(municipal, "Unknown Municipal") AS `municipal`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province', 'municipal')->get();
         $brgy = DB::table("machines")->select(DB::raw('IFNULL(brgy, "Unknown Barangay") AS `brgy`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province', 'municipal', 'brgy')->get();
-        return $this->sendResponse(array("region" => $region, "province" => $province, "municipal" => $municipal, "brgy" => $brgy), 'getTypeofMachinesCount');
+        return $this->sendResponse(array("region" => $region, "province" => $province, "municipal" => $municipal, "brgy" => $brgy), 'getTypeofMachinesCount');;
     }
 
     public function getTypeofMachinesCount(){
