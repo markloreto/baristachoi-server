@@ -28,6 +28,14 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function getTopLocations(){
+        $region = DB::table("machines")->select(DB::raw('IFNULL(region, "Unknown Region") AS `region`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region')->get();
+        $province = DB::table("machines")->select(DB::raw('IFNULL(province, "Unknown Province") AS `province`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province')->get();
+        $municipal = DB::table("machines")->select(DB::raw('IFNULL(municipal, "Unknown Municipal") AS `municipal`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province', 'municipal')->get();
+        $brgy = DB::table("machines")->select(DB::raw('IFNULL(brgy, "Unknown Barangay") AS `brgy`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province', 'municipal', 'brgy')->get();
+        return $this->sendResponse(array("region" => $region, "province" => $province, "municipal" => $municipal, "brgy" => $brgy), 'getTypeofMachinesCount');
+    }
+
     public function getTypeofMachinesCount(){
         $machinesTotal = DB::table("machines")->count();
         $q = DB::table("machines")->select(DB::raw('IFNULL(machine_type, "Other") AS `name`, COUNT(*) AS `y`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('machine_type')->get();

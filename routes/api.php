@@ -21,6 +21,8 @@ Route::post('/paypalPay2', 'API\ApiController@paypalPay2');
 Route::get('/oneSignal', 'API\ApiController@oneSignal');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
+	
+	Route::post('/getTopLocations', 'API\ApiController@getTopLocations');
 	Route::post('/getTypeofMachinesCount', 'API\ApiController@getTypeofMachinesCount');
 	Route::post('/getMachinesSummary', 'API\ApiController@getMachinesSummary');
 	Route::post('/getDashboardFirstBatchTop', 'API\ApiController@getDashboardFirstBatchTop');
