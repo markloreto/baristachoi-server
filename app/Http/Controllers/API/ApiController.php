@@ -28,6 +28,11 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function getTypeofMachinesCount(){
+        $q = DB::table("machines")->select(DB::raw('IFNULL(machine_type, "Other"), COUNT(*)'))->groupBy('machine_type')->get();
+        return $this->sendResponse($q, 'getTypeofMachinesCount');
+    }
+
     public function getMachinesSummary(Request $request){
         $expDate = Carbon::now()->addDays(30);
         $leadTotal = DB::table("machines")->whereNull('client_id')->count();
