@@ -29,7 +29,7 @@ class ApiController extends BaseController
     }
 
     public function getTypeofMachinesCount(){
-        $q = DB::table("machines")->select(DB::raw('IFNULL(machine_type, "Other"), COUNT(*)'))->groupBy('machine_type')->get();
+        $q = DB::table("machines")->select(DB::raw('IFNULL(machine_type, "Other") AS `type`, COUNT(*) AS `count`'))->groupBy('machine_type')->get();
         return $this->sendResponse($q, 'getTypeofMachinesCount');
     }
 
