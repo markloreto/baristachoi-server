@@ -37,7 +37,7 @@ class ApiController extends BaseController
                 $v->selected = true;
             }
 
-            $v->y = ($v / $machinesTotal) * 100;
+            $v->y = ($v->y / $machinesTotal) * 100;
         }
         return $this->sendResponse($q, 'getTypeofMachinesCount');
     }
