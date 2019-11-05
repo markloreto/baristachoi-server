@@ -29,7 +29,7 @@ class ApiController extends BaseController
     }
 
     public function getTopLocations(){
-        $region = DB::table("machines")->select(DB::raw('IFNULL(region, "Unknown Region") AS `region`, COUNT(*) AS `total`, (SELECT name FROM depots WHERE id = machine.depot_id) AS `depot_name`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region')->limit(10)->get();
+        $region = DB::table("machines AS m")->select(DB::raw('IFNULL(mregion, "Unknown Region") AS `region`, COUNT(*) AS `total`, (SELECT name FROM depots WHERE id = m.depot_id) AS `depot_name`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region')->limit(10)->get();
         $province = DB::table("machines")->select(DB::raw('IFNULL(province, "Unknown Province") AS `province`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province')->limit(10)->get();
         $municipal = DB::table("machines")->select(DB::raw('IFNULL(municipal, "Unknown Municipal") AS `municipal`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province', 'municipal')->limit(10)->get();
         $brgy = DB::table("machines")->select(DB::raw('IFNULL(brgy, "Unknown Barangay") AS `brgy`, COUNT(*) AS `total`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('region', 'province', 'municipal', 'brgy')->limit(10)->get();
