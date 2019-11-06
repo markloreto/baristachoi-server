@@ -106,6 +106,9 @@ class ApiController extends BaseController
         $verified = $data["verified"];
 
         $additionalParams = (isset($data["params"])) ? true : false;
+        $params = [];
+        if($additionalParams)
+            $params = $data["params"];
 
         if($additionalParams)
             $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng');
