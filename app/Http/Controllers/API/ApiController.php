@@ -349,7 +349,7 @@ class ApiController extends BaseController
             $lastSaleTransaction->diffInDays = $myTime->diffInDays($lastSaleTransaction->created_at);
         }
 
-        $machine = DB::table("machines")->where('id', $id)->whereNotNull('lat')->first();
+        $machine = DB::table("machines")->where('id', $id)->first();
         $depot = DB::table("depots")->select("name")->where('id', $machine->depot_id)->first();
         $dealer = DB::table("staffs")->select("name", "contact", "thumbnail", "email")->where('id', $machine->staff_id)->first();
         if($dealer->thumbnail){
