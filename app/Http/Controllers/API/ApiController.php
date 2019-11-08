@@ -283,7 +283,7 @@ class ApiController extends BaseController
 
         else{
             if($additionalParams){
-                $recordsFiltered += $default->count();
+                $recordsFiltered += $machineFilter->count();
                 $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
             }
             else
