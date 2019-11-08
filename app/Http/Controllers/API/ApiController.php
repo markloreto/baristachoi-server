@@ -110,10 +110,16 @@ class ApiController extends BaseController
         if($additionalParams)
             $params = $data["params"];
 
-        if($additionalParams)
+        if($additionalParams){
             $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng');
-        else
+        }
+            
+        else{
             $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng')->whereNotNull('m.lat');
+
+        }
+
+        $recordsTotal = $machineFilter->count();
 
         //depot Filter
         if(count($depot)){
@@ -264,7 +270,7 @@ class ApiController extends BaseController
                 $default = $machineFilter->get();
         }
 
-        return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive), 'machineFilter');
+        return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal), 'machineFilter');
     }
 
     public function getProvinceList(Request $request){
