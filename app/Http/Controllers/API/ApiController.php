@@ -115,7 +115,7 @@ class ApiController extends BaseController
         if($additionalParams){
             $params = $data["params"];
             $columns = $params["columns"];
-            $machineFilter = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id');
+            $machineFilter = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id')->join('staffs AS s', 's.id', '=', 'm.staff_id');
             foreach($columns AS $col){
                 $machineFilter = $machineFilter->addSelect(DB::raw($col["data"]));
             }
