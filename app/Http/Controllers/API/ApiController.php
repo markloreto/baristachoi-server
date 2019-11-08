@@ -107,19 +107,22 @@ class ApiController extends BaseController
 
         $additionalParams = (isset($data["params"])) ? true : false;
         $params = [];
+
+        $recordsTotal = 0;
+        $recordsFiltered = 0;
+
         if($additionalParams)
             $params = $data["params"];
 
         if($additionalParams){
             $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng');
+            $recordsTotal = $machineFilter->count();
         }
             
         else{
             $machineFilter = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng')->whereNotNull('m.lat');
 
         }
-
-        $recordsTotal = $machineFilter->count();
 
         //depot Filter
         if(count($depot)){
@@ -216,35 +219,47 @@ class ApiController extends BaseController
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
             if(in_array("Lead", $status) && in_array("Prospect", $status) && in_array("Active", $status) && in_array("Inactive", $status)){
-                if($additionalParams)
+                if($additionalParams){
                     $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
-                else
+                    $recordsFiltered += $default->count();
+                }
+                else{
                     $default = $machineFilter->get();
+                }  
             }else{
                 if (in_array("Lead", $status)){
                     $lead = clone $machineFilter;
 
-                    if($additionalParams)
-                        $lead = $lead->limit($params["length"])->offset($params["start"])->get();
+                    if($additionalParams){
+                        $lead = $lead->whereNull('m.client_id')->limit($params["length"])->offset($params["start"])->get();
+                        $recordsFiltered += $lead->count();
+                    }
+                        
                     else
                         $lead = $lead->whereNull('m.client_id')->get();
                 }
     
                 if (in_array("Prospect", $status)){
                     $prospect = clone $machineFilter;
-                    if($additionalParams)
+                    if($additionalParams){
                         $prospect = $prospect->limit($params["length"])->offset($params["start"])->get();
+                        $recordsFiltered += $prospect->count();
+                    }
                     
-                    else
+                    else{
                         $prospect = $prospect->where(function ($query) {
                             $query->whereNotNull('m.client_id');
                         })->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->get();
+                    }
                 }
     
                 if (in_array("Active", $status)){
                     $active = clone $machineFilter;
-                    if($additionalParams)
+                    if($additionalParams){
                         $active = $active->limit($params["length"])->offset($params["start"])->get();
+                        $recordsFiltered += $active->count();
+                    }
+                        
                     else
                         $active = $active->where(function ($query) {
                             $query->whereNotNull('m.client_id');
@@ -253,8 +268,11 @@ class ApiController extends BaseController
     
                 if (in_array("Inactive", $status)){
                     $inactive = clone $machineFilter;
-                    if($additionalParams)
+                    if($additionalParams){
                         $inactive = $inactive->limit($params["length"])->offset($params["start"])->get();
+                        $recordsFiltered += $inactive->count();
+                    }
+                        
                     else
                         $inactive = $inactive->where(function ($query) {
                             $query->whereNotNull('m.client_id');
@@ -264,13 +282,15 @@ class ApiController extends BaseController
         }
 
         else{
-            if($additionalParams)
+            if($additionalParams){
                 $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
+                $recordsFiltered += $default->count();
+            }
             else
                 $default = $machineFilter->get();
         }
 
-        return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal), 'machineFilter');
+        return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'machineFilter');
     }
 
     public function getProvinceList(Request $request){
