@@ -116,7 +116,7 @@ class ApiController extends BaseController
             $params = $data["params"];
             $columns = $params["columns"];
             $order = $params["order"][0];
-            $machineFilter = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id')->join('staffs AS s', 's.id', '=', 'm.staff_id')->orderBy("id", "desc");
+            $machineFilter = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id')->join('staffs AS s', 's.id', '=', 'm.staff_id')->orderBy($columns[$order->column], $order->dir);
             foreach($columns AS $col){
                 $machineFilter = $machineFilter->addSelect(DB::raw($col["data"]));
             }
@@ -294,7 +294,7 @@ class ApiController extends BaseController
                 $default = $machineFilter->get();
         }
 
-        return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "order" => $order), 'machineFilter');
+        return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'machineFilter');
     }
 
     public function getProvinceList(Request $request){
