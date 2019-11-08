@@ -117,7 +117,7 @@ class ApiController extends BaseController
             $columns = $params["columns"];
             $machineFilter = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id');
             foreach($columns AS $col){
-                $machineFilter = $machineFilter->addSelect($col["data"]);
+                $machineFilter = $machineFilter->addSelect(DB::raw($col["data"]));
             }
             $recordsTotal = $machineFilter->count();
         }
