@@ -96,7 +96,7 @@ class ApiController extends BaseController
         }
         $recordsTotal = $callsheetsFilter->count();
 
-        return $this->sendResponse(array("callsheets" => $callsheetsFilter->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'callsheetFilter');
+        return $this->sendResponse(array("callsheets" => $callsheetsFilter->limit($params["length"])->offset($params["start"])->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'callsheetFilter');
     }
 
     public function machineFilter(Request $request){
