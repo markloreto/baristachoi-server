@@ -61,7 +61,9 @@ class ApiController extends BaseController
             $clientPhoto = $t;
         }
 
-        $orderItems = DB::table("inventories")->where([["module_id", 7], ["reference_id", $id]])->get();
+        $orderItems = DB::table("inventories AS inv")->select("p.thumbnail", "p.name AS productName", "inv.qty", "inv.price", "inv.cost")->where([["module_id", 7], ["reference_id", $id]])
+        ->join('products AS p', 'p.id', '=', 'inv.product_id')
+        ->get();
 
         return $this->sendResponse(array("receiptInfo" => $receiptInfo, "machinePhoto" => $machinePhoto, "clientPhoto" => $clientPhoto, "orderItems" => $orderItems), 'getReceipt');
     }
