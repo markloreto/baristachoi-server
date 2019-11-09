@@ -52,7 +52,7 @@ class ApiController extends BaseController
 
         $clientPhoto = DB::table("attachments")->where([["module_id", 3], ["reference_id", $receiptInfo->clientId]])->first();
         if($clientPhoto){
-            $ct = Image::make($machinePhoto->b64);
+            $ct = Image::make($clientPhoto->b64);
             $ct->resize(100, null, function ($constraint) {
                 $constraint->aspectRatio();
             });
