@@ -32,14 +32,36 @@ class ApiController extends BaseController
         $data = $request->all();
         $id = $data["id"];
 
-        $receiptInfo = DB::table("callsheets AS cs")->select('cs.message', 'c.name', 'cnt.contact')
+        $receiptInfo = DB::table("callsheets AS cs")->select('c.name', 'cnt.contact', 'm.id AS machineId', 'c.id AS clientId')
         ->join('machines AS m', 'm.id', '=', 'cs.machine_id')
         ->join('clients AS c', 'c.id', '=', 'm.client_id')
         ->join('contacts AS cnt', 'cnt.reference_id', '=', 'm.client_id')
         ->where([['cnt.module_id', 3], ['cs.id', $id]])
         ->first();
 
-        return $this->sendResponse(array("receiptInfo" => $receiptInfo), 'getReceipt');
+        $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $receiptInfo->machineId]])->first();
+        if($machinePhoto){
+            $ct = Image::make($machinePhoto->b64);
+            $ct->resize(100, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+    
+            $t = (string) $ct->encode('data-url');
+            $machinePhoto = $t;
+        }
+
+        $clientPhoto = DB::table("attachments")->where([["module_id", 3], ["reference_id", $receiptInfo->clientId]])->first();
+        if($clientPhoto){
+            $ct = Image::make($machinePhoto->b64);
+            $ct->resize(100, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+    
+            $t = (string) $ct->encode('data-url');
+            $clientPhoto = $t;
+        }
+
+        return $this->sendResponse(array("receiptInfo" => $receiptInfo, "machinePhoto" => $machinePhoto, "clientPhoto" => $clientPhoto), 'getReceipt');
     }
 
     public function getTopLocations(){
