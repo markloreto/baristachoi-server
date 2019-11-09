@@ -32,7 +32,7 @@ class ApiController extends BaseController
         $data = $request->all();
         $id = $data["id"];
 
-        $receiptInfo = DB::table("callsheets AS cs")->select('c.name', 'cnt.contact', 'm.id AS machineId', 'c.id AS clientId')
+        $receiptInfo = DB::table("callsheets AS cs")->select('c.name', 'cnt.contact', 'm.id AS machineId', 'c.id AS clientId', "cs.amount")
         ->join('machines AS m', 'm.id', '=', 'cs.machine_id')
         ->join('clients AS c', 'c.id', '=', 'm.client_id')
         ->join('contacts AS cnt', 'cnt.reference_id', '=', 'm.client_id')
