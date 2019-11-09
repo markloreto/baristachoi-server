@@ -61,7 +61,9 @@ class ApiController extends BaseController
             $clientPhoto = $t;
         }
 
-        return $this->sendResponse(array("receiptInfo" => $receiptInfo, "machinePhoto" => $machinePhoto, "clientPhoto" => $clientPhoto), 'getReceipt');
+        $orderItems = DB::table("inventories")->where([["module_id", 7], ["reference_id", $id]])->get();
+
+        return $this->sendResponse(array("receiptInfo" => $receiptInfo, "machinePhoto" => $machinePhoto, "clientPhoto" => $clientPhoto, "orderItems" => $orderItems), 'getReceipt');
     }
 
     public function getTopLocations(){
