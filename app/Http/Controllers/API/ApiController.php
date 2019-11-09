@@ -28,6 +28,19 @@ class ApiController extends BaseController
         return $this->sendResponse($depot->toArray(), 'Depot retrieved successfully.');
     }
 
+    public function getReceipt(Request $request){
+        $data = $request->all();
+
+        $receiptInfo = DB::table("callsheets AS cs")->select('cs.message', 'c.name', 'cnt.contact')
+        ->join('machines AS m', 'm.id', '=', 'cs.machine_id')
+        ->join('clients AS c', 'c.id', '=', 'm.client_id')
+        ->join('contacts AS cnt', 'cnt.reference_id', '=', 'm.client_id')
+        ->where('cnt.module_id', 3)
+        ->first();
+
+        return $this->sendResponse(array("receiptInfo" => $receiptInfo), 'getReceipt');
+    }
+
     public function getTopLocations(){
         $region = DB::table("machines AS m")->select(DB::raw('IFNULL(m.region, "Unknown Region") AS `region`, COUNT(*) AS `total`, (SELECT name FROM depots WHERE id = m.depot_id) AS `depot_name`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('m.depot_id','m.region')->limit(10)->get();
         $province = DB::table("machines AS m")->select(DB::raw('IFNULL(m.province, "Unknown Province") AS `province`, COUNT(*) AS `total`, (SELECT name FROM depots WHERE id = m.depot_id) AS `depot_name`'))->orderBy(\DB::raw('count(*)'), 'DESC')->groupBy('m.depot_id', 'm.region', 'm.province')->limit(10)->get();
