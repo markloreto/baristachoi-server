@@ -78,6 +78,27 @@ class ApiController extends BaseController
         return $this->sendResponse(array("machinesTotal" => $machinesTotal, "clientsTotal" => $clientsTotal, "dealersTotal" => $dealersTotal, "depotTotal" => $depotTotal), 'getMachinesTotal');
     }
 
+    public function callsheetFilter(Request $request){
+        $data = $request->all();
+
+        $params = [];
+
+        $recordsTotal = 0;
+        $recordsFiltered = 0;
+
+        $params = $data["params"];
+        $columns = $params["columns"];
+        $orderBy = $params["orderBy"];
+        $orderDir = $params["orderDir"];
+        $callsheetsFilter = DB::table("callsheets AS cs")->join('depots AS d', 'd.id', '=', 'cs.depot_id')->join('staffs AS s', 's.id', '=', 'cs.staff_id')->orderBy($orderBy, $orderDir);
+        foreach($columns AS $col){
+            $callsheetsFilter = $callsheetsFilter->addSelect(DB::raw($col["data"]));
+        }
+        $recordsTotal = $callsheetsFilter->count();
+
+        return $this->sendResponse(array("callsheets" => $callsheetsFilter->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'callsheetFilter');
+    }
+
     public function machineFilter(Request $request){
         $data = $request->all();
         $depot = $data["depot"];
