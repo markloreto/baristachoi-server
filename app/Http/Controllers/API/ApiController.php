@@ -40,7 +40,7 @@ class ApiController extends BaseController
         ->first();
 
         $machineCount = DB::table("machines")->where("client_id", $receiptInfo->clientId)->count();
-        $orderCount = DB::table("callsheets")->where([["client_id", $receiptInfo->clientId], ["name", "Sale"]])->count();
+        $orderCount = DB::table("callsheets")->where([["machine_id", $receiptInfo->machineId], ["name", "Sale"]])->count();
 
         $clientPhoto = DB::table("attachments")->where([["module_id", 3], ["reference_id", $receiptInfo->clientId]])->first();
         if($clientPhoto){
