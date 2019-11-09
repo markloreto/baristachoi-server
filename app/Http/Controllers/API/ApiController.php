@@ -30,12 +30,13 @@ class ApiController extends BaseController
 
     public function getReceipt(Request $request){
         $data = $request->all();
+        $id = $data["id"];
 
         $receiptInfo = DB::table("callsheets AS cs")->select('cs.message', 'c.name', 'cnt.contact')
         ->join('machines AS m', 'm.id', '=', 'cs.machine_id')
         ->join('clients AS c', 'c.id', '=', 'm.client_id')
         ->join('contacts AS cnt', 'cnt.reference_id', '=', 'm.client_id')
-        ->where('cnt.module_id', 3)
+        ->where([['cnt.module_id', 3], ['cs.id', $id]])
         ->first();
 
         return $this->sendResponse(array("receiptInfo" => $receiptInfo), 'getReceipt');
