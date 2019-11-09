@@ -41,6 +41,13 @@ class ApiController extends BaseController
 
         $machineCount = DB::table("machines")->where("client_id", $receiptInfo->clientId)->count();
         $orderCount = DB::table("callsheets")->where([["machine_id", $receiptInfo->machineId], ["name", "Sale"]])->count();
+        $orderCountAll = DB::table("callsheets")->where("name", "Sale")
+        ->whereIn('machine_id', function($query) use($receiptInfo){
+            $query->select("id")
+                ->from('machines')
+                ->where("client_id", $receiptInfo->clientId);
+        })
+        ->count();
 
         $clientPhoto = DB::table("attachments")->where([["module_id", 3], ["reference_id", $receiptInfo->clientId]])->first();
         if($clientPhoto){
@@ -57,7 +64,7 @@ class ApiController extends BaseController
         ->join('products AS p', 'p.id', '=', 'inv.product_id')
         ->get();
 
-        return $this->sendResponse(array("receiptInfo" => $receiptInfo, "clientPhoto" => $clientPhoto, "orderItems" => $orderItems, "machineCount" => $machineCount, "orderCount" => $orderCount), 'getReceipt');
+        return $this->sendResponse(array("receiptInfo" => $receiptInfo, "clientPhoto" => $clientPhoto, "orderItems" => $orderItems, "machineCount" => $machineCount, "orderCount" => $orderCount, "orderCountAll" => $orderCountAll), 'getReceipt');
     }
 
     public function getTopLocations(){
