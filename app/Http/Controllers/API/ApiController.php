@@ -39,16 +39,8 @@ class ApiController extends BaseController
         ->where([['cnt.module_id', 3], ['cs.id', $id]])
         ->first();
 
-        $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $receiptInfo->machineId]])->first();
-        if($machinePhoto){
-            $ct = Image::make($machinePhoto->b64);
-            $ct->resize(100, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-    
-            $t = (string) $ct->encode('data-url');
-            $machinePhoto = $t;
-        }
+        $machineCount = DB::table("machines")->where("client_id", $receiptInfo->clientId)->count();
+        $orderCount = DB::table("callsheets")->where([["client_id", $receiptInfo->clientId], ["name", "Sale"]])->count();
 
         $clientPhoto = DB::table("attachments")->where([["module_id", 3], ["reference_id", $receiptInfo->clientId]])->first();
         if($clientPhoto){
@@ -65,7 +57,7 @@ class ApiController extends BaseController
         ->join('products AS p', 'p.id', '=', 'inv.product_id')
         ->get();
 
-        return $this->sendResponse(array("receiptInfo" => $receiptInfo, "machinePhoto" => $machinePhoto, "clientPhoto" => $clientPhoto, "orderItems" => $orderItems), 'getReceipt');
+        return $this->sendResponse(array("receiptInfo" => $receiptInfo, "clientPhoto" => $clientPhoto, "orderItems" => $orderItems, "machineCount" => $machineCount, "orderCount" => $orderCount), 'getReceipt');
     }
 
     public function getTopLocations(){
