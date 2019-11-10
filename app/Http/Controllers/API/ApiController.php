@@ -211,10 +211,8 @@ class ApiController extends BaseController
                 $filter->havingRaw("`contact` LIKE '%".$contact."%'");
             }
         }
-        $filter = $filter->limit($params["length"])->offset($params["start"])->get();
         $recordsFiltered += $filter->count();
-
-        
+        $filter = $filter->limit($params["length"])->offset($params["start"])->get();
         
 
         return $this->sendResponse(array("clients" => $filter, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
