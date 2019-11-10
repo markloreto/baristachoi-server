@@ -129,7 +129,7 @@ class ApiController extends BaseController
         $orderBy = $params["orderBy"];
         $orderDir = $params["orderDir"];
 
-        $filter = DB::table("clients AS c")->join('depots AS d', 'd.id', '=', 'cs.depot_id')->join('staffs AS s', 's.id', '=', 'cs.staff_id')->orderBy($orderBy, $orderDir);
+        $filter = DB::table("clients AS c")->join('depots AS d', 'd.id', '=', 'c.depot_id')->join('staffs AS s', 's.id', '=', 'c.staff_id')->orderBy($orderBy, $orderDir);
         foreach($columns AS $col){
             $filter = $filter->addSelect(DB::raw($col["data"]));
         }
