@@ -117,6 +117,30 @@ class ApiController extends BaseController
         return $this->sendResponse(array("machinesTotal" => $machinesTotal, "clientsTotal" => $clientsTotal, "dealersTotal" => $dealersTotal, "depotTotal" => $depotTotal), 'getMachinesTotal');
     }
 
+    public function clientFilter(Request $request){
+        $data = $request->all();
+        $params = [];
+
+        $recordsTotal = 0;
+        $recordsFiltered = 0;
+
+        $params = $data["params"];
+        $columns = $params["columns"];
+        $orderBy = $params["orderBy"];
+        $orderDir = $params["orderDir"];
+
+        $filter = DB::table("clients AS c")->join('depots AS d', 'd.id', '=', 'cs.depot_id')->join('staffs AS s', 's.id', '=', 'cs.staff_id')->orderBy($orderBy, $orderDir);
+        foreach($columns AS $col){
+            $filter = $filter->addSelect(DB::raw($col["data"]));
+        }
+
+        $recordsTotal = $filter->count();
+
+        $recordsFiltered += $callsheetsFilter->count();
+
+        return $this->sendResponse(array("clients" => $filter->limit($params["length"])->offset($params["start"])->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
+    }
+
     public function callsheetFilter(Request $request){
         $data = $request->all();
         $depot = $data["depot"];
@@ -148,33 +172,33 @@ class ApiController extends BaseController
             $callsheetsFilter->where("cs.machine_id", $machineId);
         }else{
             //depot Filter
-        if(count($depot)){
-            $callsheetsFilter->whereIn('cs.depot_id', $depot);
-        }
+            if(count($depot)){
+                $callsheetsFilter->whereIn('cs.depot_id', $depot);
+            }
 
-        //dealer filter
-        if(count($dealerIds)){
-            $callsheetsFilter->whereIn('cs.staff_id', $dealerIds);
-        }
+            //dealer filter
+            if(count($dealerIds)){
+                $callsheetsFilter->whereIn('cs.staff_id', $dealerIds);
+            }
 
-        //date filter
-        if($csFrom){
-            $callsheetsFilter->whereBetween('cs.created_at', [$csFrom." 00:00:00", $csTo." 23:59:59"]);
-        }
+            //date filter
+            if($csFrom){
+                $callsheetsFilter->whereBetween('cs.created_at', [$csFrom." 00:00:00", $csTo." 23:59:59"]);
+            }
 
-        //actions filter
-        if(count($actions)){
-            $callsheetsFilter->whereIn('cs.name', $actions);
-        }
+            //actions filter
+            if(count($actions)){
+                $callsheetsFilter->whereIn('cs.name', $actions);
+            }
 
-        //dealer filter
-        if($message){
-            $callsheetsFilter->where('cs.message', 'like', '%' . $message . '%');
-        }
+            //dealer filter
+            if($message){
+                $callsheetsFilter->where('cs.message', 'like', '%' . $message . '%');
+            }
 
-        if($amount){
-            $callsheetsFilter->where('cs.amount', $amount);
-        }
+            if($amount){
+                $callsheetsFilter->where('cs.amount', $amount);
+            }
         }
 
         
