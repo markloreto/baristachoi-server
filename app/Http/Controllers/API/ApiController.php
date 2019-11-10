@@ -123,7 +123,7 @@ class ApiController extends BaseController
         $dealerIds = $data["dealerIds"];
         $from = $data["from"];
         $to = $data["to"];
-        $name = $data["to"];
+        $name = $data["name"];
         $alias = $data["alias"];
         $email = $data["email"];
         $contact = $data["contact"];
