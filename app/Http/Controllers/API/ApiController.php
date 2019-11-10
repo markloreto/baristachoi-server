@@ -176,7 +176,7 @@ class ApiController extends BaseController
             }
 
             if($contact){
-                $filter->where('contact', 'like', '%' . $contact . '%');
+                $filter->havingRaw("contact LIKE '%".$contact."%'");
             }
 
             if($email){
