@@ -136,7 +136,7 @@ class ApiController extends BaseController
 
         $recordsTotal = $filter->count();
 
-        $recordsFiltered += $callsheetsFilter->count();
+        $recordsFiltered += $filter->count();
 
         return $this->sendResponse(array("clients" => $filter->limit($params["length"])->offset($params["start"])->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
     }
