@@ -177,7 +177,7 @@ class ApiController extends BaseController
 
             if($contact){
                 $filter->where(function ($query) use($contact) {
-                    $query->whereRaw("(SELECT cnt.contact FROM contacts cnt WHERE cnt.reference_id = c.id) LIKE '%".$contact."%'");
+                    $query->whereRaw("`contact` LIKE '%".$contact."%'");
                 });
             }
 
