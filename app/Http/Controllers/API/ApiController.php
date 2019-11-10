@@ -119,6 +119,13 @@ class ApiController extends BaseController
 
     public function callsheetFilter(Request $request){
         $data = $request->all();
+        $depot = $data["depot"];
+        $dealerIds = $data["dealerIds"];
+        $csFrom = $data["csFrom"];
+        $csTo = $data["csTo"];
+        $actions = $data["actions"];
+        $message = $data["message"];
+        $amount = $data["amount"];
 
         $params = [];
 
@@ -133,7 +140,25 @@ class ApiController extends BaseController
         foreach($columns AS $col){
             $callsheetsFilter = $callsheetsFilter->addSelect(DB::raw($col["data"]));
         }
+
         $recordsTotal = $callsheetsFilter->count();
+
+        //depot Filter
+        if(count($depot)){
+            $callsheetsFilter->whereIn('cs.depot_id', $depot);
+        }
+
+        //dealer filter
+        if(count($dealerIds)){
+            $callsheetsFilter->whereIn('cs.staff_id', $dealerIds);
+        }
+
+        //date filter
+        if($csFrom){
+            $callsheetsFilter->whereBetween('cs.created_at', [$csFrom." 00:00:00", $csTo." 23:59:59"]);
+        }
+
+        
         $recordsFiltered += $callsheetsFilter->count();
 
         return $this->sendResponse(array("callsheets" => $callsheetsFilter->limit($params["length"])->offset($params["start"])->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'callsheetFilter');
