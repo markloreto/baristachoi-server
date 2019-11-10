@@ -176,7 +176,7 @@ class ApiController extends BaseController
             }
 
             if($contact){
-                $filter->where(function ($query) {
+                $filter->where(function ($query) use($contact) {
                     $query->where('contact', 'like', '%' . $contact . '%');
                 });
             }
