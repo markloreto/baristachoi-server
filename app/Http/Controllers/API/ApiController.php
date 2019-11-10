@@ -216,7 +216,7 @@ class ApiController extends BaseController
 
         
 
-        return $this->sendResponse(array("clients" => $filter->limit($params["length"])->offset($params["start"])->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
+        return $this->sendResponse(array("clients" => $filter->limit($params["length"])->offset($params["start"])->toSql(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
     }
 
     public function callsheetFilter(Request $request){
