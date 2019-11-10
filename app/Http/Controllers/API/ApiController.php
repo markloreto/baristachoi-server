@@ -126,6 +126,7 @@ class ApiController extends BaseController
         $actions = $data["actions"];
         $message = $data["message"];
         $amount = $data["amount"];
+        $machineId = $data["machineId"];
 
         $params = [];
 
@@ -143,7 +144,10 @@ class ApiController extends BaseController
 
         $recordsTotal = $callsheetsFilter->count();
 
-        //depot Filter
+        if($machineId){
+            $callsheetsFilter->where("cs.machine_id", $machineId);
+        }else{
+            //depot Filter
         if(count($depot)){
             $callsheetsFilter->whereIn('cs.depot_id', $depot);
         }
@@ -171,6 +175,9 @@ class ApiController extends BaseController
         if($amount){
             $callsheetsFilter->where('cs.amount', $amount);
         }
+        }
+
+        
 
         
         $recordsFiltered += $callsheetsFilter->count();
