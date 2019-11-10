@@ -212,7 +212,7 @@ class ApiController extends BaseController
             }
         }
 
-        $recordsFiltered += $filter->count();
+        //$recordsFiltered += $filter->count();
 
         
 
