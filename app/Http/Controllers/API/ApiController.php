@@ -164,9 +164,9 @@ class ApiController extends BaseController
         }
 
         //dealer filter
-        /* if($message){
+        if($message){
             $callsheetsFilter->where('cs.message', 'like', '%' . $message . '%');
-        } */
+        }
 
         
         $recordsFiltered += $callsheetsFilter->count();
