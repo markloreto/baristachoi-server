@@ -211,12 +211,13 @@ class ApiController extends BaseController
                 $filter->havingRaw("`contact` LIKE '%".$contact."%'");
             }
         }
-
-        //$recordsFiltered += $filter->count();
+        $filter = $filter->limit($params["length"])->offset($params["start"])->get();
+        $recordsFiltered += $filter->count();
 
         
+        
 
-        return $this->sendResponse(array("clients" => $filter->limit($params["length"])->offset($params["start"])->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
+        return $this->sendResponse(array("clients" => $filter, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
     }
 
     public function callsheetFilter(Request $request){
