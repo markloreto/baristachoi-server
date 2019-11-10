@@ -131,6 +131,7 @@ class ApiController extends BaseController
         $notificationValue = $data["notificationValue"];
         $specialAccountValue = $data["specialAccountValue"];
         $clientId = $data["clientId"];
+        $machines = $data["machines"];
 
         $params = [];
 
@@ -211,6 +212,10 @@ class ApiController extends BaseController
 
             if($contact){
                 $filter->where([['cnt.contact', 'like', '%' . $contact . '%'], ["cnt.module_id", 3]]);
+            }
+
+            if($machines){
+                $filter->whereRaw("(SELECT count(m.id) FROM machines m WHERE m.client_id = c.id) = ?", [$machines]);
             }
         }
         $recordsFiltered += $filter->count();
