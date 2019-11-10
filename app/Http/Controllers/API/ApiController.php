@@ -175,10 +175,6 @@ class ApiController extends BaseController
                 $filter->where('c.alias', 'like', '%' . $alias . '%');
             }
 
-            if($contact){
-                $filter->havingRaw("`contact` LIKE '%".$contact."%'");
-            }
-
             if($email){
                 $filter->where('c.email', 'like', '%' . $email . '%');
             }
@@ -209,6 +205,10 @@ class ApiController extends BaseController
     
             if($specialAccountValue == "No"){
                 $filter->where("c.special_account", 0);
+            }
+
+            if($contact){
+                $filter->havingRaw("`contact` LIKE '%".$contact."%'");
             }
         }
 
