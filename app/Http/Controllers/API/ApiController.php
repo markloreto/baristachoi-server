@@ -142,7 +142,9 @@ class ApiController extends BaseController
         $orderBy = $params["orderBy"];
         $orderDir = $params["orderDir"];
 
-        $filter = DB::table("clients AS c")->select('c.special_account')->join('depots AS d', 'd.id', '=', 'c.depot_id')->join('staffs AS s', 's.id', '=', 'c.staff_id')->orderBy($orderBy, $orderDir);
+        $filter = DB::table("clients AS c")->select('c.special_account')->join('depots AS d', 'd.id', '=', 'c.depot_id')->join('staffs AS s', 's.id', '=', 'c.staff_id')
+        ->leftJoin('contacts AS cnt', 'cnt.reference_id', '=', 'c.id')
+        ->orderBy($orderBy, $orderDir);
         foreach($columns AS $col){
             $filter = $filter->addSelect(DB::raw($col["data"]));
         }
@@ -208,7 +210,7 @@ class ApiController extends BaseController
             }
 
             if($contact){
-                $filter->where("(SELECT cnt.contact FROM contacts cnt WHERE cnt.reference_id = c.id) LIKE '%".$contact."%'");
+                $filter->where("cnt.contact LIKE '%".$contact."%'");
             }
         }
         $recordsFiltered += $filter->count();
