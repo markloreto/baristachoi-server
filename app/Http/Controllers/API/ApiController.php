@@ -119,6 +119,19 @@ class ApiController extends BaseController
 
     public function clientFilter(Request $request){
         $data = $request->all();
+        $depot = $data["depot"];
+        $dealerIds = $data["dealerIds"];
+        $from = $data["from"];
+        $to = $data["to"];
+        $name = $data["to"];
+        $alias = $data["alias"];
+        $email = $data["email"];
+        $contact = $data["contact"];
+        $clientMeetupValue = $data["clientMeetupValue"];
+        $notificationValue = $data["notificationValue"];
+        $specialAccountValue = $data["specialAccountValue"];
+        $clientId = $data["clientId"];
+
         $params = [];
 
         $recordsTotal = 0;
@@ -136,7 +149,72 @@ class ApiController extends BaseController
 
         $recordsTotal = $filter->count();
 
+        if($clientId){
+            $filter->where("c.id", $clientId);
+        }else{
+            //depot Filter
+            if(count($depot)){
+                $filter->whereIn('c.depot_id', $depot);
+            }
+
+            //dealer filter
+            if(count($dealerIds)){
+                $filter->whereIn('c.staff_id', $dealerIds);
+            }
+
+            //date filter
+            if($from){
+                $filter->whereBetween('c.created_at', [$from." 00:00:00", $to." 23:59:59"]);
+            }
+
+            if($name){
+                $filter->where('c.name', 'like', '%' . $name . '%');
+            }
+
+            if($alias){
+                $filter->where('c.alias', 'like', '%' . $alias . '%');
+            }
+
+            if($contact){
+                $filter->where('`contact`', 'like', '%' . $contact . '%');
+            }
+
+            if($email){
+                $filter->where('c.email', 'like', '%' . $email . '%');
+            }
+
+            if($clientMeetupValue == "Yes"){
+                $filter->where(function ($query) {
+                    $query->whereNotNull("brgy_id");
+                });
+            }
+    
+            if($clientMeetupValue == "No"){
+                $filter->where(function ($query) {
+                    $query->whereNull("brgy_id");
+                });
+            }
+
+            if($notificationValue == "Yes"){
+                $filter->where("c.notification", 1);
+            }
+    
+            if($notificationValue == "No"){
+                $filter->where("c.notification", 0);
+            }
+
+            if($specialAccountValue == "Yes"){
+                $filter->where("c.special_account", 1);
+            }
+    
+            if($specialAccountValue == "No"){
+                $filter->where("c.special_account", 0);
+            }
+        }
+
         $recordsFiltered += $filter->count();
+
+        
 
         return $this->sendResponse(array("clients" => $filter->limit($params["length"])->offset($params["start"])->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
     }
