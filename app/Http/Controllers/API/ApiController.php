@@ -158,6 +158,16 @@ class ApiController extends BaseController
             $callsheetsFilter->whereBetween('cs.created_at', [$csFrom." 00:00:00", $csTo." 23:59:59"]);
         }
 
+        //actions filter
+        if(count($actions)){
+            $callsheetsFilter->whereIn('cs.name', $actions);
+        }
+
+        //dealer filter
+        if($message){
+            $callsheetsFilter->orWhere('cs.message', 'like', '%' . $message . '%');
+        }
+
         
         $recordsFiltered += $callsheetsFilter->count();
 
