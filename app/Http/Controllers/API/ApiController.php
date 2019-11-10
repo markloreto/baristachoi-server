@@ -168,6 +168,10 @@ class ApiController extends BaseController
             $callsheetsFilter->where('cs.message', 'like', '%' . $message . '%');
         }
 
+        if($amount){
+            $callsheetsFilter->where('cs.amount', $amount);
+        }
+
         
         $recordsFiltered += $callsheetsFilter->count();
 
