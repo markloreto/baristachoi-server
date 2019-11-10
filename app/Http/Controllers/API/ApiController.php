@@ -165,7 +165,7 @@ class ApiController extends BaseController
 
         //dealer filter
         if($message){
-            $callsheetsFilter->orWhere('cs.message', 'like', '%' . $message . '%');
+            $callsheetsFilter->where('cs.message', 'like', '%' . $message . '%');
         }
 
         
