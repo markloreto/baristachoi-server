@@ -210,7 +210,7 @@ class ApiController extends BaseController
             }
 
             if($contact){
-                $filter->where("cnt.contact LIKE '%".$contact."%'");
+                $filter->where([['cnt.contact', 'like', '%' . $contact . '%'], ["cnt.module_id", 3]]);
             }
         }
         $recordsFiltered += $filter->count();
