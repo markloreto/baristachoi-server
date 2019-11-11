@@ -553,6 +553,36 @@ class ApiController extends BaseController
         return $this->sendResponse(array("calls" => $callsheets, "count" => $count), 'getCallsheets');
     }
 
+    public function getClientProfile(Request $request){
+        $data = $request->all();
+        $id = $data["id"];
+
+        $client = null;
+        $clientContact = null;
+        $clientPhoto = null;
+        $clientLocation = null;
+
+        $client = DB::table("clients")->where('id', $id)->first();
+        $depot = DB::table("depots")->select("name")->where('id', $machine->depot_id)->first();
+        $dealer = DB::table("staffs")->select("name", "contact", "thumbnail", "email")->where('id', $machine->staff_id)->first();
+
+        if($client->brgy_id){
+            $clientLocation = DB::table("locations")->select(DB::raw("ST_AsGeoJSON(SHAPE) AS geo, region, province, name_2 AS municipal, name_3 AS brgy, varname_3, id_3 as brgyID"))->where('id_3', $client->brgy_id)->first();
+        }
+
+        $clientContact = DB::table("contacts")->where([["module_id", 3], ["reference_id", $id]])->first();
+        $clientPhoto = DB::table("attachments")->select('b64_preview')->where([["module_id", 3], ["reference_id", $id]])->first();
+        if($clientPhoto){
+            $resizedThumbnail = Image::make($clientPhoto->b64_preview);
+            $resizedThumbnail->resize(100, 100);
+
+            $t = (string) $resizedThumbnail->encode('data-url');
+            $clientPhoto = $t;
+        }
+
+        return $this->sendResponse(array("client" => $client, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "dealer" => $dealer, "depot" => $depot, "clientLocation" => $clientLocation), 'getClientProfile');
+    }
+
     public function getMachineProfile(Request $request){
         $data = $request->all();
         $id = $data["id"];
