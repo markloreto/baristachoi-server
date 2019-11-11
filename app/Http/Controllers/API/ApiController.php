@@ -562,6 +562,8 @@ class ApiController extends BaseController
         $clientPhoto = null;
         $clientLocation = null;
 
+        $machines = array();
+
         $client = DB::table("clients")->where('id', $id)->first();
         $depot = DB::table("depots")->select("name")->where('id', $client->depot_id)->first();
         $dealer = DB::table("staffs")->select("name", "contact", "thumbnail", "email")->where('id', $client->staff_id)->first();
@@ -580,7 +582,24 @@ class ApiController extends BaseController
             $clientPhoto = $t;
         }
 
-        return $this->sendResponse(array("client" => $client, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "dealer" => $dealer, "depot" => $depot, "clientLocation" => $clientLocation), 'getClientProfile');
+        $m = DB::table("machines AS m")->where("m.client_id", $client->id)->get();
+        foreach($m AS $machine){
+            $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $machine->id]])->first();
+            if($machinePhoto){
+                $ct = Image::make($machinePhoto->b64);
+                $ct->resize(337, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+        
+                $t = (string) $ct->encode('data-url');
+                $machinePhoto = $t;
+            }
+            $machine->thumbnail = $machinePhoto;
+            $machines[] = $machine;
+
+        }
+
+        return $this->sendResponse(array("client" => $client, "clientContact" => $clientContact, "clientPhoto" => $clientPhoto, "dealer" => $dealer, "depot" => $depot, "clientLocation" => $clientLocation, "machines" => $machines), 'getClientProfile');
     }
 
     public function getMachineProfile(Request $request){
