@@ -563,8 +563,8 @@ class ApiController extends BaseController
         $clientLocation = null;
 
         $client = DB::table("clients")->where('id', $id)->first();
-        $depot = DB::table("depots")->select("name")->where('id', $machine->depot_id)->first();
-        $dealer = DB::table("staffs")->select("name", "contact", "thumbnail", "email")->where('id', $machine->staff_id)->first();
+        $depot = DB::table("depots")->select("name")->where('id', $client->depot_id)->first();
+        $dealer = DB::table("staffs")->select("name", "contact", "thumbnail", "email")->where('id', $client->staff_id)->first();
 
         if($client->brgy_id){
             $clientLocation = DB::table("locations")->select(DB::raw("ST_AsGeoJSON(SHAPE) AS geo, region, province, name_2 AS municipal, name_3 AS brgy, varname_3, id_3 as brgyID"))->where('id_3', $client->brgy_id)->first();
