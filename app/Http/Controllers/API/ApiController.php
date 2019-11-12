@@ -585,9 +585,9 @@ class ApiController extends BaseController
         $m = DB::table("machines AS m")->where("m.client_id", $client->id)->get();
         foreach($m AS $machine){
             $machinePhoto = DB::table("attachments")->where([["module_id", 5], ["reference_id", $machine->id]])->first();
-            $sale = DB::table("attachments")->where([["name", "Sale"], ["machine_id", $machine->id]])->count();
-            $noSale = DB::table("attachments")->where([["name", "No Sale"], ["machine_id", $machine->id]])->count();
-            $repair = DB::table("attachments")->where([["name", "Repair"], ["machine_id", $machine->id]])->count();
+            $sale = DB::table("callsheets")->where([["name", "Sale"], ["machine_id", $machine->id]])->count();
+            $noSale = DB::table("callsheets")->where([["name", "No Sale"], ["machine_id", $machine->id]])->count();
+            $repair = DB::table("callsheets")->where([["name", "Repair"], ["machine_id", $machine->id]])->count();
             if($machinePhoto){
                 $ct = Image::make($machinePhoto->b64);
                 $ct->resize(337, null, function ($constraint) {
