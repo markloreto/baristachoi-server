@@ -310,9 +310,9 @@ class ApiController extends BaseController
         $machineFrom = $data["machineFrom"];
         $machineTo = $data["machineTo"];
         $delivery = $data["delivery"];
-        $status = $data["status"];
-        $machineType = $data["machineType"];
-        $establishments = $data["establishments"];
+        $status = (isset($data["status"])) ? $data["status"] : [];
+        $machineType = (isset($data["machineType"])) ? $data["machineType"] : [];
+        $establishments = (isset($data["establishments"])) ? $data["establishments"] : [];
         $selectedRegion = $data["selectedRegion"];
         $selectedProvince = $data["selectedProvince"];
         $selectedMunicipal = $data["selectedMunicipal"];
