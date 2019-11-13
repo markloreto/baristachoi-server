@@ -14,6 +14,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Stream\Stream;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Collection;
 use OneSignal;
 
 use Rap2hpoutre\FastExcel\FastExcel;
@@ -535,7 +536,7 @@ class ApiController extends BaseController
         }
 
         if($export){
-            (new Collection([[1, 2, 3], [1, 2, 3]]))->downloadExcel(
+            (new Collection($default))->downloadExcel(
                 "machines.xls",
                 $writerType = null,
                 $headings = false
