@@ -16,7 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use OneSignal;
 
-use Rap2hpoutre\FastExcel\FastExcel;
+use FastExcel;
 
 use App\Exports\MachinesExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -540,7 +540,7 @@ class ApiController extends BaseController
                 [ 'id' => 1, 'name' => 'Jane' ],
                 [ 'id' => 2, 'name' => 'John' ],
             ]);
-            (new FastExcel($list))->export('machines.csv');
+            return (new FastExcel($list))->export('machines.csv');
         }
         else{
             return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
