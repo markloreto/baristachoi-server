@@ -533,7 +533,7 @@ class ApiController extends BaseController
         }
 
         if($export){
-            $request->session()->put('machineFilterQ', $default);
+            $request->session()->put('machineFilterQ', $default->toArray());
             return Excel::download(new MachinesExport, 'machines.xls');
         }
         else{
