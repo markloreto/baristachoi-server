@@ -458,10 +458,6 @@ class ApiController extends BaseController
             $machineFilter->where("m.verified", 0);
         }
 
-        if ($request->isMethod('post')) {
-            $request->session()->put('machineFilterQ', $machineFilter);
-        }
-
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
             if(in_array("Lead", $status) && in_array("Prospect", $status) && in_array("Active", $status) && in_array("Inactive", $status)){
@@ -537,6 +533,7 @@ class ApiController extends BaseController
         }
 
         if($export){
+            $request->session()->put('machineFilterQ', $default);
             return Excel::download(new MachinesExport, 'machines.xls');
         }
         else{
