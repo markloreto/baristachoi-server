@@ -540,7 +540,7 @@ class ApiController extends BaseController
             //return Excel::download(new MachinesExport, 'machines.xls');
             $excel = Exporter::make('Excel');
             $excel->loadQuery($exportQuery);
-            $excel->setChunk(1000);
+            //$excel->setChunk(1000);
             return $excel->stream("test.xls");
         }
         else{
