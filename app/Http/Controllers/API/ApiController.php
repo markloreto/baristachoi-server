@@ -544,7 +544,7 @@ class ApiController extends BaseController
                 $writerType = null,
                 $headings = false
             ); */
-            $session2 = $request->session()->get('machineFilterQ');
+            $session2 = session('machineFilterQ');
             $results = DB::select(DB::raw($session2));
             $exportation = new MachinesExport(collect($results));
             return Excel::download($exportation, 'machines.xls');
