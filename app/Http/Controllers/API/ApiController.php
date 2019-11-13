@@ -542,12 +542,11 @@ class ApiController extends BaseController
                 $headings = false
             ); */
 
-            $exportation = new MachinesExport($request->session()->get('machineFilterCollection'));
+            $exportation = new MachinesExport($default);
             return Excel::download($exportation, 'machines.xls');
 
         }
         else{
-            $request->session()->put('machineFilterCollection', $default);
             return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
         }
         
