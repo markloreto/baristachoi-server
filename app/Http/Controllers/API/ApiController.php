@@ -305,12 +305,14 @@ class ApiController extends BaseController
             $data = $request->all();
             $request->session()->put('machineFilter', $data);
             $session = $request->session()->get('machineFilter');
+            $export = false;
         }else{
             $data = $request->session()->get('machineFilter');
+            $export = true;
         }
         
         
-        $export = $data["export"];
+        
 
 
         $depot = (isset($data["depot"])) ? $data["depot"] : [];
@@ -529,7 +531,7 @@ class ApiController extends BaseController
                 $default = $machineFilter->get();
         }
 
-        if($export == true){
+        if($export){
             return Excel::download(new MachinesExport, 'machines.xlsx');
         }
         else{
