@@ -536,7 +536,7 @@ class ApiController extends BaseController
 
         if($export){
             //return Excel::download(new MachinesExport, 'machines.xls');
-            (new FastExcel(collect($default)))->export('machines.xlsx');
+            (new FastExcel($default))->export('machines.csv');
         }
         else{
             return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
