@@ -306,8 +306,8 @@ class ApiController extends BaseController
     public function machineFilter(Request $request){
         if ($request->isMethod('post')) {
             $data = $request->all();
-            $request->session()->put('machineFilter', $data);
-            $session = $request->session()->get('machineFilter');
+            session(['machineFilter' => $data]);
+            $session = session("machineFilter");
             
             $export = false;
         }else{
@@ -549,8 +549,9 @@ class ApiController extends BaseController
 
         }
         else{
-            $request->session()->put('machineFilterQ', $test->toSql());
-            $session2 = $request->session()->get('machineFilterQ');
+            session(['machineFilterQ', $test->toSql()]);
+
+            $session2 = session('machineFilterQ');
             return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session2), 'machineFilter');
         }
         
