@@ -535,7 +535,7 @@ class ApiController extends BaseController
         }
 
         if($export){
-            collection($default)->downloadExcel("machines.xls");
+            collection($default)->downloadExcel();
             //return Excel::download(new MachinesExport, 'machines.xls');
 
         }
