@@ -302,9 +302,9 @@ class ApiController extends BaseController
 
     public function machineFilter(Request $request){
         $data = $request->all();
-        $export = (isset($data["params"]));
+        $export = (isset($data["params2"]));
         if($export){
-            $data = $data["params"];
+            $data = $data["params2"];
         }
 
         $depot = $data["depot"];
