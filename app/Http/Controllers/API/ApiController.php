@@ -540,7 +540,8 @@ class ApiController extends BaseController
                 [ 'id' => 1, 'name' => 'Jane' ],
                 [ 'id' => 2, 'name' => 'John' ],
             ]);
-            return (new FastExcel($list))->export('machines.csv');
+
+            fastexcel($list)->export('machines.csv');
         }
         else{
             return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
