@@ -36,7 +36,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/checkKey', 'API\ApiController@checkKey');
 	Route::get('/getRoles', 'API\ApiController@getRoles');
 	Route::match(['get', 'post'], '/getDealersQuickList', 'API\ApiController@getDealersQuickList');
-	Route::post('/machineFilter', 'API\ApiController@machineFilter');
+	Route::match(['get', 'post'], '/machineFilter', 'API\ApiController@machineFilter');
 	Route::post('/getProvinceList', 'API\ApiController@getProvinceList');
 	Route::post('/getMunicipalList', 'API\ApiController@getMunicipalList');
 	Route::post('/getBrgyList', 'API\ApiController@getBrgyList');
