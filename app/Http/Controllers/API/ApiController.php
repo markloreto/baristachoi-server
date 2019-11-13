@@ -421,7 +421,8 @@ class ApiController extends BaseController
         }
 
         $machineFilter->where(function ($query) use ($accuracy, $accuracyOperator) {
-            $query->where("m.accuracy", (($accuracyOperator == "greaterThan") ? ">=" : "<="), $accuracy);
+            $op = ($accuracyOperator == "greaterThan") ? ">=" : "<=";
+            $query->where("m.accuracy", $op, $accuracy);
             $query->orWhereNull('m.accuracy');
         });
 
