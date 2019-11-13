@@ -535,7 +535,7 @@ class ApiController extends BaseController
         }
 
         if($export){
-            $default->downloadExcel(
+            (new Collection([[1, 2, 3], [1, 2, 3]]))->downloadExcel(
                 "machines.xls",
                 $writerType = null,
                 $headings = false
