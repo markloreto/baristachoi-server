@@ -307,12 +307,13 @@ class ApiController extends BaseController
         if ($request->isMethod('post')) {
             $data = $request->all();
             session(['machineFilter' => $data]);
+            
             $session = session("machineFilter");
             
             $export = false;
         }else{
             $data = session('machineFilter');
-            return $data;
+            return $this->sendResponse(session(), "");
             $export = true;
         }
 
