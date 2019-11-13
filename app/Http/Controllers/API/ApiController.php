@@ -15,6 +15,9 @@ use GuzzleHttp\Stream\Stream;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use OneSignal;
+
+use App\Exports\MachinesExport;
+use Maatwebsite\Excel\Facades\Excel;
 //
 class ApiController extends BaseController
 {
@@ -311,6 +314,7 @@ class ApiController extends BaseController
         $accuracyOperator = $data["accuracyOperator"];
         $wifiTriggerValue = $data["wifiTriggerValue"];
         $cellTriggerValue = $data["cellTriggerValue"];
+        $export = $data["export"];
 
         $whereArray = [];
         $lead = [];
@@ -510,7 +514,13 @@ class ApiController extends BaseController
                 $default = $machineFilter->get();
         }
 
-        return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'machineFilter');
+        if($export){
+            return Excel::download(new MachinesExport, 'machines.xlsx');
+        }
+        else{
+            return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'machineFilter');
+        }
+        
     }
 
     public function getProvinceList(Request $request){
