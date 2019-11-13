@@ -552,7 +552,7 @@ class ApiController extends BaseController
         }
         else{
             $request->session()->put('machineFilterQ', $test->toSql());
-            return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
+            return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session2), 'machineFilter');
         }
         
     }
