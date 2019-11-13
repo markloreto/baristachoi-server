@@ -16,6 +16,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use OneSignal;
 
+use Exporter;
+
 use App\Exports\MachinesExport;
 use Maatwebsite\Excel\Facades\Excel;
 //
@@ -310,10 +312,6 @@ class ApiController extends BaseController
             $data = $request->session()->get('machineFilter');
             $export = true;
         }
-        
-        
-        
-
 
         $depot = (isset($data["depot"])) ? $data["depot"] : [];
         $dealerIds = (isset($data["dealerIds"])) ? $data["dealerIds"] : [];
@@ -467,10 +465,10 @@ class ApiController extends BaseController
             if(in_array("Lead", $status) && in_array("Prospect", $status) && in_array("Active", $status) && in_array("Inactive", $status)){
                 if($additionalParams){
                     $recordsFiltered += $default->count();
-                    $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
+                    $default = $machineFilter->limit($params["length"])->offset($params["start"]);
                 }
                 else{
-                    $default = $machineFilter->get();
+                    $default = $machineFilter;
                 }  
             }else{
                 if (in_array("Lead", $status)){
@@ -478,24 +476,24 @@ class ApiController extends BaseController
 
                     if($additionalParams){
                         $recordsFiltered += $lead->count();
-                        $lead = $lead->whereNull('m.client_id')->limit($params["length"])->offset($params["start"])->get();
+                        $lead = $lead->whereNull('m.client_id')->limit($params["length"])->offset($params["start"]);
                     }
                         
                     else
-                        $lead = $lead->whereNull('m.client_id')->get();
+                        $lead = $lead->whereNull('m.client_id');
                 }
     
                 if (in_array("Prospect", $status)){
                     $prospect = clone $machineFilter;
                     if($additionalParams){
                         $recordsFiltered += $prospect->count();
-                        $prospect = $prospect->limit($params["length"])->offset($params["start"])->get();
+                        $prospect = $prospect->limit($params["length"])->offset($params["start"]);
                     }
                     
                     else{
                         $prospect = $prospect->where(function ($query) {
                             $query->whereNotNull('m.client_id');
-                        })->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->get();
+                        })->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0");
                     }
                 }
     
@@ -503,26 +501,26 @@ class ApiController extends BaseController
                     $active = clone $machineFilter;
                     if($additionalParams){
                         $recordsFiltered += $active->count();
-                        $active = $active->limit($params["length"])->offset($params["start"])->get();
+                        $active = $active->limit($params["length"])->offset($params["start"]);
                     }
                         
                     else
                         $active = $active->where(function ($query) {
                             $query->whereNotNull('m.client_id');
-                        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->get();
+                        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0");
                 }
     
                 if (in_array("Inactive", $status)){
                     $inactive = clone $machineFilter;
                     if($additionalParams){
                         $recordsFiltered += $inactive->count();
-                        $inactive = $inactive->limit($params["length"])->offset($params["start"])->get();
+                        $inactive = $inactive->limit($params["length"])->offset($params["start"]);
                     }
                         
                     else
                         $inactive = $inactive->where(function ($query) {
                             $query->whereNotNull('m.client_id');
-                        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->get();
+                        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0");
                 }
             }
         }
@@ -530,17 +528,22 @@ class ApiController extends BaseController
         else{
             if($additionalParams){
                 $recordsFiltered += $machineFilter->count();
-                $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
+                $default = $machineFilter->limit($params["length"])->offset($params["start"]);
             }
             else
-                $default = $machineFilter->get();
+                $default = $machineFilter;
         }
 
         if($export){
-            return Excel::download(new MachinesExport, 'machines.xls');
+            //return Excel::download(new MachinesExport, 'machines.xls');
+
+            $excel = Exporter::make('Excel');
+            $excel->loadQuery($default);
+            $excel->setChunk(1000);
+            return $excel->stream("test.xls");
         }
         else{
-            return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
+            return $this->sendResponse(array("default" => $default->get(), "lead" => $lead->get(), "prospect" => $prospect->get(), "active" => $active->get(), "inactive" => $inactive->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
         }
         
     }
