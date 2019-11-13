@@ -525,12 +525,10 @@ class ApiController extends BaseController
 
         else{
             if($additionalParams){
-                $exportQuery = clone $machineFilter;
                 $recordsFiltered += $machineFilter->count();
                 $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
             }
             else{
-                $exportQuery = clone $machineFilter;
                 $default = $machineFilter->get();
             }
                 
@@ -538,10 +536,7 @@ class ApiController extends BaseController
 
         if($export){
             //return Excel::download(new MachinesExport, 'machines.xls');
-            $excel = Exporter::make('Excel');
-            $excel->loadQuery($exportQuery);
-            //$excel->setChunk(1000);
-            return $excel->stream("test.xls");
+            return (new FastExcel($default))->export('test.xls');
         }
         else{
             return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
