@@ -456,9 +456,7 @@ class ApiController extends BaseController
             $machineFilter->where("m.verified", 0);
         }
 
-        if ($request->isMethod('post')) {
-            $request->session()->put('machineFilterQ', $machineFilter);
-        }
+
 
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
@@ -527,20 +525,23 @@ class ApiController extends BaseController
 
         else{
             if($additionalParams){
+                $exportQuery = clone $machineFilter;
                 $recordsFiltered += $machineFilter->count();
                 $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
             }
-            else
+            else{
+                $exportQuery = clone $machineFilter;
                 $default = $machineFilter->get();
+            }
+                
         }
 
         if($export){
             //return Excel::download(new MachinesExport, 'machines.xls');
-            $query = DB::table('table')->select('col1','col2');
             $excel = Exporter::make('Excel');
-            $excel->loadQuery($query);
+            $excel->loadQuery($exportQuery);
             $excel->setChunk(1000);
-            return $excel->stream($yourFileName);
+            return $excel->stream("test.xls");
         }
         else{
             return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
