@@ -514,7 +514,7 @@ class ApiController extends BaseController
                 $default = $machineFilter->get();
         }
 
-        if($export){
+        if($export == true){
             return Excel::download(new MachinesExport, 'machines.xlsx');
         }
         else{
