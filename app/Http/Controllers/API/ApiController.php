@@ -312,6 +312,7 @@ class ApiController extends BaseController
             $export = false;
         }else{
             $data = session('machineFilter');
+            return $data;
             $export = true;
         }
 
