@@ -19,6 +19,8 @@ Route::post('/serverLogin', 'API\ApiController@serverLogin');
 Route::post('/resetPassword', 'API\ApiController@resetPassword');
 Route::post('/paypalPay2', 'API\ApiController@paypalPay2');
 Route::get('/oneSignal', 'API\ApiController@oneSignal');
+
+Route::post('/test', 'API\ApiController@test');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
 	Route::post('/getClientProfile', 'API\ApiController@getClientProfile');
@@ -85,7 +87,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/depotDashboardDealers', 'API\ApiController@depotDashboardDealers');
 
 	//test
-	Route::post('/test', 'API\ApiController@test');
+	
 
 	//Version Check
 	Route::get('/dealerVersion', 'API\ApiController@dealerVersion');
