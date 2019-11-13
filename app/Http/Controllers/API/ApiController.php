@@ -309,7 +309,7 @@ class ApiController extends BaseController
         $dealerIds = (isset($data["dealerIds"])) ? $data["dealerIds"] : [];
         $machineFrom = $data["machineFrom"];
         $machineTo = $data["machineTo"];
-        $delivery = $data["delivery"];
+        $delivery = (isset($data["delivery"])) ? $data["delivery"] : [];
         $status = (isset($data["status"])) ? $data["status"] : [];
         $machineType = (isset($data["machineType"])) ? $data["machineType"] : [];
         $establishments = (isset($data["establishments"])) ? $data["establishments"] : [];
