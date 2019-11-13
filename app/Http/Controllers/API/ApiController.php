@@ -308,6 +308,7 @@ class ApiController extends BaseController
             $data = $request->all();
             $request->session()->put('machineFilter', $data);
             $session = $request->session()->get('machineFilter');
+            $session2 = $request->session()->get('machineFilterQ');
             $export = false;
         }else{
             $data = $request->session()->get('machineFilter');
@@ -541,12 +542,14 @@ class ApiController extends BaseController
                 $writerType = null,
                 $headings = false
             ); */
-
-            $exportation = new MachinesExport($default);
+            $session2 = $request->session()->get('machineFilterQ');
+            $results = DB::select($session2);
+            $exportation = new MachinesExport(collect($results));
             return Excel::download($exportation, 'machines.xls');
 
         }
         else{
+            $request->session()->put('machineFilterQ', $default->toSql());
             return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session), 'machineFilter');
         }
         
