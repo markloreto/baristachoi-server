@@ -301,7 +301,14 @@ class ApiController extends BaseController
     }
 
     public function machineFilter(Request $request){
-        $data = $request->all();
+        if ($request->isMethod('post')) {
+            $data = $request->all();
+            $request->session()->put('machineFilter', $data);
+        }else{
+            $data = $request->session()->get('machineFilter');
+        }
+        
+        
         $export = $data["export"];
 
 
