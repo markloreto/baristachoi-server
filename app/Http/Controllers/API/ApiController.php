@@ -420,11 +420,11 @@ class ApiController extends BaseController
             //array_push($whereArray, ["m.region", $selectedRegion]);
         }
 
-        $machineFilter->where(function ($query) use ($accuracy, $accuracyOperator) {
+        /* $machineFilter->where(function ($query) use ($accuracy, $accuracyOperator) {
             $op = ($accuracyOperator == "greaterThan") ? ">=" : "<=";
             $query->where("m.accuracy", $op, $accuracy);
             $query->orWhereNull('m.accuracy');
-        });
+        }); */
 
         if($wifiTriggerValue == "Yes"){
             $machineFilter->where(function ($query) {
