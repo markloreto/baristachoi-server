@@ -16,7 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use OneSignal;
 
-use FastExcel;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 use App\Exports\MachinesExport;
 use Maatwebsite\Excel\Facades\Excel;
