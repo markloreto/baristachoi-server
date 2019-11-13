@@ -302,6 +302,11 @@ class ApiController extends BaseController
 
     public function machineFilter(Request $request){
         $data = $request->all();
+        $export = (isset($data["params"]));
+        if($export){
+            $data = $data["params"];
+        }
+
         $depot = $data["depot"];
         $dealerIds = $data["dealerIds"];
         $machineFrom = $data["machineFrom"];
@@ -318,7 +323,7 @@ class ApiController extends BaseController
         $accuracyOperator = $data["accuracyOperator"];
         $wifiTriggerValue = $data["wifiTriggerValue"];
         $cellTriggerValue = $data["cellTriggerValue"];
-        $export = $data["export"];
+        
 
         $whereArray = [];
         $lead = [];
