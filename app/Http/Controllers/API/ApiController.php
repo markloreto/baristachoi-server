@@ -311,7 +311,7 @@ class ApiController extends BaseController
             
             $export = false;
         }else{
-            $data = $request->session()->get('machineFilter');
+            $data = session('machineFilter');
             $export = true;
         }
 
