@@ -371,7 +371,7 @@ class ApiController extends BaseController
             $recordsTotal = $machineFilter->count();
 
             if($export){
-                $machineFilter = $machineFilter->addSelect(DB::raw("m.client_id, m.updated_at, m.accuracy, m.delivery, IF(ISNULL(m.lat), '', CONCAT('https://maps.google.com?q=', m.lat, ',', m.lng)) AS `map`, m.lat AS `latitude`, m.lng AS `longitude`, m.machine_type, m.region, m.province, m.municipal, m.brgy, m.verified, (SELECT name FROM clients WHERE id = m.client_id) AS `client_name`"));
+                $machineFilter = $machineFilter->addSelect(DB::raw("m.client_id, m.updated_at, m.accuracy, m.delivery, IF(ISNULL(m.lat), '', CONCAT('https://maps.google.com?q=', m.lat, ',', m.lng)) AS `map`, m.lat AS `latitude`, m.lng AS `longitude`, m.machine_type, m.region, m.province, m.municipal, m.brgy, IF(m.verified, 'YES', 'NO') AS `verified`, (SELECT name FROM clients WHERE id = m.client_id) AS `client_name`, (SELECT contact FROM contacts WHERE reference_id = m.client_id AND module_id = 3) AS `contact`"));
             }
         }
             
