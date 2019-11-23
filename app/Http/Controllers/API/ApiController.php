@@ -484,7 +484,7 @@ class ApiController extends BaseController
                     $lead = clone $machineFilter;
 
                     if($additionalParams && !$export){
-                        $recordsFiltered += $lead->count();
+                        $recordsFiltered += $lead->whereNull('m.client_id')->count();
                         $lead = $lead->whereNull('m.client_id')->limit($params["length"])->offset($params["start"])->get();
                     }
                         
@@ -495,8 +495,12 @@ class ApiController extends BaseController
                 if (in_array("Prospect", $status)){
                     $prospect = clone $machineFilter;
                     if($additionalParams && !$export){
-                        $recordsFiltered += $prospect->count();
-                        $prospect = $prospect->limit($params["length"])->offset($params["start"])->get();
+                        $recordsFiltered += $prospect->where(function ($query) {
+                            $query->whereNotNull('m.client_id');
+                        })->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->count();
+                        $prospect = $prospect->where(function ($query) {
+                            $query->whereNotNull('m.client_id');
+                        })->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->limit($params["length"])->offset($params["start"])->get();
                     }
                     
                     else{
@@ -509,8 +513,12 @@ class ApiController extends BaseController
                 if (in_array("Active", $status)){
                     $active = clone $machineFilter;
                     if($additionalParams && !$export){
-                        $recordsFiltered += $active->count();
-                        $active = $active->limit($params["length"])->offset($params["start"])->get();
+                        $recordsFiltered += $active->where(function ($query) {
+                            $query->whereNotNull('m.client_id');
+                        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->count();
+                        $active = $active->where(function ($query) {
+                            $query->whereNotNull('m.client_id');
+                        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->limit($params["length"])->offset($params["start"])->get();
                     }
                         
                     else
@@ -522,8 +530,12 @@ class ApiController extends BaseController
                 if (in_array("Inactive", $status)){
                     $inactive = clone $machineFilter;
                     if($additionalParams && !$export){
-                        $recordsFiltered += $inactive->count();
-                        $inactive = $inactive->limit($params["length"])->offset($params["start"])->get();
+                        $recordsFiltered += $inactive->where(function ($query) {
+                            $query->whereNotNull('m.client_id');
+                        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->count();
+                        $inactive = $inactive->where(function ($query) {
+                            $query->whereNotNull('m.client_id');
+                        })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets > 0")->limit($params["length"])->offset($params["start"])->get();
                     }
                         
                     else
