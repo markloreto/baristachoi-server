@@ -311,7 +311,7 @@ class ApiController extends BaseController
             DB::table('data_storage')
             ->updateOrInsert(
                 ['staff_id' => $data["staff_id"], 'trigger' => 'machineFilter'],
-                ['data' => json_encode($data, JSON_FORCE_OBJECT)]
+                ['data' => "test"]
             );
         }else{
             $f = DB::table("data_storage")->select('data')->where([["staff_id", $data["staff_id"]], ["trigger", "machineFilter"]])->first();
