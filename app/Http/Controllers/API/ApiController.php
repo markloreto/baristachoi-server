@@ -555,7 +555,7 @@ class ApiController extends BaseController
                 $writerType = null,
                 $headings = false
             ); */
-            $exportation = new MachinesExport($defaultExp);
+            $exportation = new MachinesExport($defaultExp->get());
             return Excel::download($exportation, 'machines.xls');
 
         }
