@@ -469,7 +469,7 @@ class ApiController extends BaseController
             $machineFilter->where("m.verified", 0);
         }
 
-
+        $defaultExp = clone $machineFilter;
 
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
@@ -544,7 +544,6 @@ class ApiController extends BaseController
                 
             }
             else{
-                $defaultExp = clone $machineFilter;
                 $default = $machineFilter->get();
             }
                 
