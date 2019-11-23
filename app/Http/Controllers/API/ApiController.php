@@ -320,6 +320,7 @@ class ApiController extends BaseController
             }
 
         }else{
+            $data = $request->all();
             $f = DB::table("data_storage")->select('data')->where([["staff_id", $data["staff_id"]], ["trigger", "machineFilter"]])->first();
             $data = json_decode($f->data, true);
             $export = true;
