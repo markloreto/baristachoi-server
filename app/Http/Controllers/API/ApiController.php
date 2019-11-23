@@ -306,14 +306,16 @@ class ApiController extends BaseController
     public function machineFilter(Request $request){
         if ($request->isMethod('post')) {
             $data = $request->all();
-            session(['machineFilter' => $data]);
-            
-            $session = session("machineFilter");
-            
             $export = false;
+
+            DB::table('data_storage')
+            ->updateOrInsert(
+                ['staff_id' => $data["staff_id"], 'trigger' => 'machineFilter'],
+                ['data' => json_encode($data)]
+            );
         }else{
-            $data = session('machineFilter');
-            return $this->sendResponse(session(), "");
+            $f = DB::table("data_storage")->select('data')->where([["staff_id", $data["staff_id"]], ["trigger", "machineFilter"]])->first();
+            $data = json_decode($f->data, true);
             $export = true;
         }
 
@@ -529,7 +531,6 @@ class ApiController extends BaseController
 
         else{
             if($additionalParams){
-                $test = clone $machineFilter;
                 $recordsFiltered += $machineFilter->count();
                 $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
                 
@@ -541,20 +542,17 @@ class ApiController extends BaseController
         }
 
         if($export){
-            /* (new Collection($default))->downloadExcel(
+            (new Collection($default))->downloadExcel(
                 "machines.xls",
                 $writerType = null,
                 $headings = false
-            ); */
-            $exportation = new MachinesExport($test);
-            return Excel::download($exportation, 'machines.xls');
+            );
+
+            //return Excel::download($exportation, 'machines.xls');
 
         }
         else{
-            session(['machineFilterQ', $test->toSql()]);
-
-            $session2 = session('machineFilterQ');
-            return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered, "session" => $session2), 'machineFilter');
+            return $this->sendResponse(array("default" => $default, "lead" => $lead, "prospect" => $prospect, "active" => $active, "inactive" => $inactive, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'machineFilter');
         }
         
     }
