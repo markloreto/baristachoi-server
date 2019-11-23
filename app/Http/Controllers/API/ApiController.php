@@ -369,6 +369,10 @@ class ApiController extends BaseController
                 $machineFilter = $machineFilter->addSelect(DB::raw($col["data"]));
             }
             $recordsTotal = $machineFilter->count();
+
+            if($export){
+                $machineFilter = $machineFilter->addSelect(DB::raw("m.client_id, m.updated_at"));
+            }
         }
             
         else{
@@ -432,7 +436,7 @@ class ApiController extends BaseController
         }
 
         $machineFilter->where(function ($query) use ($accuracy, $accuracyOperator) {
-            $op = ($accuracyOperator == "greaterThan") ? ">" : "<";
+            $op = ($accuracyOperator == "greaterThan") ? ">=" : "<=";
             $query->where("m.accuracy", $op, ($accuracy) ? $accuracy : 0);
             $query->orWhereNull('m.accuracy');
         });
