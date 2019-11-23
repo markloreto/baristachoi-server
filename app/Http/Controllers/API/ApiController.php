@@ -305,14 +305,20 @@ class ApiController extends BaseController
 
     public function machineFilter(Request $request){
         if ($request->isMethod('post')) {
-            $data = $request->input();
+            $data = $request->all();
             $export = false;
 
-            DB::table('data_storage')
-            ->updateOrInsert(
-                ['staff_id' => $data["staff_id"], 'trigger' => 'machineFilter'],
-                ['data' => "test"]
-            );
+            $c = DB::table('data_storage')->where([['staff_id' => $data["staff_id"], 'trigger' => 'machineFilter']])->select("id")->first();
+            if($c){
+                DB::table('data_storage')
+                ->where('id', $c->id)
+                ->update(['data' => json_encode($data)]);
+            }else{
+                DB::table('data_storage')->insert(
+                    ['data' => json_encode($data), 'staff_id' => $data["staff_id"], 'trigger' => 'machineFilter']
+                );
+            }
+
         }else{
             $f = DB::table("data_storage")->select('data')->where([["staff_id", $data["staff_id"]], ["trigger", "machineFilter"]])->first();
             $data = json_decode($f->data, true);
