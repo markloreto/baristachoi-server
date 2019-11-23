@@ -497,16 +497,16 @@ class ApiController extends BaseController
                     if($additionalParams && !$export){
                         $recordsFiltered += $prospect->where(function ($query) {
                             $query->whereNotNull('m.client_id');
-                        })->whereRaw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0')->count();
+                        })->whereNotNull('m.lat')->whereRaw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0')->count();
                         $prospect = $prospect->where(function ($query) {
                             $query->whereNotNull('m.client_id');
-                        })->whereRaw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0')->limit($params["length"])->offset($params["start"])->get();
+                        })->whereNotNull('m.lat')->whereRaw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0')->limit($params["length"])->offset($params["start"])->get();
                     }
                     
                     else{
                         $prospect = $prospect->where(function ($query) {
                             $query->whereNotNull('m.client_id');
-                        })->whereNotNull('m.lat')->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->get();
+                        })->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->get();
                     }
                 }
     
