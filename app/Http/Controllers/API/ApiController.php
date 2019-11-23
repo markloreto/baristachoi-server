@@ -552,7 +552,9 @@ class ApiController extends BaseController
                 $writerType = null,
                 $headings = false
             ); */
-            $collections = $default;
+            $collections = new Collection();
+            if(count($default))
+                $collections = $collections->merge($default);
             if(count($lead))
                 $collections = $collections->merge($lead);
             if(count($prospect))
