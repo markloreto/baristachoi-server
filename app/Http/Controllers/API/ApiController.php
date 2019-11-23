@@ -553,18 +553,30 @@ class ApiController extends BaseController
                 $headings = false
             ); */
             $collections = new Collection();
-            if(count($default))
+            if(count($default)){
                 $collections = $collections->merge($default);
-            if(count($lead))
+            }
+                
+            if(count($lead)){
                 $collections = $collections->merge($lead);
-            if(count($prospect))
+            }
+                
+            if(count($prospect)){
                 $collections = $collections->merge($prospect);
-            if(count($active))
+            }
+                
+            if(count($active)){
                 $collections = $collections->merge($active);
-            if(count($inactive))
+            }
+                
+            if(count($inactive)){
                 $collections = $collections->merge($inactive);
-            if(count($inactive))
+            }
+                
+            if(count($inactive)){
                 $collections = $collections->merge($inactive);
+            }
+                
             
             $exportation = new MachinesExport($collections);
             return Excel::download($exportation, 'machines.xls');
