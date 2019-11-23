@@ -305,13 +305,13 @@ class ApiController extends BaseController
 
     public function machineFilter(Request $request){
         if ($request->isMethod('post')) {
-            $data = $request->all();
+            $data = $request->input();
             $export = false;
 
             DB::table('data_storage')
             ->updateOrInsert(
                 ['staff_id' => $data["staff_id"], 'trigger' => 'machineFilter'],
-                ['data' => json_encode($data)]
+                ['data' => json_encode($data, JSON_FORCE_OBJECT)]
             );
         }else{
             $f = DB::table("data_storage")->select('data')->where([["staff_id", $data["staff_id"]], ["trigger", "machineFilter"]])->first();
