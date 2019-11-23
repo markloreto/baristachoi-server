@@ -308,7 +308,7 @@ class ApiController extends BaseController
             $data = $request->all();
             $export = false;
 
-            $c = DB::table('data_storage')->where([['staff_id' => $data["staff_id"], 'trigger' => 'machineFilter']])->select("id")->first();
+            $c = DB::table('data_storage')->where([['staff_id', $data["staff_id"], 'trigger', 'machineFilter']])->select("id")->first();
             if($c){
                 DB::table('data_storage')
                 ->where('id', $c->id)
