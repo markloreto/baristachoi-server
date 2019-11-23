@@ -507,7 +507,7 @@ class ApiController extends BaseController
                         $prospect = $prospect->where(function ($query) {
                             $query->whereNotNull('m.client_id');
                             $query->whereNotNull('m.lat');
-                        })->whereRaw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0')->get();
+                        })->addSelect(DB::raw('(SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) as totalCallsheets'))->havingRaw("totalCallsheets = 0")->get();
                     }
                 }
     
