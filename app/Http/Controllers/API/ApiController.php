@@ -479,6 +479,7 @@ class ApiController extends BaseController
                     $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
                 }
                 else{
+                    $defaultExp = clone $machineFilter;
                     $default = $machineFilter->get();
                 }  
             }else{
@@ -543,19 +544,20 @@ class ApiController extends BaseController
                 
             }
             else{
+                $defaultExp = clone $machineFilter;
                 $default = $machineFilter->get();
             }
                 
         }
 
         if($export){
-            (new Collection($default))->downloadExcel(
+            /* (new Collection($default))->downloadExcel(
                 "machines.xls",
                 $writerType = null,
                 $headings = false
-            );
-
-            //return Excel::download($exportation, 'machines.xls');
+            ); */
+            $exportation = new MachinesExport($defaultExp);
+            return Excel::download($exportation, 'machines.xls');
 
         }
         else{
