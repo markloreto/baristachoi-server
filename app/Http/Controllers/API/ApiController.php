@@ -472,7 +472,7 @@ class ApiController extends BaseController
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
             if(in_array("Lead", $status) && in_array("Prospect", $status) && in_array("Active", $status) && in_array("Inactive", $status)){
-                if($additionalParams){
+                if($additionalParams && !$export){
                     $recordsFiltered += $default->count();
                     $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
                 }
@@ -483,7 +483,7 @@ class ApiController extends BaseController
                 if (in_array("Lead", $status)){
                     $lead = clone $machineFilter;
 
-                    if($additionalParams){
+                    if($additionalParams && !$export){
                         $recordsFiltered += $lead->count();
                         $lead = $lead->whereNull('m.client_id')->limit($params["length"])->offset($params["start"])->get();
                     }
@@ -494,7 +494,7 @@ class ApiController extends BaseController
     
                 if (in_array("Prospect", $status)){
                     $prospect = clone $machineFilter;
-                    if($additionalParams){
+                    if($additionalParams && !$export){
                         $recordsFiltered += $prospect->count();
                         $prospect = $prospect->limit($params["length"])->offset($params["start"])->get();
                     }
@@ -508,7 +508,7 @@ class ApiController extends BaseController
     
                 if (in_array("Active", $status)){
                     $active = clone $machineFilter;
-                    if($additionalParams){
+                    if($additionalParams && !$export){
                         $recordsFiltered += $active->count();
                         $active = $active->limit($params["length"])->offset($params["start"])->get();
                     }
@@ -521,7 +521,7 @@ class ApiController extends BaseController
     
                 if (in_array("Inactive", $status)){
                     $inactive = clone $machineFilter;
-                    if($additionalParams){
+                    if($additionalParams && !$export){
                         $recordsFiltered += $inactive->count();
                         $inactive = $inactive->limit($params["length"])->offset($params["start"])->get();
                     }
@@ -535,7 +535,7 @@ class ApiController extends BaseController
         }
 
         else{
-            if($additionalParams){
+            if($additionalParams && !$export){
                 $recordsFiltered += $machineFilter->count();
                 $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
                 
