@@ -469,8 +469,6 @@ class ApiController extends BaseController
             $machineFilter->where("m.verified", 0);
         }
 
-        $defaultExp = clone $machineFilter;
-
         if(count($status)){
             $expDate = Carbon::now()->addDays(30);
             if(in_array("Lead", $status) && in_array("Prospect", $status) && in_array("Active", $status) && in_array("Inactive", $status)){
@@ -479,7 +477,6 @@ class ApiController extends BaseController
                     $default = $machineFilter->limit($params["length"])->offset($params["start"])->get();
                 }
                 else{
-                    $defaultExp = clone $machineFilter;
                     $default = $machineFilter->get();
                 }  
             }else{
@@ -555,7 +552,19 @@ class ApiController extends BaseController
                 $writerType = null,
                 $headings = false
             ); */
-            $exportation = new MachinesExport($defaultExp->get());
+            $collections = $default;
+            if(count($lead))
+                $collections = $collections->merge($lead);
+            if(count($prospect))
+                $collections = $collections->merge($prospect);
+            if(count($active))
+                $collections = $collections->merge($active);
+            if(count($inactive))
+                $collections = $collections->merge($inactive);
+            if(count($inactive))
+                $collections = $collections->merge($inactive);
+            
+            $exportation = new MachinesExport($collections);
             return Excel::download($exportation, 'machines.xls');
 
         }
