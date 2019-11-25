@@ -376,7 +376,7 @@ class ApiController extends BaseController
                 addSelect(DB::raw("m.client_id, m.updated_at, m.accuracy, m.delivery, IF(ISNULL(m.lat), '', CONCAT('https://maps.google.com?q=', m.lat, ',', m.lng)) AS `map`, m.lat AS `latitude`, m.lng AS `longitude`, m.machine_type, m.region, m.province, m.municipal, m.brgy, IF(m.verified, 'YES', 'NO') AS `verified`, (SELECT name FROM clients WHERE id = m.client_id) AS `client_name`, (SELECT contact FROM contacts WHERE reference_id = m.client_id AND module_id = 3) AS `contact`, CASE 
                 WHEN m.client_id IS NULL THEN 'Lead' 
                 WHEN ((SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0 AND m.client_id IS NOT NULL) THEN 'Prospect' 
-                WHEN (DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0 AND m.client_id IS NOT NULL) THEN 'Active'
+                WHEN (DATEDIFF('". $expDate ."', (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0 AND m.client_id IS NOT NULL) THEN 'Active' 
                 ELSE '...' END AS `status`"));
             }
         }
