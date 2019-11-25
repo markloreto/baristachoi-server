@@ -26,7 +26,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/getClientProfile', 'API\ApiController@getClientProfile');
 	Route::post('/clientFilter', 'API\ApiController@clientFilter');
 	Route::post('/getReceipt', 'API\ApiController@getReceipt');
-	Route::post('/callsheetFilter', 'API\ApiController@callsheetFilter');
+	Route::match(['get', 'post'], '/callsheetFilter', 'API\ApiController@callsheetFilter');
 	Route::post('/getTopLocations', 'API\ApiController@getTopLocations');
 	Route::post('/getTypeofMachinesCount', 'API\ApiController@getTypeofMachinesCount');
 	Route::post('/getMachinesSummary', 'API\ApiController@getMachinesSummary');
