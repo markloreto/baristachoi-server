@@ -21,6 +21,7 @@ use Rap2hpoutre\FastExcel\FastExcel;
 
 use App\Exports\MachinesExport;
 use App\Exports\CallsheetsExport;
+use App\Exports\ClientsExport;
 use Maatwebsite\Excel\Facades\Excel;
 //
 class ApiController extends BaseController
@@ -129,7 +130,28 @@ class ApiController extends BaseController
     }
 
     public function clientFilter(Request $request){
-        $data = $request->all();
+        if ($request->isMethod('post')) {
+            $data = $request->all();
+            $export = false;
+
+            $c = DB::table('data_storage')->where([['staff_id', $data["staff_id"]], ['trigger', 'clientFilter']])->select("id")->first();
+            if($c){
+                DB::table('data_storage')
+                ->where('id', $c->id)
+                ->update(['data' => json_encode($data)]);
+            }else{
+                DB::table('data_storage')->insert(
+                    ['data' => json_encode($data), 'staff_id' => $data["staff_id"], 'trigger' => 'clientFilter']
+                );
+            }
+
+        }else{
+            $data = $request->all();
+            $f = DB::table("data_storage")->select('data')->where([["staff_id", $data["staff_id"]], ["trigger", "clientFilter"]])->first();
+            $data = json_decode($f->data, true);
+            $export = true;
+        }
+
         $depot = $data["depot"];
         $dealerIds = $data["dealerIds"];
         $from = $data["from"];
@@ -162,6 +184,11 @@ class ApiController extends BaseController
         }
 
         $recordsTotal = $filter->count();
+
+        /* if($export){
+            $filter = $filter->
+            addSelect(DB::raw("DAYNAME(cs.created_at) AS `day`, (SELECT name FROM clients WHERE id = m.client_id) AS `client name`"));
+        } */
 
         if($clientId){
             $filter->where("c.id", $clientId);
@@ -229,11 +256,22 @@ class ApiController extends BaseController
                 $filter->whereRaw("(SELECT count(m.id) FROM machines m WHERE m.client_id = c.id) = ?", [$machines]);
             }
         }
-        $recordsFiltered += $filter->count();
-        $filter = $filter->limit($params["length"])->offset($params["start"])->get();
-        
 
-        return $this->sendResponse(array("clients" => $filter, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
+        if($export){
+            /* (new Collection($default))->downloadExcel(
+                "machines.xls",
+                $writerType = null,
+                $headings = false
+            ); */
+            $exportation = new ClientsExport($filter->get());
+            return Excel::download($exportation, 'clients.xls');
+
+        }else{
+            $recordsFiltered += $filter->count();
+            $filter = $filter->limit($params["length"])->offset($params["start"])->get();
+
+            return $this->sendResponse(array("clients" => $filter, "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'clientFilter');
+        }
     }
 
     public function callsheetFilter(Request $request){
