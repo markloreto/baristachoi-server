@@ -289,8 +289,6 @@ class ApiController extends BaseController
             addSelect(DB::raw("DAYNAME(cs.created_at) AS `day`"));
         }
 
-        $exportFilter = clone $callsheetsFilter;
-
         if($machineId){
             $callsheetsFilter->where("cs.machine_id", $machineId);
         }else{
@@ -324,13 +322,15 @@ class ApiController extends BaseController
             }
         }
 
+        $exportFilter = clone $callsheetsFilter;
+
         if($export){
             /* (new Collection($default))->downloadExcel(
                 "machines.xls",
                 $writerType = null,
                 $headings = false
             ); */
-            $exportation = new MachinesExport($exportFilter);
+            $exportation = new MachinesExport($exportFilter->get());
             return Excel::download($exportation, 'callsheets.xls');
 
         }else{
