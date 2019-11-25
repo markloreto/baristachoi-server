@@ -236,7 +236,28 @@ class ApiController extends BaseController
     }
 
     public function callsheetFilter(Request $request){
-        $data = $request->all();
+        if ($request->isMethod('post')) {
+            $data = $request->all();
+            $export = false;
+
+            $c = DB::table('data_storage')->where([['staff_id', $data["staff_id"]], ['trigger', 'callsheetFilter']])->select("id")->first();
+            if($c){
+                DB::table('data_storage')
+                ->where('id', $c->id)
+                ->update(['data' => json_encode($data)]);
+            }else{
+                DB::table('data_storage')->insert(
+                    ['data' => json_encode($data), 'staff_id' => $data["staff_id"], 'trigger' => 'callsheetFilter']
+                );
+            }
+
+        }else{
+            $data = $request->all();
+            $f = DB::table("data_storage")->select('data')->where([["staff_id", $data["staff_id"]], ["trigger", "callsheetFilter"]])->first();
+            $data = json_decode($f->data, true);
+            $export = true;
+        }
+
         $depot = $data["depot"];
         $dealerIds = $data["dealerIds"];
         $csFrom = $data["csFrom"];
@@ -261,6 +282,13 @@ class ApiController extends BaseController
         }
 
         $recordsTotal = $callsheetsFilter->count();
+
+        if($export){
+            $callsheetsFilter = $callsheetsFilter->
+            addSelect(DB::raw("DAYNAME(cs.created_at) AS `day`"));
+        }
+
+        $exportFilter = clone $callsheetsFilter;
 
         if($machineId){
             $callsheetsFilter->where("cs.machine_id", $machineId);
@@ -295,12 +323,19 @@ class ApiController extends BaseController
             }
         }
 
-        
+        if($export){
+            /* (new Collection($default))->downloadExcel(
+                "machines.xls",
+                $writerType = null,
+                $headings = false
+            ); */
+            $exportation = new MachinesExport($exportFilter);
+            return Excel::download($exportation, 'callsheets.xls');
 
-        
-        $recordsFiltered += $callsheetsFilter->count();
-
-        return $this->sendResponse(array("callsheets" => $callsheetsFilter->limit($params["length"])->offset($params["start"])->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'callsheetFilter');
+        }else{
+            $recordsFiltered += $callsheetsFilter->count();
+            return $this->sendResponse(array("callsheets" => $callsheetsFilter->limit($params["length"])->offset($params["start"])->get(), "recordsTotal" => $recordsTotal, "recordsFiltered" => $recordsFiltered), 'callsheetFilter');
+        }
     }
 
     public function machineFilter(Request $request){
