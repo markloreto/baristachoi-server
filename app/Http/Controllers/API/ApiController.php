@@ -377,6 +377,7 @@ class ApiController extends BaseController
                 WHEN m.client_id IS NULL THEN 'Lead' 
                 WHEN ((SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0 AND m.client_id IS NOT NULL) THEN 'Prospect' 
                 WHEN (DATEDIFF('". $expDate ."', (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0 AND m.client_id IS NOT NULL) THEN 'Active' 
+                WHEN (DATEDIFF('". $expDate ."', (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0 AND m.client_id IS NOT NULL) THEN 'Inactive' 
                 ELSE '...' END AS `status`"));
             }
         }
