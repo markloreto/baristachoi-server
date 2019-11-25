@@ -277,7 +277,7 @@ class ApiController extends BaseController
         $columns = $params["columns"];
         $orderBy = $params["orderBy"];
         $orderDir = $params["orderDir"];
-        $callsheetsFilter = DB::table("callsheets AS cs")->join('depots AS d', 'd.id', '=', 'cs.depot_id')->join('staffs AS s', 's.id', '=', 'cs.staff_id')->orderBy($orderBy, $orderDir);
+        $callsheetsFilter = DB::table("callsheets AS cs")->join('depots AS d', 'd.id', '=', 'cs.depot_id')->join('staffs AS s', 's.id', '=', 'cs.staff_id')->join('machines AS m', 'm.id', '=', 'cs.machine_id')->orderBy($orderBy, $orderDir);
         foreach($columns AS $col){
             $callsheetsFilter = $callsheetsFilter->addSelect(DB::raw($col["data"]));
         }
@@ -286,7 +286,7 @@ class ApiController extends BaseController
 
         if($export){
             $callsheetsFilter = $callsheetsFilter->
-            addSelect(DB::raw("DAYNAME(cs.created_at) AS `day`"));
+            addSelect(DB::raw("DAYNAME(cs.created_at) AS `day`, (SELECT name FROM clients WHERE id = m.client_id) AS `client name`"));
         }
 
         if($machineId){
