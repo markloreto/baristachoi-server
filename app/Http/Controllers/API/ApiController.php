@@ -1062,7 +1062,7 @@ class ApiController extends BaseController
 
         foreach($depot AS $d){
             if($d->thumbnail){
-                $resizedThumbnail = Image::make($clientPhoto->b64_preview);
+                $resizedThumbnail = Image::make($d->thumbnail);
                 $resizedThumbnail->resize(100, 100);
     
                 $t = (string) $resizedThumbnail->encode('data-url');
