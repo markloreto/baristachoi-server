@@ -1060,6 +1060,16 @@ class ApiController extends BaseController
             $depot = $depotV->where([['depot_id', $depot_id], ['role_id', 3]])->get();
         }
 
+        foreach($depot AS $d){
+            if($d->thumbnail){
+                $resizedThumbnail = Image::make($clientPhoto->b64_preview);
+                $resizedThumbnail->resize(100, 100);
+    
+                $t = (string) $resizedThumbnail->encode('data-url');
+                $d->thumbnail = $t;
+            }
+        }
+
         return $this->sendResponse($depot->toArray(), 'getDealersQuickList');
     }
 
