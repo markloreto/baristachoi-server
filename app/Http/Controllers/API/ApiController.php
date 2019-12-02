@@ -1739,11 +1739,12 @@ class ApiController extends BaseController
         $staff_id = $data["staff_id"];
 
         $record = DB::table("staffs AS s")
-        ->select("s.*",
+        ->select("s.*", "d.name AS depot_name",
         DB::raw("IFNULL((SELECT COUNT(*) FROM machines WHERE staff_id = $staff_id), 0) AS total_machines"),
         DB::raw("IFNULL((SELECT COUNT(*) FROM clients WHERE staff_id = $staff_id), 0) AS total_clients"),
         DB::raw("(SELECT created_at FROM callsheets WHERE staff_id = s.id ORDER BY id DESC LIMIT 1) AS last_transaction")
         )
+        ->join('depots AS d', 'd.id', '=', 's.depot_id')
         ->where("s.id", $staff_id)->first();
         return $this->sendResponse($record, 'dealerFullInfo');
     }
