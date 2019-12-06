@@ -48,10 +48,21 @@ class ApiController extends BaseController
         $type = $data["type"];
 
         if($type == "dayGridMonth"){
-            $records = DB::table("callsheets AS cs")->select(DB::raw("(SELECT COUNT(*) FROM machines m WHERE ((DATE_FORMAT(NOW(), '%s') - DATE_FORMAT(COALESCE((SELECT created_at FROM callsheets WHERE machine_id = m.id ORDER BY id DESC LIMIT 1), m.created_at), '%s') ) / 86400) < 32 AND m.delivery = DATE_FORMAT(MIN(cs.created_at), '%a') AND m.created_at <= MAX(cs.created_at) AND m.staff_id = '".$dealerId."') AS `machinesToday`"), DB::raw("(SELECT COUNT(*) FROM machines m WHERE ((DATE_FORMAT(NOW(), '%s') - DATE_FORMAT(COALESCE((SELECT created_at FROM callsheets WHERE machine_id = m.id ORDER BY id DESC LIMIT 1), m.created_at), '%s') ) / 86400) < 32 AND m.delivery = DATE_FORMAT(MIN(cs.created_at), '%a') AND m.created_at <= MAX(cs.created_at) AND m.staff_id = '".$dealerId."' AND m.id IN (SELECT machine_id FROM callsheets WHERE DATE(created_at) = `csDate`) ) AS `visitsCount`"), DB::raw("DATE(cs.created_at) AS `csDate`"), DB::raw("MIN(cs.created_at) AS `firstCall`"), DB::raw("MAX(cs.created_at) AS `lastCall`"))
+            $records = DB::table("callsheets AS cs")->select(DB::raw("(SELECT COUNT(*) FROM machines m WHERE ((DATE_FORMAT(NOW(), '%s') - DATE_FORMAT(COALESCE((SELECT created_at FROM callsheets WHERE machine_id = m.id ORDER BY id DESC LIMIT 1), m.created_at), '%s') ) / 86400) < 32 AND m.delivery = DATE_FORMAT(MIN(cs.created_at), '%a') AND m.created_at <= MAX(cs.created_at) AND m.staff_id = '".$dealerId."') AS `machinesToday`"), DB::raw("(SELECT COUNT(*) FROM machines m WHERE ((DATE_FORMAT(NOW(), '%s') - DATE_FORMAT(COALESCE((SELECT created_at FROM callsheets WHERE machine_id = m.id ORDER BY id DESC LIMIT 1), m.created_at), '%s') ) / 86400) < 32 AND m.delivery = DATE_FORMAT(MIN(cs.created_at), '%a') AND m.created_at <= MAX(cs.created_at) AND m.staff_id = '".$dealerId."' AND m.id IN (SELECT machine_id FROM callsheets WHERE created_at >= MIN(cs.created_at) AND created_at <= MAX(cs.created_at)) ) AS `visitsCount`"), DB::raw("DATE(cs.created_at) AS `csDate`"), DB::raw("MIN(cs.created_at) AS `firstCall`"), DB::raw("MAX(cs.created_at) AS `lastCall`"))
             ->whereBetween('cs.created_at', [$startDate, $endDate])
             ->groupBy(DB::raw('Date(cs.created_at)'))
             ->get();
+
+            foreach($records AS $record){
+                $start = $record->csDate . " 00:00:00";
+                $end = $record->csDate . " 23:59:59";
+
+                $machinesCountToday = DB::table("machines AS m")
+                ->whereRaw("((DATE_FORMAT(NOW(), '%s') - DATE_FORMAT(COALESCE((SELECT created_at FROM callsheets WHERE machine_id = m.id ORDER BY id DESC LIMIT 1), m.created_at), '%s') ) / 86400) < 32 AND m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."'")
+                ->count();
+
+                $record->machinesCountToday = $machinesCountToday;
+            }
         }
 
         return $this->sendResponse($records, 'productivityView');
