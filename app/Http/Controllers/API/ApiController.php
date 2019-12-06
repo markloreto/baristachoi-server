@@ -53,7 +53,7 @@ class ApiController extends BaseController
             ->groupBy(DB::raw('Date(cs.created_at)'))
             ->get();
 
-            foreach($records AS $record){
+            /* foreach($records AS $record){
                 $start = $record->csDate . " 00:00:00";
                 $end = $record->csDate . " 23:59:59";
 
@@ -62,7 +62,7 @@ class ApiController extends BaseController
                 ->count();
 
                 $record->machinesCountToday = $machinesCountToday;
-            }
+            } */
         }
 
         return $this->sendResponse($records, 'productivityView');
