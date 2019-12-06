@@ -48,9 +48,9 @@ class ApiController extends BaseController
         $type = $data["type"];
 
         if($type == "dayGridMonth"){
-            $records = DB::table("callsheets AS cs")->select("cs.created_at", DB::raw("MIN(cs.created_at) AS `firstCall`"), DB::raw("MAX(cs.created_at) AS `lastCall`"))
+            $records = DB::table("callsheets AS cs")->select(DB::raw("DATE(cs.created_at) AS `csDate`"), DB::raw("MIN(cs.created_at) AS `firstCall`"), DB::raw("MAX(cs.created_at) AS `lastCall`"))
             ->whereBetween('cs.created_at', [$startDate, $endDate])
-            ->groupBy('cs.created_at')
+            ->groupBy(DB::raw('Date(cs.created_at)'))
             ->get();
         }
 
