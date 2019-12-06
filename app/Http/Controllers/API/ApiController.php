@@ -63,6 +63,7 @@ class ApiController extends BaseController
                 ->count();
 
                 $visitsCountToday = DB::table("callsheets AS cs")
+                ->whereBetween('cs.created_at', [$startDate, $endDate])
                 ->whereRaw("cs.staff_id = " . $dealerId)
                 ->count();
 
