@@ -63,7 +63,7 @@ class ApiController extends BaseController
                 ->count();
 
                 $record->machinesCountToday = $machinesCountToday;
-                $record->f = $f;
+                $record->f = $f->toDateTimeString();
             }
         }
 
