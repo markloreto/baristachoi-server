@@ -53,16 +53,16 @@ class ApiController extends BaseController
             ->groupBy(DB::raw('Date(cs.created_at)'))
             ->get();
 
-            /* foreach($records AS $record){
+            foreach($records AS $record){
                 $start = $record->csDate . " 00:00:00";
                 $end = $record->csDate . " 23:59:59";
 
                 $machinesCountToday = DB::table("machines AS m")
-                ->whereRaw("((DATE_FORMAT(NOW(), '%s') - DATE_FORMAT(COALESCE((SELECT created_at FROM callsheets WHERE machine_id = m.id ORDER BY id DESC LIMIT 1), m.created_at), '%s') ) / 86400) < 32 AND m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."'")
+                ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."'")
                 ->count();
 
                 $record->machinesCountToday = $machinesCountToday;
-            } */
+            }
         }
 
         return $this->sendResponse($records, 'productivityView');
