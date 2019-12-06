@@ -48,7 +48,7 @@ class ApiController extends BaseController
         $type = $data["type"];
 
         if($type == "dayGridMonth"){
-            $records = DB::table("callsheets AS cs")->select(DB::raw("DATE(cs.created_at) AS `csDate`"), DB::raw("MIN(cs.created_at) AS `firstCall`"), DB::raw("MAX(cs.created_at) AS `lastCall`"))
+            $records = DB::table("callsheets AS cs")->select(DB::raw("(SELECT COUNT(*) FROM machines m WHERE ((DATE_FORMAT(NOW(), '%s') - DATE_FORMAT(COALESCE((SELECT created_at FROM callsheets WHERE machine_id = m.id ORDER BY id DESC LIMIT 1), m.created_at)), '%s') ) / 86400) < 32 AND m.delivery = DATE_FORMAT(cs.created_at, '%a') AND m.created_at <= cs.created_at) AS `machinesToday`"), DB::raw("DATE(cs.created_at) AS `csDate`"), DB::raw("MIN(cs.created_at) AS `firstCall`"), DB::raw("MAX(cs.created_at) AS `lastCall`"))
             ->whereBetween('cs.created_at', [$startDate, $endDate])
             ->groupBy(DB::raw('Date(cs.created_at)'))
             ->get();
