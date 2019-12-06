@@ -59,7 +59,11 @@ class ApiController extends BaseController
                 $f = Carbon::parse($record->csDate)->subDays(31);
 
                 $machinesCountToday = DB::table("machines AS m")
-                ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."'")
+                ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."' AND DATEDIFF('".$record->csDate."', COALESCE(DATE((SELECT created_at FROM callsheets WHERE created_at <= '".$end."' AND machine_id = m.id ORDER BY id DESC LIMIT 1)), NOW()) ) < 32")
+                ->count();
+
+                $visitsCountToday = DB::table("machines AS m")
+                ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."' AND DATEDIFF('".$record->csDate."', COALESCE(DATE((SELECT created_at FROM callsheets WHERE created_at <= '".$end."' AND machine_id = m.id ORDER BY id DESC LIMIT 1)), NOW()) ) < 32 AND m.id IN (SELECT machine_id FROM callsheets WHERE created_at >= '".$start."' AND created_at <= '".$end."')")
                 ->count();
 
                 $record->machinesCountToday = $machinesCountToday;
