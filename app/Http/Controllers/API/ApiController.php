@@ -63,7 +63,7 @@ class ApiController extends BaseController
                 ->count();
 
                 $visitsCountToday = DB::table("machines AS m")
-                ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."' AND DATEDIFF('".$record->csDate."', COALESCE(DATE((SELECT created_at FROM callsheets WHERE created_at <= '".$end."' AND machine_id = m.id ORDER BY id DESC LIMIT 1)), NOW()) ) < 32 AND m.id IN (SELECT machine_id FROM callsheets WHERE created_at >= '".$start."' AND created_at <= '".$end."')")
+                ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."' AND DATEDIFF('".$record->csDate."', COALESCE(DATE((SELECT created_at FROM callsheets WHERE created_at <= '".$end."' AND machine_id = m.id ORDER BY id DESC LIMIT 1)), NOW()) ) < 32 AND m.id IN (SELECT machine_id FROM callsheets WHERE machine_id = m.id)")
                 ->count();
 
                 $record->machinesCountToday = $machinesCountToday;
