@@ -56,9 +56,10 @@ class ApiController extends BaseController
             foreach($records AS $record){
                 $start = $record->csDate . " 00:00:00";
                 $end = $record->csDate . " 23:59:59";
+                $f = Carbon::parse($record->csDate)->subDays(31);
 
                 $machinesCountToday = DB::table("machines AS m")
-                ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."'")
+                ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."' AND m.id IN (SELECT id FROM callsheets WHERE id = m.id AND created_at >= '".$f."' AND created_at <= '".$end."')")
                 ->count();
 
                 $record->machinesCountToday = $machinesCountToday;
