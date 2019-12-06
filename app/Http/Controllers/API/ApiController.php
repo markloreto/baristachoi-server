@@ -40,6 +40,23 @@ class ApiController extends BaseController
         return Excel::download(new MachinesExport, 'machines.xlsx');
     }
 
+    public function productivityView(Request $request){
+        $data = $request->all();
+        $dealerId = $data["dealerId"];
+        $startDate = $data["startDate"];
+        $endDate = $data["endDate"];
+        $type = $data["type"];
+
+        if($type == "dayGridMonth"){
+            $records = DB::table("callsheets AS cs")->select("cs.created_at")
+            ->whereBetween('cs.created_at', [$startDate, $endDate])
+            ->get();
+        }
+
+        return $this->sendResponse($records, 'productivityView');
+
+    }
+
     public function getReceipt(Request $request){
         $data = $request->all();
         $id = $data["id"];

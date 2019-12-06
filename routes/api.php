@@ -23,6 +23,7 @@ Route::get('/oneSignal', 'API\ApiController@oneSignal');
 Route::get('/test', 'API\ApiController@test');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
+	Route::post('/productivityView', 'API\ApiController@productivityView');
 	Route::post('/getClientProfile', 'API\ApiController@getClientProfile');
 	Route::match(['get', 'post'], '/clientFilter', 'API\ApiController@clientFilter');
 	Route::post('/getReceipt', 'API\ApiController@getReceipt');
