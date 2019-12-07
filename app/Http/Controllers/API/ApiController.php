@@ -56,8 +56,14 @@ class ApiController extends BaseController
         $records = DB::table("callsheets AS cs")->select(DB::raw("DATE(cs.created_at) AS `csDate`"), DB::raw("MIN(cs.created_at) AS `firstCall`"), DB::raw("MAX(cs.created_at) AS `lastCall`"))
         ->whereMonth('cs.created_at', $month)
         ->whereYear('cs.created_at', $year)
+        ->where("cs.staff_id", $dealerId)
         ->groupBy(DB::raw('Date(cs.created_at)'))
         ->get();
+
+        /* $visits = DB::table("callsheets AS cs")
+        ->whereMonth('cs.created_at', $month)
+        ->whereYear('cs.created_at', $year)
+        -> */
 
         foreach($records AS $record){
             $start = $record->csDate . " 00:00:00";
@@ -76,6 +82,8 @@ class ApiController extends BaseController
             $record->visitsCountToday = $visitsCountToday;
             $record->f = $f->toDateTimeString();
         }
+
+
 
         return $this->sendResponse($records, 'productivityView');
 
