@@ -60,10 +60,11 @@ class ApiController extends BaseController
         ->groupBy(DB::raw('Date(cs.created_at)'))
         ->get();
 
-        /* $visits = DB::table("callsheets AS cs")
+        $visits = DB::table("callsheets AS cs")
         ->whereMonth('cs.created_at', $month)
         ->whereYear('cs.created_at', $year)
-        -> */
+        ->where("cs.staff_id", $dealerId)
+        ->get();
 
         foreach($records AS $record){
             $start = $record->csDate . " 00:00:00";
@@ -85,7 +86,7 @@ class ApiController extends BaseController
 
 
 
-        return $this->sendResponse($records, 'productivityView');
+        return $this->sendResponse(array("records" => $records, "visits" => $visits), 'productivityView');
 
     }
 
