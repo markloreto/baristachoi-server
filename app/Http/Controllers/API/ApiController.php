@@ -45,6 +45,8 @@ class ApiController extends BaseController
         $dealerId = $data["dealerId"];
         $startDate = $data["startDate"];
         $endDate = $data["endDate"];
+        $year = $data["year"];
+        $month = $data["month"];
         $type = $data["type"];
 
         $records = array();
@@ -52,7 +54,8 @@ class ApiController extends BaseController
 
 
         $records = DB::table("callsheets AS cs")->select(DB::raw("DATE(cs.created_at) AS `csDate`"), DB::raw("MIN(cs.created_at) AS `firstCall`"), DB::raw("MAX(cs.created_at) AS `lastCall`"))
-        ->whereBetween('cs.created_at', [$startDate, $endDate])
+        ->whereMonth('cs.created_at', $month)
+        ->whereYear('cs.created_at', $year)
         ->groupBy(DB::raw('Date(cs.created_at)'))
         ->get();
 
