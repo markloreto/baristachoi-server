@@ -75,13 +75,17 @@ class ApiController extends BaseController
             ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."' AND DATEDIFF('".$record->csDate."', COALESCE(DATE((SELECT created_at FROM callsheets WHERE created_at <= '".$end."' AND machine_id = m.id ORDER BY id DESC LIMIT 1)), NOW()) ) < 32")
             ->count();
 
+            $machinesIds = DB::table("machines AS m")->select("m.id")
+            ->whereRaw("m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."' AND DATEDIFF('".$record->csDate."', COALESCE(DATE((SELECT created_at FROM callsheets WHERE created_at <= '".$end."' AND machine_id = m.id ORDER BY id DESC LIMIT 1)), NOW()) ) < 32")
+            ->get();
+
             $visitsCountToday = DB::table("callsheets AS cs")
             ->whereRaw("cs.staff_id = '$dealerId' AND (cs.created_at >= '" . $start . "' AND cs.created_at <= '" . $end . "') AND cs.machine_id IN (SELECT id FROM machines m WHERE m.delivery = DATE_FORMAT('".$record->csDate."', '%a') AND m.created_at <= DATE('".$end."') AND m.staff_id = '".$dealerId."' AND DATEDIFF('".$record->csDate."', COALESCE(DATE((SELECT created_at FROM callsheets WHERE created_at <= '".$end."' AND machine_id = m.id ORDER BY id DESC LIMIT 1)), NOW()) ) < 32)")
             ->count(DB::raw('DISTINCT cs.machine_id'));
 
             $record->machinesCountToday = $machinesCountToday;
             $record->visitsCountToday = $visitsCountToday;
-            $record->f = $f->toDateTimeString();
+            $record->ids = $machinesIds;
         }
 
 
