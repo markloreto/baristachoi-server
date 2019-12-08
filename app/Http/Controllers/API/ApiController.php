@@ -61,9 +61,11 @@ class ApiController extends BaseController
         ->get();
 
         $visits = DB::table("callsheets AS cs")
+        ->select("cs.*", "m.municipal", "m.brgy")
         ->whereMonth('cs.created_at', $month)
         ->whereYear('cs.created_at', $year)
         ->where("cs.staff_id", $dealerId)
+        ->join('machines AS m', 'm.id', '=', 'cs.machine_id')
         ->get();
 
         foreach($records AS $record){
