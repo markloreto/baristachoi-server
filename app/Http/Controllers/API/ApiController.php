@@ -40,6 +40,14 @@ class ApiController extends BaseController
         return Excel::download(new MachinesExport, 'machines.xlsx');
     }
 
+    public function dealerMachines(Request $request){
+        $data = $request->all();
+        $dealerId = $data["dealerId"];
+
+        $machines = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng')->where("m.staff_id", $dealerId)->whereNotNull('m.lat')->get();
+        return $this->sendResponse($machines->toArray(), 'dealerMachines');
+    }
+
     public function productivityView(Request $request){
         $data = $request->all();
         $dealerId = $data["dealerId"];
