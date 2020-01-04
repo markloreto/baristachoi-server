@@ -44,7 +44,7 @@ class ApiController extends BaseController
         $data = $request->all();
         $dealerId = $data["dealerId"];
 
-        $machines = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng')->where("m.staff_id", $dealerId)->whereNotNull('m.lat')->get();
+        $machines = DB::table("machines AS m")->select('m.id', 'm.lat', 'm.lng', 'm.delivery')->where("m.staff_id", $dealerId)->whereNotNull('m.lat')->get();
         return $this->sendResponse($machines->toArray(), 'dealerMachines');
     }
 
