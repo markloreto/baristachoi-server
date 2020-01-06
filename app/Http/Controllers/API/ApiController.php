@@ -758,6 +758,22 @@ class ApiController extends BaseController
         
     }
 
+    public function dealerMachinesSchedule(Request $request){
+        $data = $request->all();
+        $dealerId = $data["dealerId"];
+        $expDate = Carbon::now()->addDays(30);
+        $machineFilter = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id')->join('staffs AS s', 's.id', '=', 'm.staff_id')->where("staff_id", $dealerId);
+        $machineFilter = $machineFilter->
+                addSelect(DB::raw("m.client_id, m.updated_at, m.accuracy, m.delivery, IF(ISNULL(m.lat), '', CONCAT('https://maps.google.com?q=', m.lat, ',', m.lng)) AS `map`, m.lat AS `latitude`, m.lng AS `longitude`, m.machine_type, m.region, m.province, m.municipal, m.brgy, IF(m.verified, 'YES', 'NO') AS `verified`, (SELECT name FROM clients WHERE id = m.client_id) AS `client_name`, (SELECT contact FROM contacts WHERE reference_id = m.client_id AND module_id = 3) AS `contact`, (SELECT COUNT(*) FROM callsheets WHERE name = 'Sale' AND machine_id = m.id) AS `Sale`, (SELECT COUNT(*) FROM callsheets WHERE name = 'No Sale' AND machine_id = m.id) AS `No Sale`, (SELECT COUNT(*) FROM callsheets WHERE name = 'Repair' AND machine_id = m.id) AS `Repair`, (SELECT COUNT(*) FROM callsheets WHERE name = 'Cleaning' AND machine_id = m.id) AS `Cleaning`, (SELECT COUNT(*) FROM callsheets WHERE name = 'Calibration' AND machine_id = m.id) AS `Calibration`, (SELECT COUNT(*) FROM callsheets WHERE name = 'No Action' AND machine_id = m.id) AS `No Action`, (SELECT created_at FROM callsheets WHERE machine_id = m.id ORDER BY id DESC LIMIT 1) AS `Last transaction`, CASE 
+                WHEN m.client_id IS NULL THEN 'Lead' 
+                WHEN ((SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) = 0 AND m.client_id IS NOT NULL) THEN 'Prospect' 
+                WHEN (DATEDIFF('". $expDate ."', (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0 AND m.client_id IS NOT NULL) THEN 'Active' 
+                WHEN (DATEDIFF('". $expDate ."', (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0 AND m.client_id IS NOT NULL) THEN 'Inactive' 
+                ELSE '...' END AS `status`"))->get();
+
+        return $this->sendResponse($machineFilter, 'dealerMachinesSchedule');
+    }
+
     public function getProvinceList(Request $request){
         $data = $request->all();
         $region = $data["region"];
