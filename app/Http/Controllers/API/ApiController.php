@@ -1168,7 +1168,7 @@ class ApiController extends BaseController
         $data = $request->all();
         $depot_id = $data["depot_id"];
 
-        $depotV = DB::table('staffs')->select('id', 'thumbnail', 'name', DB::raw("(SELECT created_at FROM callsheets WHERE staff_id = s.id ORDER BY id DESC LIMIT 1) AS last_transaction"));
+        $depotV = DB::table('staffs AS s')->select('s.id', 's.thumbnail', 's.name', DB::raw("(SELECT created_at FROM callsheets WHERE staff_id = s.id ORDER BY id DESC LIMIT 1) AS last_transaction"));
         
         if(is_array($depot_id)){
             $depot = $depotV->where('role_id', 3)->whereIn("depot_id", $depot_id)->get();
