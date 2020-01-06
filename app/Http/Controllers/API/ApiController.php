@@ -57,6 +57,15 @@ class ApiController extends BaseController
         return $this->sendResponse(null, 'setMachineDelivery');
     }
 
+    public function setMachineVerification(Request $request){
+        $data = $request->all();
+        $machineId = $data["machineId"];
+        $verified = $data["verified"];
+
+        DB::table('machines')->where('id', $machineId)->update(['verified' => $verified]);
+        return $this->sendResponse(null, 'setMachineVerification');
+    }
+
     public function productivityView(Request $request){
         $data = $request->all();
         $dealerId = $data["dealerId"];
