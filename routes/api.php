@@ -23,6 +23,7 @@ Route::get('/oneSignal', 'API\ApiController@oneSignal');
 Route::get('/test', 'API\ApiController@test');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
+	Route::post('/deleteMachine', 'API\ApiController@deleteMachine');
 	Route::post('/setMachineVerification', 'API\ApiController@setMachineVerification');
 	Route::post('/dealerMachinesSchedule', 'API\ApiController@dealerMachinesSchedule');
 	Route::post('/setMachineDelivery', 'API\ApiController@setMachineDelivery');

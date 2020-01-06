@@ -66,6 +66,22 @@ class ApiController extends BaseController
         return $this->sendResponse(null, 'setMachineVerification');
     }
 
+    public function deleteMachine(Request $request){
+        $data = $request->all();
+        $machineId = $data["machineId"];
+
+        DB::table('machines')->where('id', $machineId)->delete();
+        DB::table('attachments')->where([['reference_id', $machineId], ['module_id', 5]])->delete();
+        DB::table('callsheets')->where('machine_id', $machineId)->delete();
+        DB::table('callsheets')->where('machine_id', $machineId)->delete();
+        DB::table('cell_triggers')->where('machine_id', $machineId)->delete();
+        DB::table('converted_synchs2')->where([['converted_id', $machineId], ['table', 'machines']])->delete();
+        DB::table('surveys')->where('machine_id', $machineId)->delete();
+        DB::table('wifi_triggers')->where('machine_id', $machineId)->delete();
+
+        return $this->sendResponse(null, 'setMachineVerification');
+    }
+
     public function productivityView(Request $request){
         $data = $request->all();
         $dealerId = $data["dealerId"];
