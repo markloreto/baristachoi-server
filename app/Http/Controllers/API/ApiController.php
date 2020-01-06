@@ -48,6 +48,15 @@ class ApiController extends BaseController
         return $this->sendResponse($machines->toArray(), 'dealerMachines');
     }
 
+    public function setMachineDelivery(Request $request){
+        $data = $request->all();
+        $ids = $data["ids"];
+        $delivery = $data["delivery"];
+
+        DB::table('machines')->whereIn('id', $ids)->update(['delivery' => $delivery]);
+        return $this->sendResponse(null, 'setMachineDelivery');
+    }
+
     public function productivityView(Request $request){
         $data = $request->all();
         $dealerId = $data["dealerId"];
