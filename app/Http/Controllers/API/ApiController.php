@@ -1143,11 +1143,9 @@ class ApiController extends BaseController
     
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 4.4;
+        $arr["version"] = 4.5;
         $arr["changelog"] = array(
-            array("ADDED", "new machine field for verification"),
-            array("ADDED", "SMS Command to verify machine"),
-            array("FIXED", "Not updating machine info on submit")
+            array("ADDED", "Only registered contact can enable machine verification on SMS command")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
