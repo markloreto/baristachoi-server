@@ -46,6 +46,10 @@ class ApiController extends BaseController
         $updatedName = $data["updatedName"];
 
         DB::table('staffs')->where('id', $staffId)->update(['name' => $updatedName]);
+        DB::table("sync_records2")->where([
+            ["name", "staffs"],
+            ["data_id", $staffId]
+        ])->delete();
         return $this->sendResponse("...", 'updateStaffName');
     }
 
