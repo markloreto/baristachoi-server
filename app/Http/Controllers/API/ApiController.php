@@ -40,6 +40,15 @@ class ApiController extends BaseController
         return Excel::download(new MachinesExport, 'machines.xlsx');
     }
 
+    public function updateStaffName(Request $request){
+        $data = $request->all();
+        $staffId = $data["staffId"];
+        $updatedName = $data["updatedName"];
+
+        DB::table('staffs')->where('id', $staffId)->update(['name' => $updatedName]);
+        return $this->sendResponse("...", 'updateStaffName');
+    }
+
     public function dealerMachines(Request $request){
         $data = $request->all();
         $dealerId = $data["dealerId"];
