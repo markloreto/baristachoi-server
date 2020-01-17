@@ -1156,9 +1156,10 @@ class ApiController extends BaseController
     
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 4.6;
+        $arr["version"] = 4.7;
         $arr["changelog"] = array(
-            array("ADDED", "QR Scanner")
+            array("ADDED", "New Map: CAR - Benguet"),
+            array("ADDED", "New Map: IloIlo Province")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
