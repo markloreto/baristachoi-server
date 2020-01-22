@@ -49,7 +49,7 @@ class ApiController extends BaseController
         ->where('m.verified', 1)
         ->groupBy(DB::raw('m.depot_id'))
         ->orderBy(\DB::raw('count(m.verified)'), 'DESC')
-        ->get();
+        ->get();;
 
         return $this->sendResponse($records, 'getTopDepotVerifiedMachines');
 
