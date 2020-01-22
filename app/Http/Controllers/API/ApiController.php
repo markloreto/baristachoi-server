@@ -47,7 +47,7 @@ class ApiController extends BaseController
         ->select(DB::raw('d.name AS `depot`, COUNT(m.verified) AS `total`'))
         ->join('depots AS d', 'd.id', '=', 'm.depot_id')
         ->where('m.verified', 1)
-        ->groupBy(DB::raw('Date(cs.created_at)'))
+        ->groupBy(DB::raw('m.depot_id'))
         ->orderBy(\DB::raw('count(m.verified)'), 'DESC')
         ->get();
 
