@@ -1166,7 +1166,7 @@ class ApiController extends BaseController
             }
         }
 
-        return $this->sendResponse(array("to" => $to, "transferred" => $ids), 'checkMachineTransfers retrieved successfully.');
+        return $this->sendResponse(array("to" => $to, "transferred" => $ids), 'checkMachineTransfers retrieved successfully.');;
     }
 
     
@@ -1174,7 +1174,7 @@ class ApiController extends BaseController
         $arr = array(); 
         $arr["version"] = 4.9;
         $arr["changelog"] = array(
-            array("FIXED", "Installation procedure")
+            array("FIXED", "Installation procedure....")
         );
         $json = json_encode($arr, JSON_FORCE_OBJECT); 
         return $this->sendResponse($json, 'dealerVersion retrieved successfully.');
