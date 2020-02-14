@@ -40,6 +40,25 @@ class ApiController extends BaseController
         return Excel::download(new MachinesExport, 'machines.xlsx');
     }
 
+    public function setMachineDealer(){
+        $data = $request->all();
+        $ids = $data["ids"];
+        $dealerId = $data["dealerId"];
+
+        OneSignal::sendNotificationUsingTags(
+            "Test Only",
+            array(
+                ["field" => "tag", "key" => "userId", "relation" => "=", "value" => $dealerId]
+            ),
+            $url = null,
+            $data = null,
+            $buttons = null,
+            $schedule = null
+        );
+
+
+    }
+
     public function getTopDepotVerifiedMachines(Request $request){
         $data = $request->all();
 
