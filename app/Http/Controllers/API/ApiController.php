@@ -43,7 +43,7 @@ class ApiController extends BaseController
     public function setMachineDealer(Request $request){
         $data = $request->all();
         $ids = $data["ids"];
-        $dealerId = $data["dealerId"];
+        $dealerId = intval($data["dealerId"]);
 
         OneSignal::sendNotificationUsingTags(
             "Test Only",
