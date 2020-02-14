@@ -45,8 +45,10 @@ class ApiController extends BaseController
         $ids = $data["ids"];
         $dealerId = intval($data["dealerId"]);
 
+        DB::table('machines')->whereIn('id', $ids)->update(['staff_id' => $dealerId]);
+
         OneSignal::sendNotificationUsingTags(
-            "Test Only",
+            count($ids) . " machines transferred to you",
             array(
                 ["field" => "tag", "key" => "userId", "relation" => "=", "value" => $dealerId]
             ),
@@ -56,7 +58,7 @@ class ApiController extends BaseController
             $schedule = null
         );
 
-
+        return $this->sendResponse("", 'setMachineDealer retrieved successfully.');
     }
 
     public function getTopDepotVerifiedMachines(Request $request){
