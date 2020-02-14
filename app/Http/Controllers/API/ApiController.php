@@ -40,7 +40,7 @@ class ApiController extends BaseController
         return Excel::download(new MachinesExport, 'machines.xlsx');
     }
 
-    public function setMachineDealer(){
+    public function setMachineDealer(Request $request){
         $data = $request->all();
         $ids = $data["ids"];
         $dealerId = $data["dealerId"];
