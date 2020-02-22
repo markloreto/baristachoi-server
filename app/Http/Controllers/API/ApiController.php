@@ -1055,49 +1055,6 @@ class ApiController extends BaseController
         return $this->sendResponse($message, '...');
     }
 
-    public function insertPaymentCode(Request $request){
-        $data = $request->all();
-        $staff_id = $data["staff_id"];
-
-        $staffQ = DB::table("staffs")->where('id', $staff_id)->first();
-        $staff_name =  $staffQ->name;
-
-        $code = $data["code"];
-        $mytime = Carbon::now();
-
-        $payment_codes = DB::table("payment_codes")->where('code', $code)->first();
-        if($payment_codes){
-            if($payment_codes->staff_id){
-                $status = ($mytime->diffInMinutes(Carbon::parse($payment_codes->expiration))) ? "Active" : "Inactive";
-                $until = ($status == "Active") ? $mytime->diffForHumans(Carbon::parse($payment_codes->expiration), true, false, 5) : "Expired " + $payment_codes->expiration;
-                $staffQ = DB::table("staffs")->where('id', $payment_codes->staff_id)->first();
-                $staff_name =  $staffQ->name;
-                $message = ["status" => $status, "until" => $until, "for" => $staff_name];
-            }else{
-                $addMinutes = 0;
-                $activeCode = DB::table('payment_codes')->whereDate('expiration', '>', $mytime)
-                ->where("staff_id", $staff_id)->orderBy('id', 'desc')->first();
-                $status = "Reloaded";
-                if($activeCode){
-                    $addMinutes += $mytime->diffInMinutes($activeCode->expiration);
-                    $status = "Renewed";
-                }
-
-                $until = Carbon::now()->addDays($payment_codes->days)->addMinutes($addMinutes);
-
-                DB::table('payment_codes')->where('id', $payment_codes->id)->update(['code' => $code, 'staff_id' => $staff_id, "expiration" => $until]);
-
-                $message = ["status" => $status, "until" => Carbon::now()->diffForHumans($until, true, false, 5), "for" => $staff_name, "addMinutes" => $addMinutes];
-            }
-            
-        }
-        else{
-            $message = ["status" => "Invalid", "until" => "", "for" => ""];
-        }
-
-        return $this->sendResponse($message, '...');
-    }
-
     public function pullClientDetails(Request $request){
         $data = $request->all();
         $clientId = $data["clientId"];
@@ -1193,7 +1150,7 @@ class ApiController extends BaseController
     
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 5.0;
+        $arr["version"] = 5.1;
         $arr["changelog"] = array(
             array("FIXED", "All installation errors"),
             array("ADDED", "Send SMS features thru delivery list")
