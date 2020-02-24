@@ -45,6 +45,11 @@ class ApiController extends BaseController
         $ids = $data["ids"];
         $dealerId = intval($data["dealerId"]);
 
+        $records = DB::table('machines')->select("client_id")->whereIn('id', $ids)->whereNotNull('client_id')->get();
+        foreach($records AS $record){
+            DB::table('clients')->where('id', $record->client_id)->update(['staff_id' => $dealerId]);
+        }
+
         DB::table('machines')->whereIn('id', $ids)->update(['staff_id' => $dealerId]);
 
         OneSignal::sendNotificationUsingTags(
