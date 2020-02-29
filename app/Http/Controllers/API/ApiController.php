@@ -43,10 +43,10 @@ class ApiController extends BaseController
     public function getVerifiedMachineStatus(Request $request){
         $data = $request->all();
         $expDate = Carbon::now()->addDays(30);
-        $active = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id')->select(DB::raw('d.name AS `Depot Name`, COUNT(*) AS `bilang`'))->where(function ($query) {
+        $active = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id')->select(DB::raw('d.id AS depot_id, d.name AS `Depot Name`, COUNT(*) AS `bilang`'))->where(function ($query) {
             $query->whereNotNull('m.client_id');
         })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) < 31 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0 AND m.verified = 1')->groupBy(DB::raw('m.depot_id'))->get();
-        $inactive = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id')->select(DB::raw('d.name AS `Depot Name`, COUNT(*) AS `bilang`'))->where(function ($query) {
+        $inactive = DB::table("machines AS m")->join('depots AS d', 'd.id', '=', 'm.depot_id')->select(DB::raw('d.id AS depot_id, d.name AS `Depot Name`, COUNT(*) AS `bilang`'))->where(function ($query) {
             $query->whereNotNull('m.client_id');
         })->whereRaw('DATEDIFF("'. $expDate .'", (SELECT created_at FROM callsheets WHERE callsheets.machine_id = m.id ORDER BY id DESC LIMIT 1)) > 30 AND (SELECT COUNT(*) FROM callsheets cs WHERE cs.machine_id = m.id) > 0 AND m.verified = 1')->groupBy(DB::raw('m.depot_id'))->get();
 
