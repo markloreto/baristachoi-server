@@ -83,7 +83,7 @@ class ApiController extends BaseController
         $data = $request->all();
 
         $records = DB::table('machines AS m')
-        ->select(DB::raw('d.name AS `depot`, COUNT(m.verified) AS `total`'))
+        ->select(DB::raw('d.id AS depot_id, d.name AS `depot`, COUNT(m.verified) AS `total`'))
         ->join('depots AS d', 'd.id', '=', 'm.depot_id')
         ->where('m.verified', 1)
         ->groupBy(DB::raw('m.depot_id'))
