@@ -29,7 +29,7 @@ class PHPController extends BaseController
     public function nexmoOTP(Request $request){
         $data = $request->all();
         $phoneNumber = $data["phoneNumber"];
-        $cancelRequest = $data["cancelRequest"];
+        $cancelRequest = intval($data["cancelRequest"]);
         $requestId = (isset($data["requestId"])) ? $data["requestId"] : "";
         $basic  = new \Nexmo\Client\Credentials\Basic('9662548f', 'fsP0efbavPlPtfY0');
         $client = new \Nexmo\Client($basic);
