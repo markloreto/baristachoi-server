@@ -51,6 +51,6 @@ class PHPController extends BaseController
         $verification = new \Nexmo\Verify\Verification($requestId);
         $result = $client->verify()->check($verification, $code);
 
-        return $this->sendResponse($result, 'Depot retrieved successfully.');
+        return $this->sendResponse(array("result" => $result), 'Depot retrieved successfully.');
     }
 }
