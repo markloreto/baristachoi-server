@@ -102,6 +102,7 @@ Route::middleware('auth:api')->group( function () {
 	
 	/* People Help People*/
 	Route::post('/nexmoOTP', 'API\PHPController@nexmoOTP');
+	Route::post('/nexmoVerifyOTP', 'API\PHPController@nexmoVerifyOTP');
 });
 
 

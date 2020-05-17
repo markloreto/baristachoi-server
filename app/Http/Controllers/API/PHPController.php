@@ -39,4 +39,15 @@ class PHPController extends BaseController
 
         return $this->sendResponse(array("verification" => $verification->getRequestId()), 'Depot retrieved successfully.');
     }
+
+    public function nexmoVerifyOTP(Request $request){
+        $data = $request->all();
+        $requestId = $data["phoneNumber"];
+        $code = $data["code"];
+
+        $verification = new \Nexmo\Verify\Verification($requestId);
+        $result = $client->verify()->check($verification, $code);
+
+        return $this->sendResponse($result, 'Depot retrieved successfully.');
+    }
 }
