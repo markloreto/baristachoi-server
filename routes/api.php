@@ -101,7 +101,9 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/dealerVersion', 'API\ApiController@dealerVersion');
 	
 	/* People Help People*/
-	Route::post('/nexmoOTP', 'API\PHPController@nexmoOTP');
+	//Route::post('/nexmoOTP', 'API\PHPController@nexmoOTP');
 });
+
+Route::post('/nexmoOTP', 'API\PHPController@nexmoOTP');
 
 
