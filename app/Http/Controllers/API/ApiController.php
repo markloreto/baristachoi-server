@@ -37,7 +37,15 @@ class ApiController extends BaseController
     }
 
     public function test(){
-        return $this->sendResponse(array("test" => "test"), 'Depot retrieved successfully.');
+        $basic  = new \Nexmo\Client\Credentials\Basic('9662548f', 'fsP0efbavPlPtfY0');
+        $client = new \Nexmo\Client($basic);
+
+        $verification = $client->verify()->start([ 
+            'number' => '639173242410',
+            'brand'  => 'Vonage',
+             'code_length'  => '6']);
+
+        return $this->sendResponse(array("verification" => $verification->getRequestId()), 'Depot retrieved successfully.');
     }
 
     public function getVerifiedMachineStatus(Request $request){
