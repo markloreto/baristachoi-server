@@ -37,7 +37,7 @@ class ApiController extends BaseController
     }
 
     public function test(){
-        return Excel::download(new MachinesExport, 'machines.xlsx');
+        return $this->sendResponse(array("test" => "test"), 'Depot retrieved successfully.');
     }
 
     public function getVerifiedMachineStatus(Request $request){
