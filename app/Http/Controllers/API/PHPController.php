@@ -24,7 +24,7 @@ use App\Exports\CallsheetsExport;
 use App\Exports\ClientsExport;
 use Maatwebsite\Excel\Facades\Excel;
 //
-class ApiController extends BaseController
+class PhpController extends BaseController
 {
     public function nexmoOTP(Request $request){
         $data = $request->all();
