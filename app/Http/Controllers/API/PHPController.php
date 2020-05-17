@@ -45,6 +45,9 @@ class PHPController extends BaseController
         $requestId = $data["requestId"];
         $code = $data["code"];
 
+        $basic  = new \Nexmo\Client\Credentials\Basic('9662548f', 'fsP0efbavPlPtfY0');
+        $client = new \Nexmo\Client($basic);
+
         $verification = new \Nexmo\Verify\Verification($requestId);
         $result = $client->verify()->check($verification, $code);
 
