@@ -42,7 +42,7 @@ class PHPController extends BaseController
 
     public function nexmoVerifyOTP(Request $request){
         $data = $request->all();
-        $requestId = $data["phoneNumber"];
+        $requestId = $data["requestId"];
         $code = $data["code"];
 
         $verification = new \Nexmo\Verify\Verification($requestId);
