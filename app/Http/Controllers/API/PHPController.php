@@ -28,15 +28,15 @@ class PHPController extends BaseController
 {
     public function nexmoOTP(Request $request){
         $data = $request->all();
-        /* $phoneNumber = $data["phoneNumber"];
+        $phoneNumber = $data["phoneNumber"];
         $basic  = new \Nexmo\Client\Credentials\Basic('9662548f', 'fsP0efbavPlPtfY0');
         $client = new \Nexmo\Client($basic);
 
         $verification = $client->verify()->start([ 
             'number' => '63' . $phoneNumber,
             'brand'  => 'Vonage',
-             'code_length'  => '6']); */
+             'code_length'  => '6']);
 
-        return $this->sendResponse($data /* array("verification" => $verification->getRequestId()) */, 'Depot retrieved successfully.');
+        return $this->sendResponse(array("verification" => $verification->getRequestId()), 'Depot retrieved successfully.');
     }
 }
