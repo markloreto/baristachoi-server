@@ -20,7 +20,6 @@ Route::post('/resetPassword', 'API\ApiController@resetPassword');
 Route::post('/paypalPay2', 'API\ApiController@paypalPay2');
 Route::get('/oneSignal', 'API\ApiController@oneSignal');
 
-Route::get('/test', 'API\ApiController@test');
 //Route::resource('users', 'API\ApiController');
 Route::middleware('auth:api')->group( function () {
 	Route::post('/getVerifiedMachineStatus', 'API\ApiController@getVerifiedMachineStatus');
@@ -101,6 +100,8 @@ Route::middleware('auth:api')->group( function () {
 	//Version Check
 	Route::get('/dealerVersion', 'API\ApiController@dealerVersion');
 	
+	/* People Help People*/
+	Route::get('/nexmoOTP', 'API\PHPController@nexmoOTP');
 });
 
 
