@@ -60,4 +60,11 @@ class PHPController extends BaseController
         $records = DB::table("php_categories AS m")->whereNull('parent_id')->get();
         return $this->sendResponse($records, 'PHPcategories retrieved successfully.');
     }
+
+    public function PHPsubcategories(Request $request){
+        $data = $request->all();
+        $categoryId = $data["categoryId"];
+        $records = DB::table("php_categories AS m")->where('parent_id', $categoryId)->get();
+        return $this->sendResponse($records, 'PHPcategories retrieved successfully.');
+    }
 }
