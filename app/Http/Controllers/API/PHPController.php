@@ -53,4 +53,11 @@ class PHPController extends BaseController
 
         return $this->sendResponse($result->getResponseData(), 'Depot retrieved successfully.');
     }
+
+    public function PHPcategories(Request $request){
+        $data = $request->all();
+
+        $records = DB::table("php_categories AS m")->whereNull('parent_id')->get();
+        return $this->sendResponse($records, 'PHPcategories retrieved successfully.');
+    }
 }
