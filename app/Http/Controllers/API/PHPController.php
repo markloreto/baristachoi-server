@@ -69,7 +69,7 @@ class PHPController extends BaseController
     }
 
     public function PHPProvinceList(Request $request){
-        $data $request->all();
+        $data = $request->all();;
 
         $records = DB::table("locations")->distinct()->select("province")->get();
 
