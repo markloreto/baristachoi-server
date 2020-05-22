@@ -84,4 +84,13 @@ class PHPController extends BaseController
 
         return $this->sendResponse($records, 'PHPMunicipalList retrieved successfully.');
     }
+
+    public function PHPBrgyList(Request $request){
+        $data = $request->all();
+        $municipalId = $data["municipalId"];
+
+        $records = DB::table("locations")->select("id_3", "name_3", "varname_3")->where("id_2", $municipalId)->orderBy("name_3", "ASC")->get();
+
+        return $this->sendResponse($records, 'PHPBrgyList retrieved successfully.');
+    }
 }
