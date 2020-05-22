@@ -105,6 +105,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/nexmoVerifyOTP', 'API\PHPController@nexmoVerifyOTP');
 	Route::get('/PHPcategories', 'API\PHPController@PHPcategories');
 	Route::get('/PHPsubcategories', 'API\PHPController@PHPsubcategories');
+	Route::get('/PHPProvinceList', 'API\PHPController@PHPProvinceList');
 });
 
 

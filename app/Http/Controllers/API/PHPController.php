@@ -65,6 +65,14 @@ class PHPController extends BaseController
         $data = $request->all();
         $categoryId = $data["categoryId"];
         $records = DB::table("php_categories AS m")->where('parent_id', $categoryId)->get();
-        return $this->sendResponse($records, 'PHPcategories retrieved successfully.');
+        return $this->sendResponse($records, 'PHPsubcategories retrieved successfully.');
+    }
+
+    public function PHPProvinceList(Request $request){
+        $data $request->all();
+
+        $records = DB::table("locations")->distinct()->select("province")->get();
+
+        return $this->sendResponse($records, 'PHPProvinceList retrieved successfully.');
     }
 }
