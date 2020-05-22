@@ -75,4 +75,13 @@ class PHPController extends BaseController
 
         return $this->sendResponse($records, 'PHPProvinceList retrieved successfully.');
     }
+
+    public function PHPMunicipalList(Request $request){
+        $data = $request->all();
+        $province = $data["province"];
+
+        $records = DB::table("locations")->select("id_2", "name_2")->where("province", $province)->get();
+
+        return $this->sendResponse($records, 'PHPMunicipalList retrieved successfully.');
+    }
 }
