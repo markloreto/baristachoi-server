@@ -80,7 +80,7 @@ class PHPController extends BaseController
         $data = $request->all();
         $province = $data["province"];
 
-        $records = DB::table("locations")->select("id_2", "name_2")->where("province", $province)->get();
+        $records = DB::table("locations")->distinct()->select("id_2", "name_2")->where("province", $province)->get();
 
         return $this->sendResponse($records, 'PHPMunicipalList retrieved successfully.');
     }
