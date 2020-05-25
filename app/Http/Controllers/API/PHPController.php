@@ -93,4 +93,19 @@ class PHPController extends BaseController
 
         return $this->sendResponse($records, 'PHPBrgyList retrieved successfully.');
     }
+
+    public function getLoc(Request $request){
+        
+        $data = $request->all();
+        $lat = $data["lat"];
+        $lng = $data["lng"];
+
+        $loc = DB::table("locations")->select(DB::raw("region, province, name_2 AS municipal, name_3 AS brgy"))->whereRaw("MbrWithin(GeomFromText(?), shape)", ['POINT('.$lng.' '.$lat.')'])->first();
+
+        if($loc){
+            $data = $loc->province . ", " . $loc->municipal . ", " . $loc->brgy; 
+        }else{
+            $data = "";
+        }
+    }
 }
