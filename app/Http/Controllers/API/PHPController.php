@@ -107,5 +107,7 @@ class PHPController extends BaseController
         }else{
             $data = "";
         }
+
+        return $this->sendResponse($data, 'getLoc retrieved successfully.');
     }
 }
