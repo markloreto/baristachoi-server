@@ -128,6 +128,6 @@ class PHPController extends BaseController
             ['lat' => $lat, 'lng' => $lng, 'photo' => $milliseconds . ".jpg", 'message' => $message]
         ); */
 
-        return $this->sendResponse("...", 'phpContributionSubmit retrieved successfully.');
+        return $this->sendResponse($data, 'phpContributionSubmit retrieved successfully.');
     }
 }
