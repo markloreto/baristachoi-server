@@ -122,12 +122,12 @@ class PHPController extends BaseController
 
         $milliseconds = round(microtime(true) * 1000);
 
-        Storage::disk('local')->put("peoplehelppeople/" . $milliseconds . ".jpg", "data:image/*;base64," . $photo);
+        Storage::disk('local')->put("peoplehelppeople/" . $milliseconds . ".jpg", /* "data:image/*;base64," . */ base64_decode($photo));
 
         /* DB::table('php_contributions')->insert(
             ['lat' => $lat, 'lng' => $lng, 'photo' => $milliseconds . ".jpg", 'message' => $message]
         ); */
 
-        return $this->sendResponse($data, 'phpContributionSubmit retrieved successfully.');
+        return $this->sendResponse("...", 'phpContributionSubmit retrieved successfully.');
     }
 }
