@@ -132,6 +132,6 @@ class PHPController extends BaseController
 
 
 
-        return $this->sendResponse($data, 'phpContributionSubmit retrieved successfully.');
+        return $this->sendResponse($data, 'phpContributionSubmit retrieved successfully.');;
     }
 }
