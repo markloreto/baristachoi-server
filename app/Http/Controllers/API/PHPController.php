@@ -23,6 +23,8 @@ use App\Exports\MachinesExport;
 use App\Exports\CallsheetsExport;
 use App\Exports\ClientsExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
+
 //
 class PHPController extends BaseController
 {
@@ -109,5 +111,23 @@ class PHPController extends BaseController
         }
 
         return $this->sendResponse($data, 'getLoc retrieved successfully.');
+    }
+
+    public function phpContributionSubmit(Request $request){
+        $data = $request->all();
+        /* $lat = $data["lat"];
+        $lng = $data["lng"];
+        $message = $data["message"]; */
+        $photo = $data["photo"];
+
+        $milliseconds = round(microtime(true) * 1000);
+
+        Storage::disk('local')->put("peoplehelppeople/" . $milliseconds . ".jpg", $photo);
+
+        /* DB::table('php_contributions')->insert(
+            ['lat' => $lat, 'lng' => $lng, 'photo' => $milliseconds . ".jpg", 'message' => $message]
+        ); */
+
+        return $this->sendResponse("...", 'phpContributionSubmit retrieved successfully.');
     }
 }

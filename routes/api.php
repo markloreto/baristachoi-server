@@ -109,6 +109,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/PHPMunicipalList', 'API\PHPController@PHPMunicipalList');
 	Route::get('/PHPBrgyList', 'API\PHPController@PHPBrgyList');
 	Route::get('/getLoc', 'API\PHPController@getLoc');
+	Route::post('/phpContributionSubmit', 'API\PHPController@phpContributionSubmit');
 });
 
 
