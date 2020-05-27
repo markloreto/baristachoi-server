@@ -115,19 +115,23 @@ class PHPController extends BaseController
 
     public function phpContributionSubmit(Request $request){
         $data = $request->all();
-        /* $lat = $data["lat"];
+        $lat = $data["lat"];
         $lng = $data["lng"];
-        $message = $data["message"]; */
+        $locations = $data["locations"];
+        $categories = $data["categories"];
+        $message = ($data["message"] == "") ? null : $data["message"];
         $photo = $data["photo"];
 
         $milliseconds = round(microtime(true) * 1000);
 
         Storage::disk('local')->put("peoplehelppeople/" . $milliseconds . ".jpg", /* "data:image/*;base64," . */ base64_decode($photo));
 
-        /* DB::table('php_contributions')->insert(
+        $id = DB::table('php_contributions')->insertGetId(
             ['lat' => $lat, 'lng' => $lng, 'photo' => $milliseconds . ".jpg", 'message' => $message]
-        ); */
+        );
 
-        return $this->sendResponse("...", 'phpContributionSubmit retrieved successfully.');
+
+
+        return $this->sendResponse($data, 'phpContributionSubmit retrieved successfully.');
     }
 }
