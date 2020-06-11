@@ -150,7 +150,7 @@ class PHPController extends BaseController
     }
 
     public function ETinda(Request $request){
-
-        return $this->sendResponse($data, 'phpContributionSubmit retrieved successfully.');
+        $data = $request->all();
+        return $this->sendResponse("", 'phpContributionSubmit retrieved successfully.');
     }
 }
