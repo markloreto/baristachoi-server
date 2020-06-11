@@ -110,6 +110,10 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/PHPBrgyList', 'API\PHPController@PHPBrgyList');
 	Route::get('/getLoc', 'API\PHPController@getLoc');
 	Route::post('/phpContributionSubmit', 'API\PHPController@phpContributionSubmit');
+
+	/* E-Tindaa */
+
+	Route::get('/ETinda', 'API\PHPController@ETinda');
 });
 
 
