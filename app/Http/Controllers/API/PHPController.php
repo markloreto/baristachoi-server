@@ -151,7 +151,7 @@ class PHPController extends BaseController
 
     public function ETinda(Request $request){
         $data = $request->all();
-        //$challenge = $data["hub.challenge"];
-        return response($data, 200);
+        $challenge = $data["hub_challenge"];
+        return response($challenge, 200);
     }
 }
