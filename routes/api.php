@@ -113,8 +113,8 @@ Route::middleware('auth:api')->group( function () {
 
 	/* E-Tindaa */
 
-	Route::get('/ETinda', 'API\PHPController@ETinda');
+	
 });
 
-
+Route::get('/ETinda', 'API\PHPController@ETinda');
 
