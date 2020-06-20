@@ -40,4 +40,9 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($data, 'createProductCategory');
     }
+
+    public function getProductCategory(){
+        $records = DB::table("pabile_product_categories")->orderBy("sequence", "ASC")->get();
+        return $this->sendResponse($records, 'getProductCategory');
+    }
 }
