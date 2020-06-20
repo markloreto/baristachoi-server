@@ -112,7 +112,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/phpContributionSubmit', 'API\PHPController@phpContributionSubmit');
 
 	/* E-Tindaa */
-	Route::post('/phpContributionSubmit', 'API\PHPController@phpContributionSubmit');
+	Route::post('/createProductCategory', 'API\EtindaController@createProductCategory');
 	
 });
 

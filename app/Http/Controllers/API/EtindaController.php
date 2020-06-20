@@ -28,5 +28,14 @@ use Illuminate\Support\Facades\Storage;
 //
 class EtindaController extends BaseController
 {
-    
+    public function createProductCategory(Request $request){
+        $data = $request->all();
+        $name = $data["name"];
+
+        DB::table('pabile_product_categories')->insert(
+            ['name' => $name]
+        );
+
+        return $this->sendResponse($data, 'createProductCategory');
+    }
 }
