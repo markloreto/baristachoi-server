@@ -32,7 +32,7 @@ class EtindaController extends BaseController
         $data = $request->all();
         $name = $data["name"];
 
-        $seq = DB::table('pabile_product_categories')->max('id') - 1;
+        $seq = DB::table('pabile_product_categories')->max('id');
 
         DB::table('pabile_product_categories')->insert(
             ['name' => $name, 'sequence' => $seq]
