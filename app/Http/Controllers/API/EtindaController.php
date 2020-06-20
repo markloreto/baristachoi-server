@@ -32,8 +32,10 @@ class EtindaController extends BaseController
         $data = $request->all();
         $name = $data["name"];
 
+        $seq = DB::table('pabile_product_categories')->max('id') - 1;
+
         DB::table('pabile_product_categories')->insert(
-            ['name' => $name]
+            ['name' => $name, 'sequence' => $seq]
         );
 
         return $this->sendResponse($data, 'createProductCategory');
