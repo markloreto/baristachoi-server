@@ -115,6 +115,8 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/createProductCategory', 'API\EtindaController@createProductCategory');
 	Route::get('/getProductCategory', 'API\EtindaController@getProductCategory');
 	Route::get('/getMainProductCategory', 'API\EtindaController@getMainProductCategory');
+
+	Route::get('/getCategories', 'API\EtindaController@getCategories');
 	
 });
 
