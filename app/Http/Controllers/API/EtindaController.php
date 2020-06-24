@@ -56,7 +56,7 @@ class EtindaController extends BaseController
         $mainCategories = DB::table("pabile_product_main_categories")->get();
 
         foreach($mainCategories as $mainCategory){
-            $category = DB::table("pabile_product_categories")->get();
+            $category = DB::table("pabile_product_categories")->where('parent_id', $mainCategory->id)->get();
             $mainCategory->categories = $category;
         }
 
