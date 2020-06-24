@@ -31,11 +31,12 @@ class EtindaController extends BaseController
     public function createProductCategory(Request $request){
         $data = $request->all();
         $name = $data["name"];
+        $parent_id = $data["parent_id"];
 
         $seq = DB::table('pabile_product_categories')->max('id');
 
         DB::table('pabile_product_categories')->insert(
-            ['name' => $name, 'sequence' => ($seq == null) ? 0 : $seq]
+            ['name' => $name, 'sequence' => ($seq == null) ? 0 : $seq, 'parent_id' => $parent_id]
         );
 
         return $this->sendResponse($data, 'createProductCategory');
@@ -44,5 +45,10 @@ class EtindaController extends BaseController
     public function getProductCategory(){
         $records = DB::table("pabile_product_categories")->orderBy("sequence", "ASC")->get();
         return $this->sendResponse($records, 'getProductCategory');
+    }
+
+    public function getMainProductCategory(){
+        $records = DB::table("pabile_product_main_categories")->get();
+        return $this->sendResponse($records, 'getMainProductCategory');
     }
 }
