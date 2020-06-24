@@ -51,4 +51,15 @@ class EtindaController extends BaseController
         $records = DB::table("pabile_product_main_categories")->get();
         return $this->sendResponse($records, 'getMainProductCategory');
     }
+
+    public function getCategories(){
+        $mainCategories = DB::table("pabile_product_main_categories")->get()->toArray();
+
+        foreach($mainCategories as $mainCategory){
+            $category = DB::table("pabile_product_categories")->get()->toArray();
+            $mainCategory["categories"] = $category;
+        }
+
+        return $this->sendResponse($mainCategories, 'getCategories');
+    }
 }
