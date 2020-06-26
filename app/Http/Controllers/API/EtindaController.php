@@ -62,4 +62,9 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($mainCategories, 'getCategories');
     }
+
+    public function getSpecKeys(){
+        $records = DB::table("pabile_spec_keys")->get();
+        return $this->sendResponse($records, 'getMainProductCategory');
+    }
 }
