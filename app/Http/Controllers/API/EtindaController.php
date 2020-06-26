@@ -88,7 +88,7 @@ class EtindaController extends BaseController
 
     public function createNewProduct(Request $request){
         $data = $request->all();
-        $name = $data["name"];
+        /* $name = $data["name"];
         $mainCategory = $data["mainCategory"];
         $category = $data["category"];
         $enabled = $data["enabled"];
@@ -107,8 +107,8 @@ class EtindaController extends BaseController
         $milliseconds = round(microtime(true) * 1000);
         foreach($photos as $photo){
             $photoLink = $milliseconds + $photo->index;
-            Storage::disk('local')->put("pabile/photo" . $photoLink . ".jpg", /* "data:image/*;base64," . */ base64_decode($photo->photo));
-            Storage::disk('local')->put("pabile/thumbnail" . $photoLink . ".jpg", /* "data:image/*;base64," . */ base64_decode($photo->thumbnail));
+            Storage::disk('local')->put("pabile/photo" . $photoLink . ".jpg", base64_decode($photo->photo));
+            Storage::disk('local')->put("pabile/thumbnail" . $photoLink . ".jpg", base64_decode($photo->thumbnail));
             
             DB::table('pabile_product_photos')->insert(
                 ["photo " => "pabile/photo" . $photoLink . ".jpg", "thumbnail" => "pabile/thumbnail" . $photoLink . ".jpg", "primary" => ($primaryPhoto === $photo->index) ? 1 : 0, "product_id" => $id, "index" => $photo->index]
@@ -125,7 +125,7 @@ class EtindaController extends BaseController
             DB::table('pabile_product_tags')->insert(
                 ["product_id" => $id, "name" => $tag->value]
             );
-        }
+        } */
 
         return $this->sendResponse($data, 'createNewProduct');
     }
