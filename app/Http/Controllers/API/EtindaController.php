@@ -116,14 +116,17 @@ class EtindaController extends BaseController
         }
 
         foreach($specs as $spec){
-            DB::table('pabile_product_specs')->insert(
-                ["product_id" => $id, "key" => $spec["key"]["key"], "value" => $spec["key"]["key"]]
-            );
+            if($spec["key"]["key"] && $spec["value"]){
+                DB::table('pabile_product_specs')->insert(
+                    ["product_id" => $id, "key" => $spec["key"]["key"], "value" => $spec["value"]]
+                );
+            }
+            
         }
 
         foreach($tags as $tag){
             DB::table('pabile_product_tags')->insert(
-                ["product_id" => $id, "name" => $tag->value]
+                ["product_id" => $id, "name" => $tag["value"]]
             );
         }
 
