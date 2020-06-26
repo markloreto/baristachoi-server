@@ -78,4 +78,11 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($data, 'createSpecKeys');
     }
+
+    public function getProductTags(Request $request){
+        $data = $request->all();
+        $q = $data["q"];
+        $records = DB::table("pabile_product_tags")->where('name', 'like', "%" . $q . "%")->get();
+        return $this->sendResponse($records, 'getProductTags');
+    }
 }
