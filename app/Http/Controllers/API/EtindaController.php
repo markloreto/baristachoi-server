@@ -58,7 +58,6 @@ class EtindaController extends BaseController
         foreach($mainCategories as $mainCategory){
             $category = DB::table("pabile_product_categories as pc")
             ->select(DB::raw('pc.*, (SELECT COUNT(*) FROM pabile_products WHERE category_id = pc.id) AS numberOfProducts'))
-            ->join('pabile_products AS pp', 'pp.category_id', '=', 'pc.id')
             ->where('parent_id', $mainCategory->id)->get();
             $mainCategory->categories = $category;
         }
