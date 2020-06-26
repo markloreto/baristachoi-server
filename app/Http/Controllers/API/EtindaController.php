@@ -117,7 +117,7 @@ class EtindaController extends BaseController
 
         foreach($specs as $spec){
             DB::table('pabile_product_specs')->insert(
-                ["product_id" => $id, "key" => $spec->key["key"], "value" => $spec->value]
+                ["product_id" => $id, "key" => $spec->key, "value" => $spec->value]
             );
         }
 
@@ -127,6 +127,6 @@ class EtindaController extends BaseController
             );
         }
 
-        return $this->sendResponse($id, 'createNewProduct');
+        return $this->sendResponse($data, 'createNewProduct');
     }
 }
