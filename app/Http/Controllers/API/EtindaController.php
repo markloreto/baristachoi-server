@@ -68,7 +68,7 @@ class EtindaController extends BaseController
         return $this->sendResponse($records, 'getMainProductCategory');
     }
 
-    public function createSpecKeys(){
+    public function createSpecKeys(Request $request){
         $data = $request->all();
         $name = $data["name"];
 
