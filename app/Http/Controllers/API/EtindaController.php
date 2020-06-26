@@ -85,4 +85,48 @@ class EtindaController extends BaseController
         $records = DB::table("pabile_product_tags")->where('name', 'like', "%" . $q . "%")->get();
         return $this->sendResponse($records, 'getProductTags');
     }
+
+    public function createNewProduct(Request $request){
+        $data = $request->all();
+        $name = $data["name"];
+        $mainCategory = $data["mainCategory"];
+        $category = $data["category"];
+        $enabled = $data["enabled"];
+        $description = $data["description"];
+        $photos = $data["photos"];
+        $specs = $data["specs"];
+        $tags = $data["tags"];
+        $primaryPhoto = parseInt($data["primaryPhoto"]);
+
+        $seq = DB::table('pabile_products')->max('id');
+
+        $id = DB::table("pabile_products")->insertGetId(
+            ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled]
+        );
+
+        $milliseconds = round(microtime(true) * 1000);
+        foreach($photos as $photo){
+            $photoLink = $milliseconds + $photo->index;
+            Storage::disk('local')->put("pabile/photo" . $photoLink . ".jpg", /* "data:image/*;base64," . */ base64_decode($photo->photo));
+            Storage::disk('local')->put("pabile/thumbnail" . $photoLink . ".jpg", /* "data:image/*;base64," . */ base64_decode($photo->thumbnail));
+            
+            DB::table('pabile_product_photos')->insert(
+                ["photo " => "pabile/photo" . $photoLink . ".jpg", "thumbnail" => "pabile/thumbnail" . $photoLink . ".jpg", "primary" => ($primaryPhoto === $photo->index) ? 1 : 0, "product_id" => $id, "index" => $photo->index]
+            );
+        }
+
+        foreach($specs as $spec){
+            DB::table('pabile_product_specs')->insert(
+                ["product_id" => $id, "key" => $spec->key->key, "value" => $spec->value]
+            );
+        }
+
+        foreach($tags as $tag){
+            DB::table('pabile_product_tags')->insert(
+                ["product_id" => $id, "name" => $tag->value]
+            );
+        }
+
+        return $this->sendResponse($id, 'createNewProduct');
+    }
 }
