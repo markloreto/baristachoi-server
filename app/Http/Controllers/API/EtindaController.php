@@ -102,7 +102,7 @@ class EtindaController extends BaseController
 
         $id = DB::table("pabile_products")->insertGetId(
             ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled]
-        );
+        );;
 
         $milliseconds = round(microtime(true) * 1000);
         foreach($photos as $photo){
