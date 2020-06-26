@@ -96,7 +96,7 @@ class EtindaController extends BaseController
         $photos = $data["photos"];
         $specs = $data["specs"];
         $tags = $data["tags"];
-        $primaryPhoto = parseInt($data["primaryPhoto"]);
+        $primaryPhoto = intval($data["primaryPhoto"]);
 
         $seq = DB::table('pabile_products')->max('id');
 
