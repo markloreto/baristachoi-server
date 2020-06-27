@@ -119,6 +119,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/getSpecKeys', 'API\EtindaController@getSpecKeys');
 	Route::get('/getProductTags', 'API\EtindaController@getProductTags');
 	Route::get('/getProducts', 'API\EtindaController@getProducts');
+	Route::get('/checkBarcode', 'API\EtindaController@checkBarcode');
 
 	Route::post('/createSpecKeys', 'API\EtindaController@createSpecKeys');
 	Route::post('/createNewProduct', 'API\EtindaController@createNewProduct');
