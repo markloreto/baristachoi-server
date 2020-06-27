@@ -99,11 +99,12 @@ class EtindaController extends BaseController
         $specs = $data["specs"];
         $tags = $data["tags"];
         $primaryPhoto = intval($data["primaryPhoto"]);
+        $barcode = $data["barcode"];
 
         $seq = DB::table('pabile_products')->max('id');
 
         $id = DB::table("pabile_products")->insertGetId(
-            ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled]
+            ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode]
         );;
 
         $milliseconds = round(microtime(true) * 1000);
