@@ -134,4 +134,12 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($data, 'createNewProduct');
     }
+
+    public function getProducts(){
+        $data = $request->all();
+        $categoryId = $data["categoryId"];
+
+        $records = DB::table("pabile_products")->where("category_id", $categoryId)->get();
+        return $this->sendResponse($records, 'getProducts');
+    }
 }
