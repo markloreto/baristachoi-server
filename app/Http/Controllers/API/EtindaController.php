@@ -135,7 +135,7 @@ class EtindaController extends BaseController
         return $this->sendResponse($data, 'createNewProduct');
     }
 
-    public function getProducts(){
+    public function getProducts(Request $request){
         $data = $request->all();
         $categoryId = $data["categoryId"];
 
