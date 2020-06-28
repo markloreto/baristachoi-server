@@ -151,4 +151,11 @@ class EtindaController extends BaseController
         $record = DB::table("pabile_products")->where("barcode", $barcode)->get();
         return $this->sendResponse($record, 'checkBarcode');
     }
+
+    public function searchProducts(Request $request){
+        $data = $request->all();
+        $q = $data["q"];
+        $records = DB::table("pabile_products")->where('name', 'like', "%" . $q . "%")->get();
+        return $this->sendResponse($records, 'getProductTags');
+    }
 }
