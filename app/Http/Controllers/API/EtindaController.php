@@ -155,7 +155,12 @@ class EtindaController extends BaseController
     public function searchProducts(Request $request){
         $data = $request->all();
         $q = $data["q"];
-        $records = DB::table("pabile_products")->where('name', 'like', "%" . $q . "%")->get();
+        $records = DB::table("pabile_products as pp")
+        ->where('name', 'like', "%" . $q . "%")
+        ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
+        ->select(DB::raw('pp.*, ppc.name AS category_name'))
+        ->get();
+        
         return $this->sendResponse($records, 'getProductTags');
     }
 }
