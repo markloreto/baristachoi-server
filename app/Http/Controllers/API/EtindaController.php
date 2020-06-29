@@ -161,6 +161,26 @@ class EtindaController extends BaseController
         ->select(DB::raw('pp.*, ppc.name AS category_name'))
         ->get();
 
-        return $this->sendResponse($records, 'getProductTags');
+        return $this->sendResponse($records, 'searchProducts');
+    }
+
+    public function purchase(Request $request){
+        $data = $request->all();
+        $date = $data["date"];
+        $models = $data["models"];
+
+        $id = DB::table("pabile_purchases")->insertGetId(
+            ["created_at" => $date]
+        );
+
+        foreach($models as $model){
+            for ($x = 0; $x < $model["qty"]; $x++) {
+                DB::table("pabile_inventories")->insert(
+                    ["product_id" => $model["id"], "cost" => $model["cost"], "price" => $model["price"], "purchase_id" => $id]
+                );
+            }
+        }
+
+        return $this->sendResponse("Success", 'searchProducts');
     }
 }
