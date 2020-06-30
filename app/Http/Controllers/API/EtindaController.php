@@ -43,23 +43,30 @@ class EtindaController extends BaseController
         return $this->sendResponse($data, 'createProductCategory');
     }
 
-    public function getProductCategory(){
-        $records = DB::table("pabile_product_categories")->orderBy("sequence", "ASC")->get();
+    public function getProductCategory(Request $request){
+        $data = $request->all();
+        $depot_id = $data["depot_id"];
+        $records = DB::table("pabile_product_categories")->where("depot_id", $depot_id)->orderBy("sequence", "ASC")->get();
         return $this->sendResponse($records, 'getProductCategory');
     }
 
-    public function getMainProductCategory(){
-        $records = DB::table("pabile_product_main_categories")->get();
+    public function getMainProductCategory(Request $request){
+        $data = $request->all();
+        $depot_id = $data["depot_id"];
+        $records = DB::table("pabile_product_main_categories")->where("depot_id", $depot_id)->get();
         return $this->sendResponse($records, 'getMainProductCategory');
     }
 
-    public function getCategories(){
+    public function getCategories(Request $request){
+        $data = $request->all();
+        $depot_id = $data["depot_id"];
+
         $mainCategories = DB::table("pabile_product_main_categories")->get();
 
         foreach($mainCategories as $mainCategory){
             $category = DB::table("pabile_product_categories as pc")
             ->select(DB::raw('pc.*, (SELECT COUNT(*) FROM pabile_products WHERE category_id = pc.id) AS numberOfProducts'))
-            ->where('parent_id', $mainCategory->id)->get();
+            ->where([['parent_id', $mainCategory->id], ["depot_id", $depot_id]])->get();
             $mainCategory->categories = $category;
         }
 
