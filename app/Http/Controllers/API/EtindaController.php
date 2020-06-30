@@ -32,41 +32,33 @@ class EtindaController extends BaseController
         $data = $request->all();
         $name = $data["name"];
         $parent_id = $data["parent_id"];
-        $depot_id = $data["depot_id"];
 
         $seq = DB::table('pabile_product_categories')->max('id');
 
         DB::table('pabile_product_categories')->insert(
-            ['name' => $name, 'sequence' => ($seq == null) ? 0 : $seq, 'parent_id' => $parent_id, 'depot_id' => $depot_id]
+            ['name' => $name, 'sequence' => ($seq == null) ? 0 : $seq, 'parent_id' => $parent_id]
         );
 
         return $this->sendResponse($data, 'createProductCategory');
     }
 
-    public function getProductCategory(Request $request){
-        $data = $request->all();
-        $depot_id = $data["depot_id"];
-        $records = DB::table("pabile_product_categories")->where("depot_id", $depot_id)->orderBy("sequence", "ASC")->get();
+    public function getProductCategory(){
+        $records = DB::table("pabile_product_categories")->orderBy("sequence", "ASC")->get();
         return $this->sendResponse($records, 'getProductCategory');
     }
 
-    public function getMainProductCategory(Request $request){
-        $data = $request->all();
-        $depot_id = $data["depot_id"];
-        $records = DB::table("pabile_product_main_categories")->where("depot_id", $depot_id)->get();
+    public function getMainProductCategory(){
+        $records = DB::table("pabile_product_main_categories")->get();
         return $this->sendResponse($records, 'getMainProductCategory');
     }
 
-    public function getCategories(Request $request){
-        $data = $request->all();
-        $depot_id = $data["depot_id"];
-
+    public function getCategories(){
         $mainCategories = DB::table("pabile_product_main_categories")->get();
 
         foreach($mainCategories as $mainCategory){
             $category = DB::table("pabile_product_categories as pc")
             ->select(DB::raw('pc.*, (SELECT COUNT(*) FROM pabile_products WHERE category_id = pc.id) AS numberOfProducts'))
-            ->where([['parent_id', $mainCategory->id], ["depot_id", $depot_id]])->get();
+            ->where('parent_id', $mainCategory->id)->get();
             $mainCategory->categories = $category;
         }
 
@@ -176,9 +168,10 @@ class EtindaController extends BaseController
         $data = $request->all();
         $date = $data["date"];
         $models = $data["models"];
+        $depot_id = $data["depot_id"];
 
         $id = DB::table("pabile_purchases")->insertGetId(
-            ["created_at" => $date]
+            ["created_at" => $date, "depot_id" => $depot_id]
         );
 
         foreach($models as $model){
