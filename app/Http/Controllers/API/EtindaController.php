@@ -214,6 +214,9 @@ class EtindaController extends BaseController
             $photo->photob64 = $base64_2;
         }
 
-        return $this->sendResponse(array("product" => $product, "specs" => $specs, "photos" => $photos), 'getProductDetails');
+        $tags = DB::table("pabile_product_tags")->where("product_id", $productId)->get();
+
+
+        return $this->sendResponse(array("product" => $product, "specs" => $specs, "photos" => $photos, "tags" => $tags), 'getProductDetails');
     }
 }
