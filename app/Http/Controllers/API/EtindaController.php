@@ -117,13 +117,13 @@ class EtindaController extends BaseController
             $image = str_replace('data:image/jpeg;base64,', '', $image);
             $image = str_replace(' ', '+', $image);
 
-            $imageThumb = str_replace('data:image/png;base64,', '', $photo["thumbnail"]);
+            $imageThumb = str_replace('data:image/*;base64,', '', $photo["thumbnail"]);
             $imageThumb = str_replace('data:image/png;base64,', '', $imageThumb);
-            $imageThumb = str_replace('data:image/png;base64,', '', $imageThumb);
+            $imageThumb = str_replace('data:image/jpeg;base64,', '', $imageThumb);
             $imageThumb = str_replace(' ', '+', $imageThumb);
 
             Storage::disk('local')->put("pabile/photo" . $photoLink . ".jpg", base64_decode($image));
-            Storage::disk('local')->put("pabile/thumbnail" . $photoLink . ".jpg", $imageThumb);
+            Storage::disk('local')->put("pabile/thumbnail" . $photoLink . ".jpg", base64_decode($imageThumb));
             
             DB::table('pabile_product_photos')->insert(
                 ["photo" => "pabile/photo" . $photoLink . ".jpg", "thumbnail" => "pabile/thumbnail" . $photoLink . ".jpg", "primary" => ($primaryPhoto === $photo["index"]) ? 1 : 0, "product_id" => $id, "index" => $photo["index"]]
