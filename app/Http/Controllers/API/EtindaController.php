@@ -205,7 +205,7 @@ class EtindaController extends BaseController
         $product = DB::table("pabile_products as pp")->where("pp.id", $productId)->first();
         $specs = DB::table("pabile_product_specs as pps")->select(DB::raw('pps.*, (SELECT name FROM pabile_spec_keys WHERE id = pps.key) AS keyName'))->where("pps.product_id", $productId)->get();
 
-        $photos = DB::table("pabile_product_phoros")->where("product_id", $productId)->get();
+        $photos = DB::table("pabile_product_photos")->where("product_id", $productId)->get();
         foreach($photos as $photo){
             $base64 = base64_encode(Storage::disk('local')->get($photo->thumbnail));
             $photo->thumbnailb64 = $base64;
