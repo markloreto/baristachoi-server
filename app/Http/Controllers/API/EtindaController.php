@@ -209,6 +209,9 @@ class EtindaController extends BaseController
         foreach($photos as $photo){
             $base64 = base64_encode(Storage::disk('local')->get($photo->thumbnail));
             $photo->thumbnailb64 = $base64;
+
+            $base64_2 = base64_encode(Storage::disk('local')->get($photo->photo));
+            $photo->photob64 = $base64_2;
         }
 
         return $this->sendResponse(array("product" => $product, "specs" => $specs, "photos" => $photos), 'getProductDetails');
