@@ -202,7 +202,7 @@ class EtindaController extends BaseController
         $data = $request->all();
         $productId = $data["productId"];
 
-        $product = DB::table("pabile_products as pp")->where("pp.id", $productId)->first();
+        $product = DB::table("pabile_products as pp")->select(DB::raw('pp.*, (SELECT parent_id FROM pabile_product_categories WHERE id = pp.category_id) AS parent_id'))->where("pp.id", $productId)->first();
         $specs = DB::table("pabile_product_specs as pps")->select(DB::raw('pps.*, (SELECT name FROM pabile_spec_keys WHERE id = pps.key) AS keyName'))->where("pps.product_id", $productId)->get();
 
         $photos = DB::table("pabile_product_photos")->where("product_id", $productId)->get();
