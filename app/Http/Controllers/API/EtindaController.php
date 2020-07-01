@@ -197,4 +197,14 @@ class EtindaController extends BaseController
 
         return $this->sendResponse("Success", 'searchProducts');
     }
+
+    public function getProductDetails(Request $request){
+        $data = $request->all();
+        $productId = $data["productId"];
+
+        $product = DB::table("pabile_products as pp")->where("pp.id", $productId)->first();
+        $specs = DB::table("pabile_product_specs as pps")->select(DB::raw('pps.*, (SELECT name FROM pabile_spec_keys WHERE id = pps.key) AS keyName'))->where("pps.product_id", $productId)->get();
+
+        return $this->sendResponse(array("product" => $product, "specs" => $specs), 'getProductDetails');
+    }
 }
