@@ -74,11 +74,11 @@ class EtindaController extends BaseController
         $data = $request->all();
         $name = $data["name"];
 
-        DB::table('pabile_spec_keys')->insert(
+        $id = DB::table('pabile_spec_keys')->insertGetId(
             ['name' => $name]
         );
 
-        return $this->sendResponse($data, 'createSpecKeys');
+        return $this->sendResponse($id, 'createSpecKeys');
     }
 
     public function getProductTags(Request $request){
