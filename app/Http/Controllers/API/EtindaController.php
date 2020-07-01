@@ -111,8 +111,15 @@ class EtindaController extends BaseController
         $milliseconds = round(microtime(true) * 1000);
         foreach($photos as $photo){
             $photoLink = $milliseconds + $photo["index"];
-            Storage::disk('local')->put("pabile/photo" . $photoLink . ".jpg", $photo["photo"]);
-            Storage::disk('local')->put("pabile/thumbnail" . $photoLink . ".jpg", $photo["thumbnail"]);
+
+            $image = str_replace('data:image/png;base64,', '', $photo["photo"]);
+            $image = str_replace(' ', '+', $image);
+
+            $imageThumb = str_replace('data:image/png;base64,', '', $photo["thumbnail"]);
+            $imageThumb = str_replace(' ', '+', $imageThumb);
+
+            Storage::disk('local')->put("pabile/photo" . $photoLink . ".jpg", $image);
+            Storage::disk('local')->put("pabile/thumbnail" . $photoLink . ".jpg", $imageThumb);
             
             DB::table('pabile_product_photos')->insert(
                 ["photo" => "pabile/photo" . $photoLink . ".jpg", "thumbnail" => "pabile/thumbnail" . $photoLink . ".jpg", "primary" => ($primaryPhoto === $photo["index"]) ? 1 : 0, "product_id" => $id, "index" => $photo["index"]]
