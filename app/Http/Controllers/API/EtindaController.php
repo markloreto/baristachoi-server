@@ -115,20 +115,20 @@ class EtindaController extends BaseController
             );
         }
 
-        $milliseconds = round(microtime(true) * 1000);
+        /* $milliseconds = round(microtime(true) * 1000);
         foreach($photos as $photo){
             $photoLink = $milliseconds + $photo["index"];
 
             $image = preg_replace('/^data:image\/\w+;base64,/', '', $photo["photo"]);
-            /* $image = str_replace('data:image/*;base64,', '', $photo["photo"]);
-            $image = str_replace('data:image/png;base64,', '', $image);
-            $image = str_replace('data:image/jpeg;base64,', '', $image); */
+            //$image = str_replace('data:image/*;base64,', '', $photo["photo"]);
+            //$image = str_replace('data:image/png;base64,', '', $image);
+            //$image = str_replace('data:image/jpeg;base64,', '', $image);
             $image = str_replace(' ', '+', $image);
 
             $imageThumb = preg_replace('/^data:image\/\w+;base64,/', '', $photo["thumbnail"]);
-            /* $imageThumb = str_replace('data:image/*;base64,', '', $photo["thumbnail"]);
-            $imageThumb = str_replace('data:image/png;base64,', '', $imageThumb);
-            $imageThumb = str_replace('data:image/jpeg;base64,', '', $imageThumb); */
+            //$imageThumb = str_replace('data:image/*;base64,', '', $photo["thumbnail"]);
+            //$imageThumb = str_replace('data:image/png;base64,', '', $imageThumb);
+            //$imageThumb = str_replace('data:image/jpeg;base64,', '', $imageThumb);
             $imageThumb = str_replace(' ', '+', $imageThumb);
 
             Storage::disk('local')->put("pabile/photo" . $photoLink . ".jpg", base64_decode($image));
@@ -152,7 +152,7 @@ class EtindaController extends BaseController
             DB::table('pabile_product_tags')->insert(
                 ["product_id" => $id, "name" => $tag["value"]]
             );
-        }
+        } */
 
         return $this->sendResponse($data, 'createNewProduct');
     }
