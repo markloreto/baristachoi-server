@@ -164,7 +164,7 @@ class EtindaController extends BaseController
             );
         }
 
-        return $this->sendResponse($data, 'createNewProduct');
+        return $this->sendResponse($id, 'createNewProduct');
     }
 
     public function getProducts(Request $request){
