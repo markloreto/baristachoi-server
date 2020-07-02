@@ -29,7 +29,7 @@ Route::get('profilePhoto/{id}', 'BasicController@profilePhoto');
 
 Route::get('pabile/{filename}', function ($filename)
 {
-    $path = storage_path("pabile/" . $filename);
+    $path = storage_path("app/pabile/" . $filename);
  
     if (!File::exists($path)) {
         abort(404);
