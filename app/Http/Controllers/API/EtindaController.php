@@ -109,13 +109,24 @@ class EtindaController extends BaseController
             $id = $modify;
             DB::table("pabile_products")->where('id', $id)
             ->update(['name' => $name, 'category_id' => $category, 'description' => $description, 'enabled' => $enabled, 'barcode' => $barcode, 'price' => $price]);
+            
+            $photosPrevious = DB::table("pabile_product_photos")->where("product_id", $id)->get();
+
+            foreach($photosPrevious as $photo){
+                Storage::disk('local')->delete([$photo->photo, $photo->thumbnail]);
+            }
+
+            DB::table('pabile_product_photos')->where('product_id', $id)->delete();
+            DB::table('pabile_product_specs')->where('product_id', $id)->delete();
+            DB::table('pabile_product_tags')->where('product_id', $id)->delete();
+        
         }else{
             $id = DB::table("pabile_products")->insertGetId(
                 ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price]
             );
         }
 
-        /* $milliseconds = round(microtime(true) * 1000);
+        $milliseconds = round(microtime(true) * 1000);
         foreach($photos as $photo){
             $photoLink = $milliseconds + $photo["index"];
 
@@ -144,15 +155,14 @@ class EtindaController extends BaseController
                 DB::table('pabile_product_specs')->insert(
                     ["product_id" => $id, "key" => $spec["key"]["key"], "value" => $spec["value"]]
                 );
-            }
-            
+            }  
         }
 
         foreach($tags as $tag){
             DB::table('pabile_product_tags')->insert(
                 ["product_id" => $id, "name" => $tag["value"]]
             );
-        } */
+        }
 
         return $this->sendResponse($data, 'createNewProduct');
     }
