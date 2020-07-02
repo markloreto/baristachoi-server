@@ -66,8 +66,4 @@ return [
 
     ],
 
-    'links' => [
-        public_path('pabile') => storage_path('app/pabile'),
-    ],
-
 ];
