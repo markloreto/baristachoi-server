@@ -108,7 +108,7 @@ class EtindaController extends BaseController
         if($modify){
             $id = $modify;
             DB::table("pabile_products")->where('id', $id)
-            ->update(['name' => $name, 'category_id' => $categoryId, 'description' => $description, 'enabled' => $enabled, 'barcode' => $barcode, 'price' => $price]);
+            ->update(['name' => $name, 'category_id' => $category, 'description' => $description, 'enabled' => $enabled, 'barcode' => $barcode, 'price' => $price]);
         }else{
             $id = DB::table("pabile_products")->insertGetId(
                 ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price]
