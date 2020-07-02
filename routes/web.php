@@ -27,9 +27,9 @@ Route::get('generatePaymentCode/{days}', 'BasicController@generatePaymentCode');
 Route::get('attachmentView/{id}', 'BasicController@attachmentView');
 Route::get('profilePhoto/{id}', 'BasicController@profilePhoto');
 
-Route::get('pabile-photos/pabile/{filename}', function ($filename)
+Route::get('pabile-photos/{filename}', function ($filename)
 {
-    $path = storage_path("app/" . $filename);
+    $path = storage_path("app/pabile/" . $filename);
  
     if (!File::exists($path)) {
         abort(404);
