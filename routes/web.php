@@ -26,3 +26,20 @@ Route::get('chrono/abc/{depot_id}/{year}/{month}', 'BasicController@abc');
 Route::get('generatePaymentCode/{days}', 'BasicController@generatePaymentCode');
 Route::get('attachmentView/{id}', 'BasicController@attachmentView');
 Route::get('profilePhoto/{id}', 'BasicController@profilePhoto');
+
+Route::get('pabile/{filename}', function ($filename)
+{
+    $path = storage_path($filename);
+ 
+    if (!File::exists($path)) {
+        abort(404);
+    }
+ 
+    $file = File::get($path);
+    $type = File::mimeType($path);
+ 
+    $response = Response::make($file, 200);
+    $response->header("Content-Type", $type);
+ 
+    return $response;
+});
