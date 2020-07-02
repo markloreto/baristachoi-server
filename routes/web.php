@@ -27,7 +27,7 @@ Route::get('generatePaymentCode/{days}', 'BasicController@generatePaymentCode');
 Route::get('attachmentView/{id}', 'BasicController@attachmentView');
 Route::get('profilePhoto/{id}', 'BasicController@profilePhoto');
 
-Route::get('pabile-photos/{filename}', function ($filename)
+Route::get('pabile-photos/pabile/{filename}', function ($filename)
 {
     $path = storage_path("app/" . $filename);
  
