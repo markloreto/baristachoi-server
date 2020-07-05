@@ -237,4 +237,13 @@ class EtindaController extends BaseController
 
         return $this->sendResponse(array("product" => $product, "specs" => $specs, "photos" => $photos, "tags" => $tags), 'getProductDetails');
     }
+
+    public function pabileBrgyList(Request $request){
+        $data = $request->all();
+        $depotId = $data["depotId"];
+
+        $depot = DB::table("pabile_depots")->where("id", $depotId)->first();
+        $brgys = DB::table("pabile_depots")->select('id_3', 'name_3', 'varname_3')->where("id_2", $depot->location_id)->first();
+        return $this->sendResponse($brgys, 'searchProducts');
+    }
 }
