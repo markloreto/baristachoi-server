@@ -243,7 +243,7 @@ class EtindaController extends BaseController
         $depotId = $data["depotId"];
 
         $depot = DB::table("pabile_depots")->where("id", $depotId)->first();
-        $brgys = DB::table("pabile_depots")->select('id_3', 'name_3', 'varname_3')->where("id_2", $depot->location_id)->first();
+        $brgys = DB::table("locations")->select('id_3', 'name_3', 'varname_3')->where("id_2", $depot->location_id)->get();
         return $this->sendResponse($brgys, 'searchProducts');
     }
 }
