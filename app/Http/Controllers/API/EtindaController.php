@@ -246,4 +246,22 @@ class EtindaController extends BaseController
         $brgys = DB::table("locations")->select('id_3', 'name_3', 'varname_3')->where("id_2", $depot->location_id)->get();
         return $this->sendResponse($brgys, 'pabileBrgyList');
     }
+
+    public function addClient(Request $request){
+        $data = $request->all();
+        $name = $data["name"];
+        $mobile = $data["mobile"];
+        $brgyId = $data["brgyId"];
+
+        $isMobileExist = DB::table("pabile_clients")->where("mobile", $mobile)->count();
+
+        if($isMobileExist){
+            return $this->sendResponse(true, 'addClient');
+        }else{
+            DB::table('pabile_clients')->insert(
+                ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId]
+            );
+            return $this->sendResponse(false, 'addClient');
+        }
+    }
 }
