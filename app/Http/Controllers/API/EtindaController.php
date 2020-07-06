@@ -293,7 +293,13 @@ class EtindaController extends BaseController
         );
 
         foreach($items as $item){
-            DB::statement("UPDATE pabile_inventories SET price = " . $item["price"] . ", order_id = " . $id . " WHERE product_id = " . $item["productId"] .  " AND (order_id IS NULL AND inventory_out_id IS NULL) ORDER BY id ASC LIMIT " . $item["qty"]);
+            //DB::statement("UPDATE pabile_inventories SET price = " . $item["price"] . ", order_id = " . $id . " WHERE product_id = " . $item["productId"] .  " AND (order_id IS NULL AND inventory_out_id IS NULL) ORDER BY id ASC LIMIT " . $item["qty"]);
+            DB::table("pabile_inventories")->whereRaw('product_id = ? AND (order_id IS NULL AND inventory_out_id IS NULL)', [$item["productId"]])
+            ->update([ 
+            'price' => $item["price"], 
+            'order_id' => $id
+            ])->limit($item["qty"])
+            ->orderBy('id', 'asc');
         }
 
         return $this->sendResponse($id, 'submitOrder');
