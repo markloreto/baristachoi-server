@@ -269,7 +269,7 @@ class EtindaController extends BaseController
         $data = $request->all();
         $q = $data["q"];
 
-        $records = DB::table("pabile_clients")->where('name', 'like', "%" . $q . "%")->orWhere('mobile', "%" . $q . "%")->get();
+        $records = DB::table("pabile_clients")->where('name', 'like', "%" . $q . "%")->orWhere('mobile', 'like', "%" . $q . "%")->get();
         return $this->sendResponse($records, 'getProductTags');
     }
 }
