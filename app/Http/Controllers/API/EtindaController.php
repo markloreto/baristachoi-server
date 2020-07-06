@@ -277,4 +277,25 @@ class EtindaController extends BaseController
         ->get();
         return $this->sendResponse($records, 'getProductTags');
     }
+
+    public function submitOrder(Request $request){
+        $data = $request->all();
+        $clientId = $data["clientId"];
+        $date = $data["date"];
+        $schedule = $data["schedule"];
+        $changeFor = $data["changeFor"];
+        $notes = $data["notes"];
+        $clientId = $data["clientId"];
+        $items = $data["items"];
+
+        $id = DB::table('pabile_orders')->insertGetId(
+            ["client_id" => $clientId, "date" => $date, "schedule" => $schedule, "changeFor" => $changeFor, "notes" => $notes, "created_at" => Carbon::today(), "status_id" => 1, "origin" => "pos"]
+        );
+
+        foreach($items as $item){
+            DB::statement("UPDATE pabile_inventories SET product_id = " . $item["productId"] . ", price = " . $item["price"] . ", order_id = " . $id . " ORDER BY id ASC LIMIT " . $item["qty"]);
+        }
+
+        return $this->sendResponse($id, 'submitOrder');
+    }
 }
