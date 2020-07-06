@@ -208,7 +208,7 @@ class EtindaController extends BaseController
         foreach($models as $model){
             for ($x = 0; $x < $model["qty"]; $x++) {
                 DB::table("pabile_inventories")->insert(
-                    ["product_id" => $model["id"], "cost" => $model["cost"], "price" => $model["price"], "purchase_id" => $id]
+                    ["product_id" => $model["id"], "cost" => $model["cost"], "price" => null/* $model["price"] */, "purchase_id" => $id]
                 );
             }
         }
