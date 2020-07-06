@@ -256,12 +256,12 @@ class EtindaController extends BaseController
         $isMobileExist = DB::table("pabile_clients")->where("mobile", $mobile)->count();
 
         if($isMobileExist){
-            return $this->sendResponse(true, 'addClient');
+            return $this->sendResponse(false, 'addClient');
         }else{
-            DB::table('pabile_clients')->insert(
+            $id = DB::table('pabile_clients')->insertGetId(
                 ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId]
             );
-            return $this->sendResponse(false, 'addClient');
+            return $this->sendResponse($id, 'addClient');
         }
     }
 }
