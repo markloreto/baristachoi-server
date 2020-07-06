@@ -264,4 +264,12 @@ class EtindaController extends BaseController
             return $this->sendResponse($id, 'addClient');
         }
     }
+
+    public function searchClients(Request $request){
+        $data = $request->all();
+        $q = $data["q"];
+
+        $records = DB::table("pabile_clients")->where('name', 'like', "%" . $q . "%")->orWhere('mobile', "%" . $q . "%")->get();
+        return $this->sendResponse($records, 'getProductTags');
+    }
 }
