@@ -305,4 +305,10 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($id, 'submitOrder');
     }
+
+    public function deliveries(Request $request){
+        $data = $request->all();
+        $records = DB::table("pabile_orders")->where("status", "!=", 4)->orWhere("status", "!=", 5)->get()->groupBy("status");
+        return $this->sendResponse($records, 'deliveries');
+    }
 }

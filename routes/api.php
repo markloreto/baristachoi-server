@@ -124,6 +124,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/getProductDetails', 'API\EtindaController@getProductDetails');
 	Route::get('/pabileBrgyList', 'API\EtindaController@pabileBrgyList');
 	Route::get('/searchClients', 'API\EtindaController@searchClients');
+	Route::get('/deliveries', 'API\EtindaController@deliveries');
 	
 
 	Route::post('/createSpecKeys', 'API\EtindaController@createSpecKeys');
