@@ -308,7 +308,10 @@ class EtindaController extends BaseController
 
     public function deliveries(Request $request){
         $data = $request->all();
-        $records = DB::table("pabile_orders")->where("status_id", "!=", 4)->orWhere("status_id", "!=", 5)->get()->groupBy("status_id");
+        $records = DB::table("pabile_orders as po")->select("po.*", "pos.name")
+        ->where("status_id", "!=", 4)
+        ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')
+        ->orWhere("status_id", "!=", 5)->get()->groupBy("pos.name");
         return $this->sendResponse($records, 'deliveries');
     }
 }
