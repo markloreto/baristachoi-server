@@ -311,7 +311,7 @@ class EtindaController extends BaseController
         $records = DB::table("pabile_orders as po")->select("po.*", "pos.name")
         ->where("status_id", "!=", 4)
         ->orWhere("status_id", "!=", 5)
-        ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')->get()->groupBy(\DB::raw('pos.name'));
+        ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')->get()->groupBy("name");
         return $this->sendResponse($records, 'deliveries');
     }
 }
