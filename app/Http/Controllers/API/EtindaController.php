@@ -317,7 +317,9 @@ class EtindaController extends BaseController
         foreach($records as $record){
             foreach($record as $rec){
                 if($rec->client_id){
-                    $client = DB::table("pabile_clients")->where("id", $rec->client_id)->first();
+                    $client = DB::table("pabile_clients as pc")
+                    ->join('locations as l', 'l.id_3', '=', 'pc.brgy_id')
+                    ->select("pc.*", "l.name_3", "l.varname_3")->where("id", $rec->client_id)->first();
                     $rec->client = $client;
                 }else{
                     $rec->client = null;
