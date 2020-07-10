@@ -319,7 +319,7 @@ class EtindaController extends BaseController
                 if($rec->client_id){
                     $client = DB::table("pabile_clients as pc")
                     ->join('locations as l', 'l.id_3', '=', 'pc.brgy_id')
-                    ->select("pc.*", "l.name_3", "l.varname_3")->where("id", $rec->client_id)->first();
+                    ->select("pc.*", "l.name_3", "l.varname_3")->where("pc.id", $rec->client_id)->first();
                     $rec->client = $client;
                 }else{
                     $rec->client = null;
