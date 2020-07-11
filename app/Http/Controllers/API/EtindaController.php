@@ -352,4 +352,18 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($items, 'getOrderItems');
     }
+
+    public function voidOrder(Request $request){
+        $data = $request->all();
+        $orderId = $data["orderId"];
+
+        DB::table('pabile_orders')->where('id', $orderId)->delete();
+        DB::table('pabile_inventories')->where("order_id", $orderId)
+        ->update([ 
+            'price' => null, 
+            'order_id' => null
+        ]);
+
+        return $this->sendResponse($items, 'voidOrder');
+    }
 }
