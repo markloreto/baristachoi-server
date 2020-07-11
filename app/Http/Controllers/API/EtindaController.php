@@ -371,7 +371,7 @@ class EtindaController extends BaseController
         $data = $request->all();
         $orderId = $data["orderId"];
 
-        DB::table('pabile_orders')->where("order_id", $orderId)
+        DB::table('pabile_orders')->where("id", $orderId)
         ->update([ 
             'status_id' => 2
         ]);
