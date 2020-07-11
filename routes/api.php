@@ -133,6 +133,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/addClient', 'API\EtindaController@addClient');
 	Route::post('/submitOrder', 'API\EtindaController@submitOrder');
 	Route::post('/voidOrder', 'API\EtindaController@voidOrder');
+	Route::post('/processOrder', 'API\EtindaController@processOrder');
 });
 
 Route::get('/ETinda', 'API\PHPController@ETinda');
