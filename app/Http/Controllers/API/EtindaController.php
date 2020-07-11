@@ -364,6 +364,6 @@ class EtindaController extends BaseController
             'order_id' => null
         ]);
 
-        return $this->sendResponse($items, 'voidOrder');
+        return $this->sendResponse("", 'voidOrder');
     }
 }
