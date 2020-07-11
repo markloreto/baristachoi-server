@@ -335,9 +335,8 @@ class EtindaController extends BaseController
         $orderId = $data["orderId"];
 
         $items = DB::table("pabile_inventories as pi")->where("pi.order_id", $orderId)
-        ->select(DB::raw('pp.*, COUNT(pi.product_id) AS qty, AVG(pi.price) AS `var_price`, (COUNT(pi.product_id) * AVG(pi.price)) AS subTotal, ppp.photo'))
+        ->select(DB::raw('pp.*, COUNT(pi.product_id) AS qty, AVG(pi.price) AS `var_price`, (COUNT(pi.product_id) * AVG(pi.price)) AS subTotal, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND primary = 1) AS `Photo`'))
         ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id')
-        ->join('pabile_product_photos as ppp', 'ppp.product_id', '=', 'pp.id')
         ->groupBy("pi.product_id", "pi.price")
         ->get();
 
@@ -345,7 +344,7 @@ class EtindaController extends BaseController
             $specs = DB::table("pabile_product_specs as pps")
             ->select("pps.*", "psk.name")
             ->join('pabile_spec_keys as psk', 'pps.key', '=', 'psk.id')
-            ->where([["pps.product_id", $item->id], "ppp.primary", 1])
+            ->where("pps.product_id", $item->id)
             ->get();
 
             $item->specs = $specs;
