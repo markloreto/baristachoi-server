@@ -329,4 +329,17 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($records, 'deliveries');
     }
+
+    public function getOrderItems(Request $request){
+        $data = $request->all();
+        $orderId = $data["orderId"];
+
+        $items = DB::table("pabile_inventories as pi")->where("pi.id", $orderId)
+        ->select(DB::raw('pp.*, COUNT(pi.product_id) AS qty, AVG(pi.price) AS `var_price`, (COUNT(pi.product_id) * AVG(pi.price)) AS subTotal'))
+        ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id')
+        ->groupBy("pi.product_id", "pi.price")
+        ->get();
+
+        return $this->sendResponse($items, 'getOrderItems');
+    }
 }
