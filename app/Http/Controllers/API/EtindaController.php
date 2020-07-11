@@ -340,6 +340,16 @@ class EtindaController extends BaseController
         ->groupBy("pi.product_id", "pi.price")
         ->get();
 
+        foreach($items as $item){
+            $specs = DB::table("pabile_product_specs as pps")
+            ->select("pps.*", "psk.name")
+            ->join('pabile_spec_keys as psk', 'pps.key', '=', 'psk.id')
+            ->where("pps.product_id", $item->id)
+            ->get();
+
+            $item->specs = $specs;
+        }
+
         return $this->sendResponse($items, 'getOrderItems');
     }
 }
