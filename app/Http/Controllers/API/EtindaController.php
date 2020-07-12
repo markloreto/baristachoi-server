@@ -312,6 +312,7 @@ class EtindaController extends BaseController
         ->select(DB::raw('po.*, pos.name'))
         ->where("status_id", "!=", 4)
         ->orWhere("status_id", "!=", 5)
+        ->orWhere("status_id", "!=", 6)
         ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')->orderBy("po.id", "desc")->get()->groupBy("name");
 
         foreach($records as $record){
