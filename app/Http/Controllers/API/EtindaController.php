@@ -309,7 +309,7 @@ class EtindaController extends BaseController
     public function deliveries(Request $request){
         $data = $request->all();
         $records = DB::table("pabile_orders as po")
-        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName'))
+        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName, (SELECT SUM(price) FROM pabile_inventories WHERE order_id = po.id) AS `grandTotal`'))
         ->where("status_id", "!=", 4)
         ->orWhere("status_id", "!=", 5)
         ->orWhere("status_id", "!=", 6)
