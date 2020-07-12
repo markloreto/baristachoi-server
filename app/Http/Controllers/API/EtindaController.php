@@ -399,4 +399,17 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($records, 'getRiders');
     }
+
+    public function setRider(Request $request){
+        $data = $request->all();
+        $riderId = $data["riderId"];
+        $orderId = $data["orderId"];
+
+        DB::table('pabile_orders')->where("id", $orderId)
+        ->update([ 
+            'riderId' => $riderId
+        ]);
+
+        return $this->sendResponse("", 'completeOrder');
+    }
 }
