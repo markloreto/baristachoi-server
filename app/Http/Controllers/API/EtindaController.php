@@ -309,11 +309,14 @@ class EtindaController extends BaseController
     public function deliveries(Request $request){
         $data = $request->all();
         $records = DB::table("pabile_orders as po")
-        ->select(DB::raw('po.*, pos.name'))
+        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName'))
         ->where("status_id", "!=", 4)
         ->orWhere("status_id", "!=", 5)
         ->orWhere("status_id", "!=", 6)
-        ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')->orderBy("po.id", "desc")->get()->groupBy("name");
+        ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')
+        ->orderBy("po.id", "desc")
+
+        ->get()->groupBy("name");
 
         foreach($records as $record){
             foreach($record as $rec){
