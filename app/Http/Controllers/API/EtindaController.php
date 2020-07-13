@@ -432,7 +432,7 @@ class EtindaController extends BaseController
                 $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
             }
 
-            var_dump($prefixRec);
+            var_dump($uMobilePrefix);
         }
 
         return $this->sendResponse($records, 'updateMobilePrefix');
