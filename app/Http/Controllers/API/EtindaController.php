@@ -341,6 +341,7 @@ class EtindaController extends BaseController
                 if($rec->client_id){
                     $client = DB::table("pabile_clients as pc")
                     ->join('locations as l', 'l.id_3', '=', 'pc.brgy_id')
+                    ->select(DB::raw('pc.*, l.name_3, l.varname_3, (SELECT `network` FROM pabile_mobile_prefixes WHERE id = pc.prefix_id) AS mobile_network'))
                     ->select("pc.*", "l.name_3", "l.varname_3")->where("pc.id", $rec->client_id)->first();
                     $rec->client = $client;
                 }else{
