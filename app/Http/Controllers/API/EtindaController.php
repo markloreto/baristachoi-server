@@ -420,6 +420,14 @@ class EtindaController extends BaseController
 
     public function updateMobilePrefix(){
         $records = DB::table("pabile_clients")->where("prefix_id", null)->get();
+
+        foreach($records as $record){
+            $uMobilePrefix = substr($record->prefix_id, 0, 4);
+
+            $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+            var_dump($prefixRec);
+        }
+
         return $this->sendResponse($records, 'updateMobilePrefix');
     }
 }
