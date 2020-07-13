@@ -258,8 +258,26 @@ class EtindaController extends BaseController
         if($isMobileExist){
             return $this->sendResponse(false, 'addClient');
         }else{
+            //Network Prefix
+            $uMobilePrefix = substr($mobile, 0, 4);
+
+            $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+            
+            if($prefixRec == null){
+                $uMobilePrefix = substr($mobile, 0, 3);
+
+                $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+            }
+
+            if($prefixRec == null){
+                $v = null;
+            }else{
+                $v = $prefixRec->id;
+            }
+            //
+
             $id = DB::table('pabile_clients')->insertGetId(
-                ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId]
+                ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId, "prefix_id" => $v]
             );
             return $this->sendResponse($id, 'addClient');
         }
