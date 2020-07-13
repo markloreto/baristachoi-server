@@ -425,6 +425,13 @@ class EtindaController extends BaseController
             $uMobilePrefix = substr($record->prefix_id, 0, 4);
 
             $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+            
+            if($prefixRec == null){
+                $uMobilePrefix = substr($record->prefix_id, 0, 3);
+
+                $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+            }
+
             var_dump($prefixRec);
         }
 
