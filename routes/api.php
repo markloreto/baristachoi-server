@@ -140,4 +140,5 @@ Route::middleware('auth:api')->group( function () {
 });
 
 Route::get('/ETinda', 'API\PHPController@ETinda');
+Route::get('/updateMobilePrefix', 'API\PHPController@updateMobilePrefix');
 

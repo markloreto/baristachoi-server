@@ -417,4 +417,9 @@ class EtindaController extends BaseController
 
         return $this->sendResponse("", 'setRider');
     }
+
+    public function updateMobilePrefix(){
+        $records = DB::table("pabile_clients")->where("prefix_id", null)->get();
+        return $this->sendResponse($records, 'updateMobilePrefix');
+    }
 }
