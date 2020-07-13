@@ -422,12 +422,12 @@ class EtindaController extends BaseController
         $records = DB::table("pabile_clients")->where("prefix_id", null)->get();
 
         foreach($records as $record){
-            $uMobilePrefix = substr($record->prefix_id, 0, 4);
+            $uMobilePrefix = substr($record->mobile, 0, 4);
 
             $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
             
             if($prefixRec == null){
-                $uMobilePrefix = substr($record->prefix_id, 0, 3);
+                $uMobilePrefix = substr($record->mobile, 0, 3);
 
                 $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
             }
