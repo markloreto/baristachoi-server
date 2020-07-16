@@ -401,6 +401,18 @@ class EtindaController extends BaseController
         return $this->sendResponse("", 'processOrder');
     }
 
+    public function deliveredOrder(Request $request){
+        $data = $request->all();
+        $orderIds = $data["orderIds"];
+
+        DB::table('pabile_orders')->whereIn("id", $orderIds)
+        ->update([ 
+            'status_id' => 4
+        ]);
+
+        return $this->sendResponse($orderIds, 'deliveredOrder');
+    }
+
     public function completeOrder(Request $request){
         $data = $request->all();
         $orderId = $data["orderId"];
