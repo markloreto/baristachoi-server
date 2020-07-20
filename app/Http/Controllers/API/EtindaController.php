@@ -405,7 +405,7 @@ class EtindaController extends BaseController
         $delivereds = $data["delivereds"];
 
         foreach($delivereds as $delivered){
-            DB::table('pabile_orders')->whereIn("id", $delivered["orderId"])
+            DB::table('pabile_orders')->where("id", $delivered["orderId"])
             ->update([ 
                 'status_id' => 4
             ]);
