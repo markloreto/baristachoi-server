@@ -405,12 +405,12 @@ class EtindaController extends BaseController
         $delivereds = $data["delivereds"];
 
         foreach($delivereds as $delivered){
-            DB::table('pabile_orders')->whereIn("id", $delivered->orderId)
+            DB::table('pabile_orders')->whereIn("id", $delivered["orderId"])
             ->update([ 
                 'status_id' => 4
             ]);
 
-            $order = DB::table('pabile_orders')->select("client_id")->where("id", $delivered->orderId)->first();
+            $order = DB::table('pabile_orders')->select("client_id")->where("id", $delivered["orderId"])->first();
 
             DB::table('pabile_clients')->whereIn("id", $order->client_id)
             ->update([ 
