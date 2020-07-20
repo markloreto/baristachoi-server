@@ -404,7 +404,7 @@ class EtindaController extends BaseController
         $data = $request->all();
         $delivereds = $data["delivereds"];
 
-        foreach($delivereds as $delivered){
+        /* foreach($delivereds as $delivered){
             DB::table('pabile_orders')->whereIn("id", $delivered["orderId"])
             ->update([ 
                 'status_id' => 4
@@ -417,7 +417,7 @@ class EtindaController extends BaseController
                 'lat' => $delivered["lat"],
                 'lng' => $delivered["lng"]
             ]);
-        }
+        } */
 
         return $this->sendResponse($delivereds, 'deliveredOrder');
     }
