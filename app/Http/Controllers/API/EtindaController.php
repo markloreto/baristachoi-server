@@ -402,14 +402,24 @@ class EtindaController extends BaseController
 
     public function deliveredOrder(Request $request){
         $data = $request->all();
-        $orderIds = $data["orderIds"];
+        $delivereds = $data["delivereds"];
 
-        DB::table('pabile_orders')->whereIn("id", $orderIds)
-        ->update([ 
-            'status_id' => 4
-        ]);
+        foreach($delivereds as $delivered){
+            DB::table('pabile_orders')->whereIn("id", $delivered["orderId"])
+            ->update([ 
+                'status_id' => 4
+            ]);
 
-        return $this->sendResponse($orderIds, 'deliveredOrder');
+            $order = DB::table('pabile_orders')->select("client_id")->where("id", $orderId)->first();
+
+            DB::table('pabile_clients')->whereIn("id", $order->client_id)
+            ->update([ 
+                'lat' => $delivered["lat"],
+                'lng' => $delivered["lng"]
+            ]);
+        }
+
+        return $this->sendResponse($delivereds, 'deliveredOrder');
     }
 
     public function completeOrder(Request $request){
