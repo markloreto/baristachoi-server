@@ -201,11 +201,11 @@ class EtindaController extends BaseController
         $models = $data["models"];
         $depot_id = $data["depot_id"];
 
-        $id = DB::table("pabile_purchases")->insertGetId(
-            ["created_at" => $date, "depot_id" => $depot_id]
-        );
-
         foreach($models as $model){
+            $id = DB::table("pabile_purchases")->insertGetId(
+                ["created_at" => $date, "depot_id" => $depot_id]
+            );
+            
             for ($x = 0; $x < $model["qty"]; $x++) {
                 DB::table("pabile_inventories")->insert(
                     ["product_id" => $model["id"], "cost" => $model["cost"], "price" => null/* $model["price"] */, "purchase_id" => $id]
