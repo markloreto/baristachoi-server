@@ -485,4 +485,18 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($records, 'updateMobilePrefix');
     }
+
+    public function getPurchases(Request $request){
+        $data = $request->all();
+        $offset = $data["offset"];
+
+        $records = DB::table("pabile_inventories as pi")->select(DB::raw('pi.purchase_id, (SELECT created_at FROM pabile_purchases WHERE id = pi.purchase_id) AS `Date`, (SELECT name FROM pabile_products WHERE id = pi.product_id) AS `Product Name`, pi.cost AS `Cost`, (SELECT COUNT(id) FROM pabile_inventories WHERE purchase_id = pi.purchase_id) AS `Loaded`, COUNT(pi.id) AS `Remaining`'))
+        ->whereRaw('pi.order_id IS NULL AND pi.inventory_out_id IS NULL')
+        ->groupBy("pi.purchase_id", "pi.product_id", "pi.cost")
+        ->limit(20)
+        ->offset($offset)
+        ->get();
+
+        return $this->sendResponse($records, 'getPurchases');
+    }
 }
