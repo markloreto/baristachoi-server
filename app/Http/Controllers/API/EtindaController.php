@@ -205,7 +205,7 @@ class EtindaController extends BaseController
             $id = DB::table("pabile_purchases")->insertGetId(
                 ["created_at" => $date, "depot_id" => $depot_id]
             );
-            
+
             for ($x = 0; $x < $model["qty"]; $x++) {
                 DB::table("pabile_inventories")->insert(
                     ["product_id" => $model["id"], "cost" => $model["cost"], "price" => null/* $model["price"] */, "purchase_id" => $id]
@@ -490,7 +490,7 @@ class EtindaController extends BaseController
         $data = $request->all();
         $offset = $data["offset"];
 
-        $records = DB::table("pabile_inventories as pi")->select(DB::raw('pi.purchase_id, (SELECT DATE(created_at) FROM pabile_purchases WHERE id = pi.purchase_id) AS `Date`, (SELECT name FROM pabile_products WHERE id = pi.product_id) AS `Product Name`, pi.cost AS `Cost`, (SELECT COUNT(id) FROM pabile_inventories WHERE purchase_id = pi.purchase_id) AS `Loaded`, COUNT(pi.id) AS `Remaining`'))
+        $records = DB::table("pabile_inventories as pi")->select(DB::raw('pi.purchase_id, pi.product_id, (SELECT DATE(created_at) FROM pabile_purchases WHERE id = pi.purchase_id) AS `Date`, (SELECT name FROM pabile_products WHERE id = pi.product_id) AS `Product Name`, pi.cost AS `Cost`, (SELECT COUNT(id) FROM pabile_inventories WHERE purchase_id = pi.purchase_id) AS `Loaded`, COUNT(pi.id) AS `Remaining`'))
         ->whereRaw('pi.order_id IS NULL AND pi.inventory_out_id IS NULL')
         ->orderBy("Date", "desc")
         ->groupBy("pi.purchase_id", "pi.product_id", "pi.cost")
