@@ -500,4 +500,13 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($records, 'getPurchases');
     }
+
+    public function removePurchases(Request $request){
+        $data = $request->all();
+        $purchaseId = $data["purchaseId"];
+
+        DB::table('pabile_purchases')->where('id', $purchaseId)->delete();
+        DB::table('pabile_inventories')->where('purchase_id', $purchaseId)->delete();
+        return $this->sendResponse("", 'removePurchases');
+    }
 }

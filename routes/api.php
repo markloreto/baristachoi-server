@@ -139,6 +139,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/completeOrder', 'API\EtindaController@completeOrder');
 	Route::post('/setRider', 'API\EtindaController@setRider');
 	Route::post('/deliveredOrder', 'API\EtindaController@deliveredOrder');
+	Route::post('/removePurchases', 'API\EtindaController@removePurchases');
 });
 
 Route::get('/ETinda', 'API\PHPController@ETinda');
