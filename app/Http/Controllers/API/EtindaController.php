@@ -515,7 +515,7 @@ class EtindaController extends BaseController
         $purchaseId = $data["purchaseId"];
 
         $records = DB::table('pabile_inventories as pi')
-        ->select(DB::raw('po.*, pi.order_id, COUNT(pi.id) as `count`, DATE(date) as dateOnly'))
+        ->select(DB::raw('po.*, pi.order_id, COUNT(pi.id) as `count`, DATE(date) as dateOnly, pos.name AS status_name'))
         ->where('pi.purchase_id', $purchaseId)
         ->join('pabile_orders as po', 'po.id', '=', 'pi.order_id')
         ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')
