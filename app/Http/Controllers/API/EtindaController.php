@@ -171,7 +171,7 @@ class EtindaController extends BaseController
         $data = $request->all();
         $categoryId = $data["categoryId"];
         
-        $records = DB::table("pabile_products as pp")->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL AND pi.inventory_out_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`'))->where("pp.category_id", $categoryId)->get();
+        $records = DB::table("pabile_products as pp")->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`'))->where("pp.category_id", $categoryId)->get();
         return $this->sendResponse($records, 'getProducts');
     }
 
@@ -188,7 +188,7 @@ class EtindaController extends BaseController
         $records = DB::table("pabile_products as pp")
         ->where('pp.name', 'like', "%" . $q . "%")
         ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
-        ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL AND pi.inventory_out_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
+        ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
         ->limit(10)
         ->get();
 
@@ -312,7 +312,7 @@ class EtindaController extends BaseController
 
         foreach($items as $item){
             //DB::statement("UPDATE pabile_inventories SET price = " . $item["price"] . ", order_id = " . $id . " WHERE product_id = " . $item["productId"] .  " AND (order_id IS NULL AND inventory_out_id IS NULL) ORDER BY id ASC LIMIT " . $item["qty"]);
-            DB::table("pabile_inventories")->whereRaw('product_id = ? AND (order_id IS NULL AND inventory_out_id IS NULL)', [$item["productId"]])
+            DB::table("pabile_inventories")->whereRaw('product_id = ? AND order_id IS NULL', [$item["productId"]])
             ->orderBy('id', 'asc')
             ->limit($item["qty"])
             ->update([ 
@@ -491,7 +491,7 @@ class EtindaController extends BaseController
         $offset = $data["offset"];
 
         $records = DB::table("pabile_inventories as pi")->select(DB::raw('pi.purchase_id, pi.product_id, (SELECT DATE(created_at) FROM pabile_purchases WHERE id = pi.purchase_id) AS `Date`, (SELECT name FROM pabile_products WHERE id = pi.product_id) AS `Product Name`, pi.cost AS `Cost`, (SELECT COUNT(id) FROM pabile_inventories WHERE purchase_id = pi.purchase_id) AS `Loaded`, COUNT(pi.id) AS `Remaining`'))
-        ->whereRaw('pi.order_id IS NULL AND pi.inventory_out_id IS NULL')
+        ->whereRaw('pi.order_id IS NULL')
         ->orderBy("Date", "desc")
         ->groupBy("pi.purchase_id", "pi.product_id", "pi.cost")
         ->limit(20)
