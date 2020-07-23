@@ -526,4 +526,26 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($records, 'getOrdersInPurchases');
     }
+
+    public function orderInfo(Request $request){
+        $data = $request->all();
+        $orderId = $data["orderId"];
+        $rec = DB::table("pabile_orders as po")
+        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName, (SELECT nickName FROM pabile_riders WHERE id = po.rider_id) AS riderNickName, (SELECT SUM(price) FROM pabile_inventories WHERE order_id = po.id) AS `grandTotal`'))
+        ->where("po.id", $orderId)
+        ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')
+        ->first();
+
+        if($rec->client_id){
+            $client = DB::table("pabile_clients as pc")
+            ->join('locations as l', 'l.id_3', '=', 'pc.brgy_id')
+            ->select(DB::raw('pc.*, l.name_3, l.varname_3, (SELECT `network` FROM pabile_mobile_prefixes WHERE id = pc.prefix_id) AS mobile_network'))
+            ->where("pc.id", $rec->client_id)->first();
+            $rec->client = $client;
+        }else{
+            $rec->client = null;
+        }
+
+        return $this->sendResponse($rec, 'orderInfo');
+    }
 }
