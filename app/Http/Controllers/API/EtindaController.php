@@ -509,4 +509,19 @@ class EtindaController extends BaseController
         DB::table('pabile_inventories')->where('purchase_id', $purchaseId)->delete();
         return $this->sendResponse("", 'removePurchases');
     }
+
+    public function getOrdersInPurchases(Request $request){
+        $data = $request->all();
+        $purchaseId = $data["purchaseId"];
+
+        $records = DB::table('pabile_inventories as pi')
+        ->select(DB::raw('po.*, pi.order_id, COUNT(pi.id) as `count`'))
+        ->where('pi.purchase_id', $purchaseId)
+        ->join('pabile_orders as po', 'po.id', '=', 'pi.order_id')
+        ->whereNotNull('pi.order_id')
+        ->groupBy("pi.order_id")
+        ->get();
+
+        return $this->sendResponse($records, 'getOrdersInPurchases');
+    }
 }
