@@ -519,6 +519,7 @@ class EtindaController extends BaseController
         ->where('pi.purchase_id', $purchaseId)
         ->join('pabile_orders as po', 'po.id', '=', 'pi.order_id')
         ->whereNotNull('pi.order_id')
+        ->orderBy("po.id", "desc")
         ->groupBy("pi.order_id")
         ->get();
 
