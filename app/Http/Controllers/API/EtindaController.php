@@ -518,6 +518,7 @@ class EtindaController extends BaseController
         ->select(DB::raw('po.*, pi.order_id, COUNT(pi.id) as `count`, DATE(date) as dateOnly'))
         ->where('pi.purchase_id', $purchaseId)
         ->join('pabile_orders as po', 'po.id', '=', 'pi.order_id')
+        ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')
         ->whereNotNull('pi.order_id')
         ->orderBy("po.id", "desc")
         ->groupBy("pi.order_id")
