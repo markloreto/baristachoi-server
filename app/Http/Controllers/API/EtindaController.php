@@ -48,7 +48,9 @@ class EtindaController extends BaseController
     }
 
     public function getMainProductCategory(){
-        $records = DB::table("pabile_product_main_categories")->get();
+        $records = DB::table("pabile_product_main_categories as ppmc")
+        ->select(DB::raw("ppmc.*, (SELECT COUNT(*) FROM pabile_product_categories WHERE parent_id = ppmc.id) AS `catCount`"))
+        ->get();
         return $this->sendResponse($records, 'getMainProductCategory');
     }
 
