@@ -191,7 +191,7 @@ class EtindaController extends BaseController
         $pid = (isset($data["pid"])) ? $data["pid"] : null;
 
         if($pid){
-            $where = [["id", $pid]];
+            $where = [["pp.id", $pid]];
         }else{
             $where = [['pp.name', 'like', "%" . $q . "%"]];
         }
