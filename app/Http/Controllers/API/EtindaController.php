@@ -548,4 +548,13 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($rec, 'orderInfo');
     }
+
+    public function getCategoriesById(Request $request){
+        $data = $request->all();
+        $catId = $data["catId"];
+
+        $records = DB::table("pabile_product_categories")->where("parent_id", $catId)->get();
+
+        return $this->sendResponse($records, 'getCategoriesById');
+    }
 }
