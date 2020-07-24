@@ -173,7 +173,8 @@ class EtindaController extends BaseController
         $data = $request->all();
         $categoryId = $data["categoryId"];
         
-        $records = DB::table("pabile_products as pp")->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`'))->where("pp.category_id", $categoryId)->get();
+        $records = DB::table("pabile_products as pp")
+        ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`'))->where("pp.category_id", $categoryId)->get();
         return $this->sendResponse($records, 'getProducts');
     }
 
@@ -187,8 +188,16 @@ class EtindaController extends BaseController
     public function searchProducts(Request $request){
         $data = $request->all();
         $q = $data["q"];
+        $pid = (isset($data["pid"])) ? $data["pid"] : null;
+
+        if($pid){
+            $where = [["id", $pid]];
+        }else{
+            $where = [['pp.name', 'like', "%" . $q . "%"]];
+        }
+
         $records = DB::table("pabile_products as pp")
-        ->where('pp.name', 'like', "%" . $q . "%")
+        ->where($where)
         ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
         ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
         ->limit(10)
