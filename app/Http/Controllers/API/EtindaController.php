@@ -556,7 +556,7 @@ class EtindaController extends BaseController
         $catId = $data["catId"];
 
         $records = DB::table("pabile_product_categories as ppc")->where("parent_id", $catId)
-        ->select(DB::raw('ppc.*, (SELECT (*) FROM pabile_products WHERE ppc.id = category_id) as prodCount'))
+        ->select(DB::raw('ppc.*, (SELECT COUNT(*) FROM pabile_products WHERE ppc.id = category_id) as prodCount'))
         ->get();
 
         return $this->sendResponse($records, 'getCategoriesById');
