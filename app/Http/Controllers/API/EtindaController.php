@@ -570,4 +570,21 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($records, 'getCategoriesById');
     }
+
+    public function botMainProductCategories(Request $request){
+        $data = $request->all();
+
+        return response()->json([
+            'version' => 'v2',
+            'content' => array(
+                "messages" => array(
+                    0 => array(
+                        "type" => "cards"
+                    )
+                ),
+                "actions" => array(),
+                "replies" => array()
+            ),
+        ]);
+    }
 }
