@@ -586,7 +586,7 @@ class EtindaController extends BaseController
                 $elements[] = array(
                     "title" => $record->name,
                     "subtitle" => $record->count . " items"
-                )
+                );
             }
         }
 
