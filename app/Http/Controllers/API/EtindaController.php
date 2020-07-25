@@ -581,14 +581,14 @@ class EtindaController extends BaseController
 
         $elements = [];
 
-        foreach($records as $record){
+        /* foreach($records as $record){
             if($record->catCount){
                 $elements[] = array(
                     "title" => $record->name,
                     "subtitle" => $record->catCount . " items"
                 );
             }
-        }
+        } */
 
         return response()->json([
             'version' => 'v2',
