@@ -149,5 +149,5 @@ Route::get('/ETinda', 'API\PHPController@ETinda');
 Route::get('/updateMobilePrefix', 'API\EtindaController@updateMobilePrefix');
 
 //E-Tinda Bot
-Route::get('/botMainProductCategories', 'API\PHPController@botMainProductCategories');
+Route::get('/botMainProductCategories', 'API\EtindaController@botMainProductCategories');
 
