@@ -591,6 +591,10 @@ class EtindaController extends BaseController
         } */
 
         return response()->json([
+            "test" => "weee"
+        ])
+
+        /* return response()->json([
             'version' => 'v2',
             'content' => array(
                 "messages" => array(
@@ -618,6 +622,6 @@ class EtindaController extends BaseController
                 "actions" => array(),
                 "replies" => array()
             ),
-        ]);
+        ]); */
     }
 }
