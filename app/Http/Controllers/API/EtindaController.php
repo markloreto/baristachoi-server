@@ -575,28 +575,28 @@ class EtindaController extends BaseController
     public function botMainProductCategories(Request $request){
         $data = $request->all();
 
+        $records = DB::table("pabile_product_main_categories as ppmc")
+        ->select(DB::raw("ppmc.*, (SELECT COUNT(*) FROM pabile_product_categories WHERE parent_id = ppmc.id) AS `catCount`"))
+        ->get();
+
+        $elements = [];
+
+        foreach($records as $record){
+            if($record->count){
+                $elements[] = array(
+                    "title" => $record->name,
+                    "subtitle" => $record->count . " items"
+                )
+            }
+        }
+
         return response()->json([
             'version' => 'v2',
             'content' => array(
                 "messages" => array(
                     0 => array(
                         "type" => "cards",
-                        "elements" => array(
-                            0 => array(
-                                "title" => "Weee",
-                                "subtitle" => "Subtitle",
-                                "buttons" => array()
-                            ),
-                            1 => array(
-                                "title" => "Weee 2",
-                                "subtitle" => "Subtitle 2",
-                                "buttons" => array()
-                            ),
-                            3 => array(
-                                "title" => "Weee 2",
-                                "subtitle" => "Subtitle 2",
-                                "buttons" => array()
-                            )
+                        "elements" => $elements
                         )
                     )
                 ),
