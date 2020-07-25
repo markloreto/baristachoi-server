@@ -582,10 +582,10 @@ class EtindaController extends BaseController
         $elements = [];
 
         foreach($records as $record){
-            if($record->count){
+            if($record->catCount){
                 $elements[] = array(
                     "title" => $record->name,
-                    "subtitle" => $record->count . " items"
+                    "subtitle" => $record->catCount . " items"
                 );
             }
         }
