@@ -597,7 +597,6 @@ class EtindaController extends BaseController
                     0 => array(
                         "type" => "cards",
                         "elements" => $elements
-                        )
                     )
                 ),
                 "actions" => array(),
