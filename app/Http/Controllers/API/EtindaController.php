@@ -592,7 +592,7 @@ class EtindaController extends BaseController
 
         return response()->json([
             "test" => "weee"
-        ])
+        ]);
 
         /* return response()->json([
             'version' => 'v2',
