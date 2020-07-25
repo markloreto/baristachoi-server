@@ -571,6 +571,7 @@ class EtindaController extends BaseController
         return $this->sendResponse($records, 'getCategoriesById');
     }
 
+    //BOT
     public function botMainProductCategories(Request $request){
         $data = $request->all();
 
@@ -584,6 +585,16 @@ class EtindaController extends BaseController
                             0 => array(
                                 "title" => "Weee",
                                 "subtitle" => "Subtitle",
+                                "buttons" => array()
+                            ),
+                            1 => array(
+                                "title" => "Weee 2",
+                                "subtitle" => "Subtitle 2",
+                                "buttons" => array()
+                            ),
+                            3 => array(
+                                "title" => "Weee 2",
+                                "subtitle" => "Subtitle 2",
                                 "buttons" => array()
                             )
                         )
