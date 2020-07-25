@@ -114,7 +114,7 @@ Route::middleware('auth:api')->group( function () {
 	/* E-Tinda */
 	Route::post('/createProductCategory', 'API\EtindaController@createProductCategory');
 	Route::get('/getProductCategory', 'API\EtindaController@getProductCategory');
-	Route::get('/getMainProductCategory', 'API\EtindaController@getMainProductCategory');
+	
 	Route::get('/getCategories', 'API\EtindaController@getCategories');
 	Route::get('/getSpecKeys', 'API\EtindaController@getSpecKeys');
 	Route::get('/getProductTags', 'API\EtindaController@getProductTags');
@@ -147,4 +147,7 @@ Route::middleware('auth:api')->group( function () {
 
 Route::get('/ETinda', 'API\PHPController@ETinda');
 Route::get('/updateMobilePrefix', 'API\EtindaController@updateMobilePrefix');
+
+//
+Route::get('/getMainProductCategory', 'API\EtindaController@getMainProductCategory');
 
