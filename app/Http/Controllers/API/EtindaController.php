@@ -579,7 +579,14 @@ class EtindaController extends BaseController
             'content' => array(
                 "messages" => array(
                     0 => array(
-                        "type" => "cards"
+                        "type" => "cards",
+                        "elements" => array(
+                            0 => array(
+                                "title" => "Weee",
+                                "subtitle" => "Subtitle",
+                                "buttons" => array()
+                            )
+                        )
                     )
                 ),
                 "actions" => array(),
