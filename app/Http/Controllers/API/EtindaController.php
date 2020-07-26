@@ -601,7 +601,7 @@ class EtindaController extends BaseController
                             "buttons" => array(
                                 0 => array(
                                     "type" => "web_url",
-                                    "url" => "https://pabile-e.web.app",
+                                    "url" => "https://pabile-e.firebaseapp.com/",
                                     "title" => "Visit"
                                 )
                             )
