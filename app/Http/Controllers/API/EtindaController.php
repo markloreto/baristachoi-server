@@ -615,11 +615,15 @@ class EtindaController extends BaseController
                         )
                     ),
                     1 => array(
-                        "type" => "url",
-                        "caption" => "Pabil-E!!!",
-                        "url" => "https://pabile-e.web.app/sample-page",
-                        "webview_size" => "medium",
-                        "webview_share_button" => "hide" 
+                        "type" => "text",
+                        "text" => "Pabil-E!!!",
+                        "buttons" => array(
+                            "type" => "url",
+                            "caption" => "External link",
+                            "url" => "https://pabile-e.web.app/sample-page",
+                            "webview_size" => "medium",
+                            "webview_share_button" => "hide" 
+                        )
                     )
                 ),
                 "actions" => array(),
