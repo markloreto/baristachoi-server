@@ -591,46 +591,25 @@ class EtindaController extends BaseController
         } */
 
         return response()->json([
-            'version' => 'v2',
-            'content' => array(
-                "messages" => array(
-                    0 => array(
-                        "type" => "cards",
-                        "elements" => array(
-                            0 => array(
-                                "title" => "Weee",
-                                "subtitle" => "Subtitle",
-                                "buttons" => array()
-                            ),
-                            1 => array(
-                                "title" => "Weee 2",
-                                "subtitle" => "Subtitle 2",
-                                "buttons" => array()
-                            ),
-                            3 => array(
-                                "title" => "Weee 2",
-                                "subtitle" => "Subtitle 2",
-                                "buttons" => array()
-                            )
-                        )
-                    ),
-                    1 => array(
-                        "type" => "text",
-                        "text" => "Pabil-E!!!",
-                        "buttons" => array(
-                            0 => array(
-                                "type" => "url",
-                                "caption" => "External link",
-                                "url" => "https://pabile-e.web.app/sample-page",
-                                "webview_size" => "medium",
-                                "webview_share_button" => "hide" 
+            "messages" => array(
+                0 => array(
+                    "attachment" => array(
+                        "type" => "template",
+                        "payload" => array(
+                            "template_type" => "button",
+                            "text" => "hello",
+                            "buttons" => array(
+                                0 => array(
+                                    "type" => "web_url",
+                                    "url" => "https://pabile-e.web.app",
+                                    "title" => "Visit",
+                                    "https://pabile-e.web.app" => "hide"
+                                )
                             )
                         )
                     )
-                ),
-                "actions" => array(),
-                "replies" => array()
-            ),
+                )
+            )
         ]);
     }
 }
