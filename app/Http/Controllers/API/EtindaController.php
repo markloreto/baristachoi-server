@@ -603,7 +603,7 @@ class EtindaController extends BaseController
                                     "type" => "web_url",
                                     "url" => "https://pabile-e.web.app",
                                     "title" => "Visit",
-                                    "https://pabile-e.web.app" => "hide"
+                                    "webview_share_button" => "hide"
                                 )
                             )
                         )
