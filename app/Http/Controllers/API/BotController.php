@@ -70,7 +70,7 @@ class BotController extends BaseController
                   }
                 ]
               }
-        '));
+        ', true));
     }
 
     /* public function botMainProductCategories(Request $request){
