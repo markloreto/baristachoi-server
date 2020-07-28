@@ -72,7 +72,12 @@ class BotController extends BaseController
           }
         ', true);
 
-        return response()->json($json);
+        return response()->json([
+            'name' => 'Abigail',
+            'state' => 'CA'
+        ]);
+
+        //return response()->json($json);
     }
 
     /* public function botMainProductCategories(Request $request){
