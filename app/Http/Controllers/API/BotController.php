@@ -52,7 +52,7 @@ class BotController extends BaseController
                       "type": "template",
                       "payload": {
                         "template_type": "button",
-                        "text": ' . $text . ',
+                        "text": "' . $text . '",
                         "buttons": [
                           {
                             "type": "show_block",
