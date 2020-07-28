@@ -44,33 +44,35 @@ class BotController extends BaseController
             ";
         }
 
-        return response()->json(json_decode('
-            {
-                "messages": [
-                  {
-                    "attachment": {
-                      "type": "template",
-                      "payload": {
-                        "template_type": "button",
-                        "text": "' . $text . '",
-                        "buttons": [
-                          {
-                            "type": "show_block",
-                            "block_names": ["name of block"],
-                            "title": "Show Block 1"
-                          },
-                          {
-                            "type": "show_block",
-                            "block_names": ["name of block"],
-                            "title": "Show Block 2"
-                          }
-                        ]
+        $json = json_decode('
+        {
+            "messages": [
+              {
+                "attachment": {
+                  "type": "template",
+                  "payload": {
+                    "template_type": "button",
+                    "text": "' . $text . '",
+                    "buttons": [
+                      {
+                        "type": "show_block",
+                        "block_names": ["name of block"],
+                        "title": "Show Block 1"
+                      },
+                      {
+                        "type": "show_block",
+                        "block_names": ["name of block"],
+                        "title": "Show Block 2"
                       }
-                    }
+                    ]
                   }
-                ]
+                }
               }
-        ', true));
+            ]
+          }
+        ', true);
+
+        return response()->json($json);
     }
 
     /* public function botMainProductCategories(Request $request){
