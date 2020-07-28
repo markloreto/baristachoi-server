@@ -47,37 +47,32 @@ class BotController extends BaseController
         $json = json_decode('
         {
             "messages": [
-              {
-                "attachment": {
-                  "type": "template",
-                  "payload": {
-                    "template_type": "button",
-                    "text": "' . $text . '",
-                    "buttons": [
-                      {
-                        "type": "show_block",
-                        "block_names": ["name of block"],
-                        "title": "Show Block 1"
-                      },
-                      {
-                        "type": "show_block",
-                        "block_names": ["name of block"],
-                        "title": "Show Block 2"
-                      }
-                    ]
-                  }
+                {
+                    "attachment": {
+                        "type": "template",
+                        "payload": {
+                        "template_type": "button",
+                        "text": "' . $text . '",
+                        "buttons": [
+                                {
+                                "type": "web_url",
+                                "url": "https://rockets.chatfuel.com",
+                                "title": "Visit Website"
+                                },
+                                {
+                                "url": "https://rockets.chatfuel.com/api/welcome",
+                                "type":"json_plugin_url",
+                                "title":"Postback"
+                                }
+                            ]
+                        }
+                    }
                 }
-              }
             ]
-          }
+        }
         ', true);
 
-        return response()->json([
-            'name' => 'Abigail',
-            'state' => 'CA'
-        ]);
-
-        //return response()->json($json);
+        return response()->json($json);
     }
 
     /* public function botMainProductCategories(Request $request){
