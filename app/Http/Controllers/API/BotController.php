@@ -34,14 +34,10 @@ class BotController extends BaseController
         $language = $data["u-language"];
 
         if($language == "english"){
-            $text = "Hi {{first name}}, \n\r\n\r
-            this is an english
-            ";
+            $text = "Hi {{first name}}, \n\r\n\r this is an english";
         }
         if($language == "tagalog"){
-            $text = "Hi {{first name}}, \n\r\n\r
-            tagalog ito!
-            ";
+            $text = "Hi {{first name}}, \n\r\n\r tagalog ito!";
         }
 
         $json = json_decode('
@@ -51,18 +47,18 @@ class BotController extends BaseController
                     "attachment": {
                         "type": "template",
                         "payload": {
-                        "template_type": "button",
-                        "text": "' . $text . '",
-                        "buttons": [
+                            "template_type": "button",
+                            "text": "' . $text . '",
+                            "buttons": [
                                 {
-                                "type": "web_url",
-                                "url": "https://rockets.chatfuel.com",
-                                "title": "Visit Website"
+                                    "type": "web_url",
+                                    "url": "https://rockets.chatfuel.com",
+                                    "title": "Visit Website"
                                 },
                                 {
-                                "url": "https://rockets.chatfuel.com/api/welcome",
-                                "type":"json_plugin_url",
-                                "title":"Postback"
+                                    "url": "https://rockets.chatfuel.com/api/welcome",
+                                    "type":"json_plugin_url",
+                                    "title":"Postback"
                                 }
                             ]
                         }
