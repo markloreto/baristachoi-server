@@ -34,10 +34,10 @@ class BotController extends BaseController
         $language = $data["u-language"];
 
         if($language == "english"){
-            $text = "Hi {{first name}}, \n\r\n\r this is an english";
+            $text = "Hi \{\{first name\}\}, \n\r\n\r this is an english";
         }
         if($language == "tagalog"){
-            $text = "Hi {{first name}}, \n\r\n\r tagalog ito!";
+            $text = "Hi \{\{first name\}\}, \n\r\n\r tagalog ito!";
         }
 
         $json = json_decode('{
