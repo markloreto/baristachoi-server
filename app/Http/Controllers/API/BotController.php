@@ -29,12 +29,19 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
-    public function botTest(Request $request){
+    public function botGetToken(Request $request){
       $data = $request->all();
-      $messengerId = $data["messengerId"];
+      $messengerId = $data["messenger user id"];
       $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
 
-      return $this->sendResponse($hashedMessengerId, 'test');
+      $json = json_decode('{
+        "set_attributes":
+          {
+            "u-token": " ' . $hashedMessengerId . ' "
+          }
+      }');
+
+      return response()->json($json);
     }
 
     public function getBotCategoriesById(Request $request){
