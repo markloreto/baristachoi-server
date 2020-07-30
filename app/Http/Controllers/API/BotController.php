@@ -29,6 +29,18 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function getBotCategoriesById(Request $request){
+      $data = $request->all();
+      $catId = $data["catId"];
+
+      $records = DB::table("pabile_product_categories as ppc")->where("parent_id", $catId)
+      ->select(DB::raw('ppc.*, (SELECT COUNT(*) FROM pabile_products WHERE ppc.id = category_id) as prodCount'))
+      ->having("prodCount", "!=", 0)
+      ->get();
+
+      return $this->sendResponse($records, 'getCategoriesById');
+  }
+
     public function getBotMainProductCategory(Request $request){
       $records = DB::table("pabile_product_main_categories as ppmc")
       ->select(DB::raw("ppmc.*, (SELECT COUNT(*) FROM pabile_product_categories WHERE parent_id = ppmc.id) AS `catCount`"))
