@@ -39,7 +39,7 @@ class BotController extends BaseController
       ->get();
 
       return $this->sendResponse($records, 'getCategoriesById');
-  }
+    }
 
     public function getBotMainProductCategory(Request $request){
       $records = DB::table("pabile_product_main_categories as ppmc")
@@ -47,7 +47,7 @@ class BotController extends BaseController
       ->having("catCount", "!=", 0)
       ->get();
       return $this->sendResponse($records, 'getMainProductCategory');
-  }
+    }
 
     public function botWelcome(Request $request){
         $data = $request->all();
