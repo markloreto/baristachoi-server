@@ -153,4 +153,5 @@ Route::get('/botMainProductCategories', 'API\EtindaController@botMainProductCate
 Route::post('/botWelcome', 'API\BotController@botWelcome');
 Route::get('/getBotMainProductCategory', 'API\BotController@getBotMainProductCategory');
 Route::get('/getBotCategoriesById', 'API\BotController@getBotCategoriesById');
+Route::get('/botTest', 'API\BotController@botTest');
 

@@ -29,6 +29,14 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function botTest(Request $request){
+      $data = $request->all();
+      $messengerId = $data["messengerId"];
+      $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
+
+      return $this->sendResponse($hashedMessengerId, 'test');
+    }
+
     public function getBotCategoriesById(Request $request){
       $data = $request->all();
       $catId = $data["catId"];
