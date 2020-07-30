@@ -29,6 +29,14 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function getBotMainProductCategory(Request $request){
+      $records = DB::table("pabile_product_main_categories as ppmc")
+      ->select(DB::raw("ppmc.*, (SELECT COUNT(*) FROM pabile_product_categories WHERE parent_id = ppmc.id) AS `catCount`"))
+      ->having("catCount", "!=", 0)
+      ->get();
+      return $this->sendResponse($records, 'getMainProductCategory');
+  }
+
     public function botWelcome(Request $request){
         $data = $request->all();
         $language = $data["u-language"];
