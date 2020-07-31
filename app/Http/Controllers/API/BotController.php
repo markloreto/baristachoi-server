@@ -33,7 +33,7 @@ class BotController extends BaseController
       $data = $request->all();
       $token = $data["token"];
       $items = $data["items"];
-      $messengerId = $data["messenger user id"];
+      $messengerId = $data["messenger_uid"];
 
       $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
 
