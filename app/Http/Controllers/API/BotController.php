@@ -41,7 +41,7 @@ class BotController extends BaseController
 
       $success = 1;
 
-      if(count($items) > 500 && $hashedMessengerId != $token){
+      if(count($items) > 500 || $hashedMessengerId != $token){
         $success = 0;
       }else{
         
