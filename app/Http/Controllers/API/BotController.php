@@ -29,6 +29,20 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function fbOrder(Request $request){
+      $data = $request->all();
+      $token = $data["token"];
+      $items = $data["items"];
+
+      foreach($items as $item){
+        DB::table("pabile_temp_orders")->insert(
+          ["token" => $items, "product_id" => $item["id"], "qty" => $item["qty"]]
+        );
+      }
+
+      return $this->sendResponse("", 'fbOrder');
+    }
+
     public function botGetToken(Request $request){
       $data = $request->all();
       $messengerId = $data["messenger user id"];
