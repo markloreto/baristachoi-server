@@ -36,7 +36,7 @@ class BotController extends BaseController
 
       foreach($items as $item){
         DB::table("pabile_temp_orders")->insert(
-          ["token" => $items, "product_id" => $item["id"], "qty" => $item["qty"]]
+          ["token" => $token, "product_id" => $item["id"], "qty" => $item["qty"]]
         );
       }
 
