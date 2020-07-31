@@ -33,14 +33,27 @@ class BotController extends BaseController
       $data = $request->all();
       $token = $data["token"];
       $items = $data["items"];
+      $messengerId = $data["messenger user id"];
 
-      foreach($items as $item){
-        DB::table("pabile_temp_orders")->insert(
-          ["token" => $token, "product_id" => $item["id"], "qty" => $item["qty"]]
-        );
+      $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
+
+      DB::table('pabile_temp_orders')->where('token', $token)->delete();
+
+      $success = 1;
+
+      if(count($items) > 500 && $hashedMessengerId != $token){
+        $success = 0;
+      }else{
+        
+
+        foreach($items as $item){
+          DB::table("pabile_temp_orders")->insert(
+            ["token" => $token, "product_id" => $item["id"], "qty" => $item["qty"]]
+          );
+        }
       }
 
-      return $this->sendResponse("", 'fbOrder');
+      return $this->sendResponse($success, 'fbOrder');
     }
 
     public function botGetToken(Request $request){
