@@ -40,8 +40,13 @@ class BotController extends BaseController
       DB::table('pabile_temp_orders')->where('token', $token)->delete();
 
       $success = 1;
+      $itemsCount = 0;
 
-      if(count($items) > 500 || $hashedMessengerId != $token){
+      foreach($items as $item){
+        $itemsCount+= intval($item["qty"]);
+      }
+
+      if($itemsCount > 100 || $hashedMessengerId != $token){
         $success = 0;
       }else{
 
