@@ -47,8 +47,9 @@ class BotController extends BaseController
 
         $orders[] = $d;
 
-        return $this->sendResponse($orders, 'getTempOrders');
       }
+
+      return $this->sendResponse($orders, 'getTempOrders');
     }
 
     public function fbOrder(Request $request){
