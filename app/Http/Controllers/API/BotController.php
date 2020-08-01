@@ -31,7 +31,7 @@ class BotController extends BaseController
     //BOT
     public function getTempOrders(Request $request){
       $data = $request->all();
-      $token = $data["token"];
+      $token = trim($data["token"]);
       $orders = [];
 
       $recs = DB::table("pabile_temp_orders")->where("token", $token)->get();
@@ -98,7 +98,7 @@ class BotController extends BaseController
       $json = json_decode('{
         "set_attributes":
           {
-            "u-token": " ' . $hashedMessengerId . ' "
+            "u-token": "' . $hashedMessengerId . '"
           }
       }');
 
