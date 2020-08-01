@@ -29,6 +29,28 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function getTempOrders(Request $request){
+      $data = $request->all();
+      $token = $data["token"];
+      $orders = [];
+
+      $recs = DB::table("pabile_temp_orders")->where("token", $token)->get();
+      foreach($recs as $rec){
+        $d = DB::table("pabile_products as pp")
+        ->where(["pp.id", $rec->product_id])
+        ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
+        ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
+        ->limit(10)
+        ->first();
+
+        $d->qty = $rec->qty;
+
+        $orders[] = $d;
+
+        return $this->sendResponse($orders, 'getTempOrders');
+      }
+    }
+
     public function fbOrder(Request $request){
       $data = $request->all();
       $token = $data["token"];

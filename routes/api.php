@@ -155,4 +155,5 @@ Route::get('/getBotMainProductCategory', 'API\BotController@getBotMainProductCat
 Route::get('/getBotCategoriesById', 'API\BotController@getBotCategoriesById');
 Route::post('/botGetToken', 'API\BotController@botGetToken');
 Route::post('/fbOrder', 'API\BotController@fbOrder');
+Route::get('/getTempOrders', 'API\BotController@getTempOrders');
 
