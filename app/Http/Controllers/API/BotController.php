@@ -44,13 +44,20 @@ class BotController extends BaseController
       if(count($items) > 500 || $hashedMessengerId != $token){
         $success = 0;
       }else{
-        
 
         foreach($items as $item){
           DB::table("pabile_temp_orders")->insert(
             ["token" => $token, "product_id" => $item["id"], "qty" => $item["qty"]]
           );
         }
+
+        $client = new Client([
+          'headers' => [ 
+              'Content-Type' => 'application/json'
+            ]
+        ]);
+
+        $response = $client->post("https://api.chatfuel.com/bots/5f1d5f37cf7d166801d21c5a/users/" . $messengerId . "/send?chatfuel_token=mELtlMAHYqR0BvgEiMq8zVek3uYUK3OJMbtyrdNPTrQB9ndV0fM7lWTFZbM4MZvD&chatfuel_message_tag=POST_PURCHASE_UPDATE&chatfuel_block_name=CartIn");
       }
 
       return $this->sendResponse($success, 'fbOrder');
