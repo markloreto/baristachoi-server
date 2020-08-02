@@ -29,6 +29,29 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+
+    public function getBrgyInfo(Request $request){
+      $data = $request->all();
+      $brgyId = $data["brgyId"];
+      $brgyInfo = DB::table("locations")->select(DB::raw("ST_AsGeoJSON(SHAPE) AS geo, region, province, name_2 AS municipal, name_3 AS brgy, varname_3, id_3 as brgyID"))->where('id_3', $brgyId)->first();
+
+      return $this->sendResponse($brgyInfo, 'getBrgyInfo');
+    }
+
+    public function deleteTempOrders(Request $request){
+      $data = $request->all();
+      $token = $data["token"];
+      $messengerId = $data["messenger_uid"];
+
+      $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
+
+      if($hashedMessengerId == $token){
+        DB::table('pabile_temp_orders')->where('token', $token)->delete();
+      }
+
+      return $this->sendResponse("", 'deleteTempOrders');
+    }
+
     public function getTempOrders(Request $request){
       $data = $request->all();
       $token = trim($data["token"]);
