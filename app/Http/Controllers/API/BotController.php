@@ -30,6 +30,29 @@ class BotController extends BaseController
 {
     //BOT
 
+    public function botSetLocation(Request $request){
+      $data = $request->all();
+      $token = $data["token"];
+      $messengerId = $data["messenger_uid"];
+      $depotId = $data["depot_id"];
+      $brgyId = $data["brgyId"];
+      $brgyName = $data["brgyName"];
+      $lat = $data["lat"];
+      $lng = $data["lng"];
+
+      $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
+
+      $success = 1;
+
+      if($hashedMessengerId != $token){
+        $success = 0;
+      }else{
+        $response = $client->post("https://api.chatfuel.com/bots/5f1d5f37cf7d166801d21c5a/users/" . $messengerId . "/send?chatfuel_token=mELtlMAHYqR0BvgEiMq8zVek3uYUK3OJMbtyrdNPTrQB9ndV0fM7lWTFZbM4MZvD&chatfuel_message_tag=POST_PURCHASE_UPDATE&chatfuel_block_name=summary&u-lat=".$lat."&u-lng=".$lng."&u-brgy-name=".$brgyName."&u-brgy_id=".$brgyId);
+      }
+
+      return $this->sendResponse($success, 'botSetLocation');
+    }
+
     public function getBrgyInfo(Request $request){
       $data = $request->all();
       $brgyId = $data["brgyId"];
