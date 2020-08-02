@@ -158,3 +158,5 @@ Route::post('/fbOrder', 'API\BotController@fbOrder');
 Route::get('/getTempOrders', 'API\BotController@getTempOrders');
 Route::post('/deleteTempOrders', 'API\BotController@deleteTempOrders');
 Route::get('/getBrgyInfo', 'API\BotController@getBrgyInfo');
+Route::post('/botSetLocation', 'API\BotController@botSetLocation');
+
