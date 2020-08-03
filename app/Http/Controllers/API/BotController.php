@@ -41,6 +41,10 @@ class BotController extends BaseController
       $brgyName = $data["brgyName"];
       $address = ($data["address"]) ? $data["address"] : "";
       $depot = $data["depot"];
+      $depotId = $data["depot_id"];
+
+      $depotInfo = DB::table("locations")->select("province", "name_1", "name_2")->where("id_2", $depotId)->first();
+
       //
       $realClientId = 0;
 
@@ -138,8 +142,8 @@ class BotController extends BaseController
                     "street_1": "Barangay ' . $brgyName . '",
                     "street_2": "' .$address. '",
                     "city": "' . $depot . '",
-                    "postal_code": "0000",
-                    "state": "",
+                    "postal_code": "' . $depotId . '",
+                    "state": "' .$depotInfo->province. '",
                     "country": "PH"
                   },
                   "summary": {
