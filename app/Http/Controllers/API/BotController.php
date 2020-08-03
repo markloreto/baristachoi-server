@@ -42,6 +42,7 @@ class BotController extends BaseController
       $address = ($data["address"]) ? $data["address"] : "";
       $depot = $data["depot"];
       $depotId = $data["depot_id"];
+      $address = ($address) ? $address : "";
 
       $depotInfo = DB::table("locations")->select("province", "name_1", "name_2")->where("id_2", $depotId)->first();
 
