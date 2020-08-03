@@ -130,7 +130,7 @@ class BotController extends BaseController
             "productId" => $item->product_id,
             "qty" => $item->qty,
             "price" => $d->price
-          ]
+          ];
         }
         
         $request->request->add([
