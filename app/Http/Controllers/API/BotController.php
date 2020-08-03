@@ -180,7 +180,7 @@ class BotController extends BaseController
 
         $json["messages"][0]["attachment"]["payload"]["elements"] = $orders;
 
-        
+        DB::table('pabile_temp_orders')->where('token', $token)->delete();
       }
 
     return response()->json($json);

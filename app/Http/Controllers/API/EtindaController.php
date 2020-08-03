@@ -316,9 +316,10 @@ class EtindaController extends BaseController
         $notes = $data["notes"];
         $items = $data["items"];
         $bot = (isset($data["bot"])) ? true : false;
+        $origin = (isset($data["origin"])) ? $data["origin"] : "pos";
 
         $id = DB::table('pabile_orders')->insertGetId(
-            ["client_id" => $clientId, "date" => $date, "schedule" => $schedule, "changeFor" => $changeFor, "notes" => $notes, "created_at" => Carbon::today(), "status_id" => 1, "origin" => "pos"]
+            ["client_id" => $clientId, "date" => $date, "schedule" => $schedule, "changeFor" => $changeFor, "notes" => $notes, "created_at" => Carbon::today(), "status_id" => 1, "origin" => $origin]
         );
 
         foreach($items as $item){
