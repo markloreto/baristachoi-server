@@ -115,7 +115,7 @@ class BotController extends BaseController
             "title" => $d->name,
             "subtitle" => $d->category_name,
             "quantity" => $item->qty,
-            "price" => $d->price,
+            "price" => floatval($d->price),
             "currency" => "PHP",
             "image_url" => $thumb
           ];
@@ -129,20 +129,26 @@ class BotController extends BaseController
                 "payload": { 
                   "template_type": "receipt",
                   "recipient_name": "' . $name . '",
+                  "order_number": "12345678901",
                   "currency": "PHP",
                   "payment_method": "Cash on Delivery",
+                  "order_url": "https://rockets.chatfuel.com/store?order_id=12345678901",
                   "timestamp": "' . time() . '",
                   "address": {
                     "street_1": "' . $st . '",
                     "street_2": "",
                     "city": "' . $depot . '",
+                    "postal_code": "6002",
+                    "state": "La Union",
                     "country": "PH"
                   },
                   "summary": {
                     "subtotal": ' . $total . ',
                     "shipping_cost": 0,
+                    "total_tax": 0,
                     "total_cost": ' . $total . '
                   },
+                  "adjustments": [],
                   "elements": []
                 }
               }
