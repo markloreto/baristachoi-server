@@ -110,92 +110,102 @@ class BotController extends BaseController
           }
         }
 
-        $total = 0;
-        $orders = [];
-        $ordersSave= [];
+        //Pending Orders Technique
+        $pendingOrdersCount = DB::table("pabile_orders")->where([["client_id", $realClientId], ["status_id", 1]])->count();
         
-        foreach($items as $item){
-          $d = DB::table("pabile_products as pp")
-          ->where("pp.id", $item->product_id)
-          ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
-          ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
-          ->first();
+        if($pendingOrdersCount > 3){
+          $json = json_decode('{
+            "redirect_to_blocks": ["tooManyPending"]
+          }', true);
+        }else{
+          $total = 0;
+          $orders = [];
+          $ordersSave= [];
+          
+          foreach($items as $item){
+            $d = DB::table("pabile_products as pp")
+            ->where("pp.id", $item->product_id)
+            ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
+            ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
+            ->first();
 
-          $d->qty = $item->qty;
-          $total += $item->qty * $d->price;
+            $d->qty = $item->qty;
+            $total += $item->qty * $d->price;
 
-          $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($d->thumbnail, 'pabile/');
-          $orders[] = [
-            "title" => $d->name,
-            "subtitle" => $d->category_name,
-            "quantity" => $item->qty,
-            "price" => floatval($d->price),
-            "currency" => "PHP",
-            "image_url" => $thumb
-          ];
+            $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($d->thumbnail, 'pabile/');
+            $orders[] = [
+              "title" => $d->name,
+              "subtitle" => $d->category_name,
+              "quantity" => $item->qty,
+              "price" => floatval($d->price),
+              "currency" => "PHP",
+              "image_url" => $thumb
+            ];
 
-          $ordersSave[] = [
-            "productId" => $item->product_id,
-            "qty" => $item->qty,
-            "price" => $d->price
-          ];
-        }
-        
-        $request->request->add([
-          'date' => date("o-m-d H:i:s"), 
-          'schedule' => "Now", 
-          "changeFor" => null, 
-          "notes" => $address, 
-          "items" => $ordersSave,
-          "bot" => true,
-          "origin" => "fb"
-          ]);
-        $submitOrder = new EtindaController;
-        $orderId = $submitOrder->submitOrder($request);
+            $ordersSave[] = [
+              "productId" => $item->product_id,
+              "qty" => $item->qty,
+              "price" => $d->price
+            ];
+          }
+          
+          $request->request->add([
+            'date' => date("o-m-d H:i:s"), 
+            'schedule' => "Now", 
+            "changeFor" => null, 
+            "notes" => $address, 
+            "items" => $ordersSave,
+            "bot" => true,
+            "origin" => "fb",
+            "clientId" => $realClientId
+            ]);
+          $submitOrder = new EtindaController;
+          $orderId = $submitOrder->submitOrder($request);
 
-        $json = json_decode('{
-          "set_attributes":
-          {
-            "u-status": "active",
-            "u-id": '.$realClientId.'
-          },
-          "messages": [
+          $json = json_decode('{
+            "set_attributes":
             {
-              "attachment": {
-                "type": "template",
-                "payload": { 
-                  "template_type": "receipt",
-                  "recipient_name": "' . $name . '",
-                  "order_number": "'.$orderId.'",
-                  "currency": "PHP",
-                  "payment_method": "Cash on Delivery",
-                  "order_url": "https://rockets.chatfuel.com/store?order_id=12345678901",
-                  "timestamp": "' . time() . '",
-                  "address": {
-                    "street_1": "Barangay ' . $brgyName . ', ",
-                    "street_2": "' .$address. '",
-                    "city": "' . $depot . '",
-                    "postal_code": "' . $depotInfo->location_id . '",
-                    "state": "' .$location->province. '",
-                    "country": "PH"
-                  },
-                  "summary": {
-                    "subtotal": ' . $total . ',
-                    "shipping_cost": 0,
-                    "total_tax": 0,
-                    "total_cost": ' . $total . '
-                  },
-                  "adjustments": [],
-                  "elements": []
+              "u-status": "active",
+              "u-id": '.$realClientId.'
+            },
+            "messages": [
+              {
+                "attachment": {
+                  "type": "template",
+                  "payload": { 
+                    "template_type": "receipt",
+                    "recipient_name": "' . $name . '",
+                    "order_number": "'.$orderId.'",
+                    "currency": "PHP",
+                    "payment_method": "Cash on Delivery",
+                    "order_url": "https://rockets.chatfuel.com/store?order_id=12345678901",
+                    "timestamp": "' . time() . '",
+                    "address": {
+                      "street_1": "Barangay ' . $brgyName . ', ",
+                      "street_2": "' .$address. '",
+                      "city": "' . $depot . '",
+                      "postal_code": "' . $depotInfo->location_id . '",
+                      "state": "' .$location->province. '",
+                      "country": "PH"
+                    },
+                    "summary": {
+                      "subtotal": ' . $total . ',
+                      "shipping_cost": 0,
+                      "total_tax": 0,
+                      "total_cost": ' . $total . '
+                    },
+                    "adjustments": [],
+                    "elements": []
+                  }
                 }
               }
-            }
-          ]
-        }', true);
+            ]
+          }', true);
 
-        $json["messages"][0]["attachment"]["payload"]["elements"] = $orders;
+          $json["messages"][0]["attachment"]["payload"]["elements"] = $orders;
 
-        DB::table('pabile_temp_orders')->where('token', $token)->delete();
+          DB::table('pabile_temp_orders')->where('token', $token)->delete();
+        }
       }
 
     return response()->json($json);
