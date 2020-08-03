@@ -30,6 +30,133 @@ class BotController extends BaseController
 {
     //BOT
 
+    public function botSummary(Request $request){
+      $data = $request->all();
+      $token = $data["token"];
+      $messengerId = $data["messenger_uid"];
+      $clientId = $data["client_id"];
+      $name = $data["name"];
+      $mobile = $data["mobile"];
+      $brgyId = $data["brgyId"];
+      $brgyName = $data["brgyName"];
+      $address = $data["address"];
+      $depot = $data["depot"];
+      //
+      $realClientId = 0;
+
+      if(intval($clientId) !== 0){
+        //
+        $realClientId = $clientId;
+      }else{
+        $mobile = ltrim($mobile, '0');
+        $mobile = ltrim($mobile, '+63');
+
+        $isMobileExist = DB::table("pabile_clients")->where("mobile", $mobile)->count();
+
+        if($isMobileExist){
+            $client = DB::table("pabile_clients")->where("mobile", $mobile)->first();
+            DB::table('pabile_clients')->where("id", $client->id)
+            ->update([ 
+                'name' => $name, 
+                'brgy_id' => $brgyId,
+                'messenger_id' => $messengerId
+            ]);
+
+            $realClientId = $client->id;
+        }else{
+            //Network Prefix
+            $uMobilePrefix = substr($mobile, 0, 4);
+
+            $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+            
+            if($prefixRec == null){
+                $uMobilePrefix = substr($mobile, 0, 3);
+
+                $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+            }
+
+            if($prefixRec == null){
+                $v = null;
+            }else{
+                $v = $prefixRec->id;
+            }
+            //
+
+            $realClientId = DB::table('pabile_clients')->insertGetId(
+                ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId, "prefix_id" => $v, "messenger_id" => $messengerId]
+            );
+        }
+      }
+
+      $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
+
+      $success = 1;
+
+      if($hashedMessengerId != $token){
+        $success = 0;
+      }else{
+        $st = ($address) ? "Barangay " . $brgyName . ", " . $address;
+
+        $total = 0;
+        $orders = [];
+        $items = DB::table("pabile_temp_orders")->where("token", $token)->get();
+        foreach($items as $item){
+          $d = DB::table("pabile_products as pp")
+          ->where("pp.id", $rec->product_id)
+          ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
+          ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
+          ->first();
+
+          $d->qty = $rec->qty;
+          $total += $rec->qty * $d->price;
+
+          $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($d->thumbnail, 'pabile/');
+          $orders[] = [
+            "title" => $d->name,
+            "subtitle" => $d->category_name,
+            "quantity" => $rec->qty,
+            "price" => $d->price,
+            "currency" => "PHP",
+            "image_url" => $thumb
+          ];
+        }
+
+        $json = json_decode('{
+          "messages": [
+            {
+              "attachment": {
+                "type": "template",
+                "payload": { 
+                  "template_type": "receipt",
+                  "recipient_name": "' . $name . '",
+                  "currency": "PHP",
+                  "payment_method": "Cash on Delivery",
+                  "timestamp": "' . time() . '",
+                  "address": {
+                    "street_1": "' . $st . '",
+                    "street_2": "",
+                    "city": "' . $depot . '",
+                    "country": "PH"
+                  },
+                  "summary": {
+                    "subtotal": ' . $total . ',
+                    "shipping_cost": 0,
+                    "total_cost": ' . $total . '
+                  },
+                  "elements": []
+                }
+              }
+            }
+          ]
+        }', true);
+
+        $json["messages"][0]["attachment"]["payload"]["elements"] = $orders;
+      }
+
+    return response()->json($json);
+
+    }
+
     public function botSetAddress(Request $request){
       $data = $request->all();
       $token = $data["token"];

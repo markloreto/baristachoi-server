@@ -160,4 +160,4 @@ Route::post('/deleteTempOrders', 'API\BotController@deleteTempOrders');
 Route::get('/getBrgyInfo', 'API\BotController@getBrgyInfo');
 Route::post('/botSetLocation', 'API\BotController@botSetLocation');
 Route::post('/botSetAddress', 'API\BotController@botSetAddress');
-
+Route::post('/botSummary', 'API\BotController@botSummary');
