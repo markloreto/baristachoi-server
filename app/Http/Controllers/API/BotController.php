@@ -45,6 +45,12 @@ class BotController extends BaseController
       $lat = ($data["lat"] == "null") ? null : ($data["lat"]) ? $data["lat"] : null;
       $lng = ($data["lng"] == "null") ? null : ($data["lng"]) ? $data["lng"] : null;
 
+      $mobile = ltrim($mobile, '0');
+      $mobile = ltrim($mobile, '+63');
+
+      $Etinda = new EtindaController;
+      $prefix = $Etinda->getMobilePrefix($mobile);
+
       $depotInfo = DB::table("pabile_depots")->where("id", $depotId)->first();
       $location = DB::table("locations")->select("province", "name_1", "name_2")->where("id_2", $depotInfo->location_id)->first();
       $items = DB::table("pabile_temp_orders")->where("token", $token)->get();
@@ -67,19 +73,19 @@ class BotController extends BaseController
         if(intval($clientId) !== 0){
           //
           $realClientId = $clientId;
+
           $client = DB::table("pabile_clients")->where("mobile", $mobile)->first();
           DB::table('pabile_clients')->where("id", $realClientId)
           ->update([ 
               'name' => $name, 
               'brgy_id' => $brgyId,
-              'messenger_id' => $messengerId,
               'lat' => $lat,
               'lng' => $lng,
-              'mobile' => $mobile
+              'mobile' => $mobile,
+              'prefix_id' => $prefix
           ]);
         }else{
-          $mobile = ltrim($mobile, '0');
-          $mobile = ltrim($mobile, '+63');
+          
   
           $isMobileExist = DB::table("pabile_clients")->where("mobile", $mobile)->count();
   
@@ -91,31 +97,15 @@ class BotController extends BaseController
                   'brgy_id' => $brgyId,
                   'messenger_id' => $messengerId,
                   'lat' => $lat,
-                  'lng' => $lng
+                  'lng' => $lng,
+                  'prefix_id' => $prefix
               ]);
   
               $realClientId = $client->id;
           }else{
-              //Network Prefix
-              $uMobilePrefix = substr($mobile, 0, 4);
-  
-              $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
-              
-              if($prefixRec == null){
-                  $uMobilePrefix = substr($mobile, 0, 3);
-  
-                  $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
-              }
-  
-              if($prefixRec == null){
-                  $v = null;
-              }else{
-                  $v = $prefixRec->id;
-              }
-              //
   
               $realClientId = DB::table('pabile_clients')->insertGetId(
-                  ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId, "prefix_id" => $v, "messenger_id" => $messengerId, "lat" => $lat, "lng" => $lng]
+                  ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId, "prefix_id" => $prefix, "messenger_id" => $messengerId, "lat" => $lat, "lng" => $lng]
               );
           }
         }
@@ -169,8 +159,7 @@ class BotController extends BaseController
             "origin" => "fb",
             "realClientId" => $realClientId
             ]);
-          $submitOrder = new EtindaController;
-          $orderId = $submitOrder->submitOrder($request);
+          $orderId = $Etinda->submitOrder($request);
 
           $json = json_decode('{
             "set_attributes":

@@ -258,6 +258,26 @@ class EtindaController extends BaseController
         return $this->sendResponse($brgys, 'pabileBrgyList');
     }
 
+    public function getMobilePrefix($mobile){
+        $uMobilePrefix = substr($mobile, 0, 4);
+
+        $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+        
+        if($prefixRec == null){
+            $uMobilePrefix = substr($mobile, 0, 3);
+
+            $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+        }
+
+        if($prefixRec == null){
+            $v = null;
+        }else{
+            $v = $prefixRec->id;
+        }
+
+        return $v;
+    }
+
     public function addClient(Request $request){
         $data = $request->all();
         $name = $data["name"];
@@ -270,22 +290,8 @@ class EtindaController extends BaseController
             return $this->sendResponse(false, 'addClient');
         }else{
             //Network Prefix
-            $uMobilePrefix = substr($mobile, 0, 4);
 
-            $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
-            
-            if($prefixRec == null){
-                $uMobilePrefix = substr($mobile, 0, 3);
-
-                $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
-            }
-
-            if($prefixRec == null){
-                $v = null;
-            }else{
-                $v = $prefixRec->id;
-            }
-            //
+            $v = $this->getMobilePrefix($mobile);
 
             $id = DB::table('pabile_clients')->insertGetId(
                 ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId, "prefix_id" => $v]
