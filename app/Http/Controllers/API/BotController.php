@@ -149,7 +149,7 @@ class BotController extends BaseController
                   },
                   "summary": {
                     "subtotal": ' . $total . ',
-                    "shipping_cost": "FREE!!!",
+                    "shipping_cost": 0,
                     "total_tax": 0,
                     "total_cost": ' . $total . '
                   },
