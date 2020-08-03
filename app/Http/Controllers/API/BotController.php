@@ -39,7 +39,7 @@ class BotController extends BaseController
       $mobile = $data["mobile"];
       $brgyId = $data["brgyId"];
       $brgyName = $data["brgyName"];
-      $address = $data["address"];
+      $address = ($data["address"]) ? $data["address"] : "";
       $depot = $data["depot"];
       //
       $realClientId = 0;
@@ -129,17 +129,17 @@ class BotController extends BaseController
                 "payload": { 
                   "template_type": "receipt",
                   "recipient_name": "' . $name . '",
-                  "order_number": "12345678901",
+                  "order_number": "-for confirmation-",
                   "currency": "PHP",
                   "payment_method": "Cash on Delivery",
                   "order_url": "https://rockets.chatfuel.com/store?order_id=12345678901",
                   "timestamp": "' . time() . '",
                   "address": {
-                    "street_1": "' . $st . '",
-                    "street_2": "",
+                    "street_1": "Barangay ' . $brgyName . '",
+                    "street_2": $address,
                     "city": "' . $depot . '",
-                    "postal_code": "6002",
-                    "state": "La Union",
+                    "postal_code": "",
+                    "state": "' . $depot . '",
                     "country": "PH"
                   },
                   "summary": {
