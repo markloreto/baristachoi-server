@@ -189,8 +189,7 @@ class BotController extends BaseController
                 }
               }
             }
-          ],
-          "redirect_to_blocks": ["thanks"]
+          ]
         }', true);
 
         $json["messages"][0]["attachment"]["payload"]["elements"] = $orders;
