@@ -136,7 +136,7 @@ class BotController extends BaseController
                   "timestamp": "' . time() . '",
                   "address": {
                     "street_1": "Barangay ' . $brgyName . '",
-                    "street_2": $address,
+                    "street_2": " ' .$address. ' ",
                     "city": "' . $depot . '",
                     "postal_code": "",
                     "state": "' . $depot . '",
