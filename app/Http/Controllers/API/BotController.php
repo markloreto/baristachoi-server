@@ -67,6 +67,16 @@ class BotController extends BaseController
         if(intval($clientId) !== 0){
           //
           $realClientId = $clientId;
+          $client = DB::table("pabile_clients")->where("mobile", $mobile)->first();
+          DB::table('pabile_clients')->where("id", $realClientId)
+          ->update([ 
+              'name' => $name, 
+              'brgy_id' => $brgyId,
+              'messenger_id' => $messengerId,
+              'lat' => $lat,
+              'lng' => $lng,
+              'mobile' => $mobile
+          ]);
         }else{
           $mobile = ltrim($mobile, '0');
           $mobile = ltrim($mobile, '+63');
