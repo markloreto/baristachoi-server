@@ -95,7 +95,7 @@ class BotController extends BaseController
       if($hashedMessengerId != $token){
         $success = 0;
       }else{
-        $st = ($address) ? "Barangay " . $brgyName . ", " . $address;
+        $st = ($address) ? "Barangay " . $brgyName . ", " . $address : "Barangay " . $brgyName;
 
         $total = 0;
         $orders = [];
