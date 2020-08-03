@@ -39,7 +39,7 @@ class BotController extends BaseController
       $mobile = $data["mobile"];
       $brgyId = $data["brgyId"];
       $brgyName = $data["brgyName"];
-      $address = ($data["address"] == "null") ? "" : ($data["address"]) ? $data["address"] : "";
+      $address = ($data["address"] == "null") ? null : ($data["address"]) ? $data["address"] : null;
       $depot = $data["depot"];
       $depotId = $data["depot_id"];
 
