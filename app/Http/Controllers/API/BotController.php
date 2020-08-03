@@ -42,10 +42,12 @@ class BotController extends BaseController
       $address = ($data["address"] == "null") ? null : ($data["address"]) ? $data["address"] : null;
       $depot = $data["depot"];
       $depotId = $data["depot_id"];
+      $lat = ($data["lat"] == "null") ? null : ($data["lat"]) ? $data["lat"] : null;
+      $lng = ($data["lng"] == "null") ? null : ($data["lng"]) ? $data["lng"] : null;
 
       $depotInfo = DB::table("pabile_depots")->where("id", $depotId)->first();
       $location = DB::table("locations")->select("province", "name_1", "name_2")->where("id_2", $depotInfo->location_id)->first();
-
+      $items = DB::table("pabile_temp_orders")->where("token", $token)->get();
       //
       $realClientId = 0;
 
@@ -55,7 +57,12 @@ class BotController extends BaseController
 
       if($hashedMessengerId != $token){
         $success = 0;
-      }else{
+      }elseif (count($items) === 0) {
+        $json = json_decode('{
+          "redirect_to_blocks": ["noItemsInCart"]
+        }', true);
+      }
+      else{
 
         if(intval($clientId) !== 0){
           //
@@ -72,7 +79,9 @@ class BotController extends BaseController
               ->update([ 
                   'name' => $name, 
                   'brgy_id' => $brgyId,
-                  'messenger_id' => $messengerId
+                  'messenger_id' => $messengerId,
+                  'lat' => $lat,
+                  'lng' => $lng
               ]);
   
               $realClientId = $client->id;
@@ -96,7 +105,7 @@ class BotController extends BaseController
               //
   
               $realClientId = DB::table('pabile_clients')->insertGetId(
-                  ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId, "prefix_id" => $v, "messenger_id" => $messengerId]
+                  ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId, "prefix_id" => $v, "messenger_id" => $messengerId, "lat" => $lat, "lng" => $lng]
               );
           }
         }
@@ -104,7 +113,7 @@ class BotController extends BaseController
         $total = 0;
         $orders = [];
         $ordersSave= [];
-        $items = DB::table("pabile_temp_orders")->where("token", $token)->get();
+        
         foreach($items as $item){
           $d = DB::table("pabile_products as pp")
           ->where("pp.id", $item->product_id)
@@ -181,7 +190,7 @@ class BotController extends BaseController
               }
             }
           ],
-          "redirect_to_blocks": ["TestBlock"]
+          "redirect_to_blocks": ["thanks"]
         }', true);
 
         $json["messages"][0]["attachment"]["payload"]["elements"] = $orders;
