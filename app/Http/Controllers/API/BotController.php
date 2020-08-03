@@ -101,7 +101,6 @@ class BotController extends BaseController
       if($hashedMessengerId != $token){
         $success = 0;
       }else{
-        $st = ($address) ? "Barangay " . $brgyName . ", " . $address : "Barangay " . $brgyName;
 
         $total = 0;
         $orders = [];
@@ -135,13 +134,13 @@ class BotController extends BaseController
                 "payload": { 
                   "template_type": "receipt",
                   "recipient_name": "' . $name . '",
-                  "order_number": "000000000",
+                  "order_number": "--",
                   "currency": "PHP",
                   "payment_method": "Cash on Delivery",
                   "order_url": "https://rockets.chatfuel.com/store?order_id=12345678901",
                   "timestamp": "' . time() . '",
                   "address": {
-                    "street_1": "Barangay ' . $brgyName . '",
+                    "street_1": "Barangay ' . $brgyName . ', ",
                     "street_2": "' .$address. '",
                     "city": "' . $depot . '",
                     "postal_code": "' . $depotInfo->location_id . '",
@@ -150,7 +149,7 @@ class BotController extends BaseController
                   },
                   "summary": {
                     "subtotal": ' . $total . ',
-                    "shipping_cost": 0,
+                    "shipping_cost": "FREE!!!",
                     "total_tax": 0,
                     "total_cost": ' . $total . '
                   },
