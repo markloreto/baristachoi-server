@@ -128,7 +128,7 @@ class BotController extends BaseController
         
         $request->request->add(['test' => 'wahaha']);
         $getName = new EtindaController;
-        $name = $getName->weee1();
+        $name = $getName->weee1($request);
 
         $json = json_decode('{
           "messages": [
