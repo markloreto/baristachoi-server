@@ -44,7 +44,8 @@ class BotController extends BaseController
       $depotId = $data["depot_id"];
       $address = ($address) ? $address : "";
 
-      $depotInfo = DB::table("locations")->select("province", "name_1", "name_2")->where("id_2", $depotId)->first();
+      $depotInfo = DB::table("pabile_depots")->where("id", $depotId)->first();
+      $location = DB::table("locations")->select("province", "name_1", "name_2")->where("id_2", $depotInfo->location_id)->first();
 
       //
       $realClientId = 0;
@@ -143,8 +144,8 @@ class BotController extends BaseController
                     "street_1": "Barangay ' . $brgyName . '",
                     "street_2": "' .$address. '",
                     "city": "' . $depot . '",
-                    "postal_code": "' . $depotId . '",
-                    "state": "' .$depotInfo->province. '",
+                    "postal_code": "' . $depotInfo->location_id . '",
+                    "state": "' .$location->province. '",
                     "country": "PH"
                   },
                   "summary": {
