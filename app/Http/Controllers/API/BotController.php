@@ -156,7 +156,8 @@ class BotController extends BaseController
         $json = json_decode('{
           "set_attributes":
           {
-            "u-status": "active"
+            "u-status": "active",
+            "u-id": '.$realClientId.'
           },
           "messages": [
             {
