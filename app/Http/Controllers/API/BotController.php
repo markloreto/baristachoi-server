@@ -125,6 +125,10 @@ class BotController extends BaseController
             "image_url" => $thumb
           ];
         }
+        
+        $request->request->add(['test' => 'wahaha']);
+        $getName = new EtindaController;
+        $name = $getName->weee1();
 
         $json = json_decode('{
           "messages": [
@@ -162,6 +166,8 @@ class BotController extends BaseController
         }', true);
 
         $json["messages"][0]["attachment"]["payload"]["elements"] = $orders;
+
+        
       }
 
     return response()->json($json);

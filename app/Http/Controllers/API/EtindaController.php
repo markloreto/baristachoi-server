@@ -307,6 +307,12 @@ class EtindaController extends BaseController
         return $this->sendResponse($records, 'getProductTags');
     }
 
+    public function weee1(Request $request){
+        $data = $request->all();
+        $test = $data["test"];
+        return $test;
+    }
+
     public function submitOrder(Request $request){
         $data = $request->all();
         $clientId = $data["clientId"];
