@@ -307,12 +307,6 @@ class EtindaController extends BaseController
         return $this->sendResponse($records, 'getProductTags');
     }
 
-    public function weee1(Request $request){
-        $data = $request->all();
-        $test = $data["test"];
-        return $test;
-    }
-
     public function submitOrder(Request $request){
         $data = $request->all();
         $clientId = $data["clientId"];
@@ -320,8 +314,8 @@ class EtindaController extends BaseController
         $schedule = $data["schedule"];
         $changeFor = $data["changeFor"];
         $notes = $data["notes"];
-        $clientId = $data["clientId"];
         $items = $data["items"];
+        $bot = (isset($data["bot"])) ? true : false;
 
         $id = DB::table('pabile_orders')->insertGetId(
             ["client_id" => $clientId, "date" => $date, "schedule" => $schedule, "changeFor" => $changeFor, "notes" => $notes, "created_at" => Carbon::today(), "status_id" => 1, "origin" => "pos"]
@@ -338,7 +332,8 @@ class EtindaController extends BaseController
              ]);
         }
 
-        return $this->sendResponse($id, 'submitOrder');
+        if(!$bot)
+            return $this->sendResponse($id, 'submitOrder');
     }
 
     public function deliveries(Request $request){

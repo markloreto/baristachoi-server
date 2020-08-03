@@ -34,7 +34,7 @@ class BotController extends BaseController
       $data = $request->all();
       $token = $data["token"];
       $messengerId = $data["messenger_uid"];
-      $clientId = $data["client_id"];
+      $clientId = $data["clientId"];
       $name = $data["name"];
       $mobile = $data["mobile"];
       $brgyId = $data["brgyId"];
@@ -50,50 +50,6 @@ class BotController extends BaseController
       //
       $realClientId = 0;
 
-      if(intval($clientId) !== 0){
-        //
-        $realClientId = $clientId;
-      }else{
-        $mobile = ltrim($mobile, '0');
-        $mobile = ltrim($mobile, '+63');
-
-        $isMobileExist = DB::table("pabile_clients")->where("mobile", $mobile)->count();
-
-        if($isMobileExist){
-            $client = DB::table("pabile_clients")->where("mobile", $mobile)->first();
-            DB::table('pabile_clients')->where("id", $client->id)
-            ->update([ 
-                'name' => $name, 
-                'brgy_id' => $brgyId,
-                'messenger_id' => $messengerId
-            ]);
-
-            $realClientId = $client->id;
-        }else{
-            //Network Prefix
-            $uMobilePrefix = substr($mobile, 0, 4);
-
-            $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
-            
-            if($prefixRec == null){
-                $uMobilePrefix = substr($mobile, 0, 3);
-
-                $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
-            }
-
-            if($prefixRec == null){
-                $v = null;
-            }else{
-                $v = $prefixRec->id;
-            }
-            //
-
-            $realClientId = DB::table('pabile_clients')->insertGetId(
-                ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId, "prefix_id" => $v, "messenger_id" => $messengerId]
-            );
-        }
-      }
-
       $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
 
       $success = 1;
@@ -102,8 +58,53 @@ class BotController extends BaseController
         $success = 0;
       }else{
 
+        if(intval($clientId) !== 0){
+          //
+          $realClientId = $clientId;
+        }else{
+          $mobile = ltrim($mobile, '0');
+          $mobile = ltrim($mobile, '+63');
+  
+          $isMobileExist = DB::table("pabile_clients")->where("mobile", $mobile)->count();
+  
+          if($isMobileExist){
+              $client = DB::table("pabile_clients")->where("mobile", $mobile)->first();
+              DB::table('pabile_clients')->where("id", $client->id)
+              ->update([ 
+                  'name' => $name, 
+                  'brgy_id' => $brgyId,
+                  'messenger_id' => $messengerId
+              ]);
+  
+              $realClientId = $client->id;
+          }else{
+              //Network Prefix
+              $uMobilePrefix = substr($mobile, 0, 4);
+  
+              $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+              
+              if($prefixRec == null){
+                  $uMobilePrefix = substr($mobile, 0, 3);
+  
+                  $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
+              }
+  
+              if($prefixRec == null){
+                  $v = null;
+              }else{
+                  $v = $prefixRec->id;
+              }
+              //
+  
+              $realClientId = DB::table('pabile_clients')->insertGetId(
+                  ["name" => $name, "mobile" => $mobile, "brgy_id" => $brgyId, "prefix_id" => $v, "messenger_id" => $messengerId]
+              );
+          }
+        }
+
         $total = 0;
         $orders = [];
+        $ordersSave= [];
         $items = DB::table("pabile_temp_orders")->where("token", $token)->get();
         foreach($items as $item){
           $d = DB::table("pabile_products as pp")
@@ -124,11 +125,24 @@ class BotController extends BaseController
             "currency" => "PHP",
             "image_url" => $thumb
           ];
+
+          $ordersSave[] = [
+            "productId" => $item->product_id,
+            "qty" => $item->qty,
+            "price" => $d->price
+          ]
         }
         
-        $request->request->add(['test' => 'wahaha']);
-        $getName = new EtindaController;
-        $name = $getName->weee1($request);
+        $request->request->add([
+          'date' => date("o-m-d H:i:s"), 
+          'schedule' => "Now", 
+          "changeFor" => null, 
+          "notes" => $address, 
+          "items" => $ordersSave,
+          "bot" => true
+          ]);
+        $submitOrder = new EtindaController;
+        $submitOrder->submitOrder($request);
 
         $json = json_decode('{
           "messages": [
