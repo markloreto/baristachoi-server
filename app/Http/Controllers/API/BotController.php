@@ -157,7 +157,7 @@ class BotController extends BaseController
             "items" => $ordersSave,
             "bot" => true,
             "origin" => "fb",
-            "clientId" => $realClientId
+            "realClientId" => $realClientId
             ]);
           $submitOrder = new EtindaController;
           $orderId = $submitOrder->submitOrder($request);
