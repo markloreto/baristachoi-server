@@ -145,6 +145,10 @@ class BotController extends BaseController
         $orderId = $submitOrder->submitOrder($request);
 
         $json = json_decode('{
+          "set_attributes":
+          {
+            "u-status": "active"
+          },
           "messages": [
             {
               "attachment": {
@@ -176,7 +180,8 @@ class BotController extends BaseController
                 }
               }
             }
-          ]
+          ],
+          "redirect_to_blocks": ["TestBlock"]
         }', true);
 
         $json["messages"][0]["attachment"]["payload"]["elements"] = $orders;
