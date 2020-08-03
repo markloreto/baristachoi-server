@@ -129,7 +129,7 @@ class BotController extends BaseController
                 "payload": { 
                   "template_type": "receipt",
                   "recipient_name": "' . $name . '",
-                  "order_number": "-for confirmation-",
+                  "order_number": "000000000",
                   "currency": "PHP",
                   "payment_method": "Cash on Delivery",
                   "order_url": "https://rockets.chatfuel.com/store?order_id=12345678901",
