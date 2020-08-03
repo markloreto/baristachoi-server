@@ -139,7 +139,7 @@ class BotController extends BaseController
                     "street_2": " ' .$address. ' ",
                     "city": "' . $depot . '",
                     "postal_code": "",
-                    "state": "' . $depot . '",
+                    "state": "",
                     "country": "PH"
                   },
                   "summary": {
