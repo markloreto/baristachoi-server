@@ -102,19 +102,19 @@ class BotController extends BaseController
         $items = DB::table("pabile_temp_orders")->where("token", $token)->get();
         foreach($items as $item){
           $d = DB::table("pabile_products as pp")
-          ->where("pp.id", $rec->product_id)
+          ->where("pp.id", $item->product_id)
           ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
           ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
           ->first();
 
-          $d->qty = $rec->qty;
-          $total += $rec->qty * $d->price;
+          $d->qty = $item->qty;
+          $total += $item->qty * $d->price;
 
           $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($d->thumbnail, 'pabile/');
           $orders[] = [
             "title" => $d->name,
             "subtitle" => $d->category_name,
-            "quantity" => $rec->qty,
+            "quantity" => $item->qty,
             "price" => $d->price,
             "currency" => "PHP",
             "image_url" => $thumb
