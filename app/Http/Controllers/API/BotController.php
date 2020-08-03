@@ -142,7 +142,7 @@ class BotController extends BaseController
           "origin" => "fb"
           ]);
         $submitOrder = new EtindaController;
-        $submitOrder->submitOrder($request);
+        $orderId = $submitOrder->submitOrder($request);
 
         $json = json_decode('{
           "messages": [
@@ -152,7 +152,7 @@ class BotController extends BaseController
                 "payload": { 
                   "template_type": "receipt",
                   "recipient_name": "' . $name . '",
-                  "order_number": "--",
+                  "order_number": "'.$orderId.'",
                   "currency": "PHP",
                   "payment_method": "Cash on Delivery",
                   "order_url": "https://rockets.chatfuel.com/store?order_id=12345678901",

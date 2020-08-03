@@ -335,6 +335,9 @@ class EtindaController extends BaseController
 
         if(!$bot)
             return $this->sendResponse($id, 'submitOrder');
+        else{
+            return $id;
+        }
     }
 
     public function deliveries(Request $request){
