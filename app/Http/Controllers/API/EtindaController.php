@@ -60,7 +60,7 @@ class EtindaController extends BaseController
             $table = "pabile_fb_orders as pi";
 
         $items = DB::table($table)->where("pi.order_id", $orderId)
-        ->select(DB::raw('pp.*, ' . ($returnAsData) ? 'qty' : 'COUNT(pi.product_id) AS `qty`' . ', AVG(pi.price) AS `var_price`, (COUNT(pi.product_id) * AVG(pi.price)) AS subTotal, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `Photo`, (SELECT name FROM pabile_product_categories WHERE id = pp.category_id) AS categoryName'))
+        ->select(DB::raw('pp.*, ' . ($returnAsData) ? 'pi.qty' : 'COUNT(pi.product_id) AS `qty`' . ', AVG(pi.price) AS `var_price`, (COUNT(pi.product_id) * AVG(pi.price)) AS subTotal, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `Photo`, (SELECT name FROM pabile_product_categories WHERE id = pp.category_id) AS categoryName'))
         ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id');
 
         if($returnAsData){
