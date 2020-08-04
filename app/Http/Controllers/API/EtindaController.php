@@ -28,6 +28,15 @@ use Illuminate\Support\Facades\Storage;
 //
 class EtindaController extends BaseController
 {
+    public function getFbOrders(Request $request){
+        $data = $request->all();
+        $orderId = $data["orderId"];
+
+        $records = DB::table("pabile_fb_orders")->where('order_id', $orderId)->get();
+
+        return $this->sendResponse($records, 'getFbOrders');
+    }
+
     public function createProductCategory(Request $request){
         $data = $request->all();
         $name = $data["name"];
@@ -361,7 +370,7 @@ class EtindaController extends BaseController
     public function deliveries(Request $request){
         $data = $request->all();
         $records = DB::table("pabile_orders as po")
-        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName, (SELECT nickName FROM pabile_riders WHERE id = po.rider_id) AS riderNickName, (SELECT SUM(price) FROM pabile_inventories WHERE order_id = po.id) AS `grandTotal`, DATE(date) as dateOnly'))
+        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName, (SELECT nickName FROM pabile_riders WHERE id = po.rider_id) AS riderNickName, (SELECT SUM(price) FROM pabile_inventories WHERE order_id = po.id) AS `grandTotal`, (SELECT SUM(price) FROM pabile_fb_orders WHERE order_id = po.id) AS `grandTotalFb`, DATE(date) as dateOnly'))
         ->where([["status_id", "!=", 5], ["status_id", "!=", 6]])
         ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')
         ->orderBy("po.id", "desc")
@@ -565,7 +574,7 @@ class EtindaController extends BaseController
         $data = $request->all();
         $orderId = $data["orderId"];
         $rec = DB::table("pabile_orders as po")
-        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName, (SELECT nickName FROM pabile_riders WHERE id = po.rider_id) AS riderNickName, (SELECT SUM(price) FROM pabile_inventories WHERE order_id = po.id) AS `grandTotal`, DATE(date) as dateOnly'))
+        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName, (SELECT nickName FROM pabile_riders WHERE id = po.rider_id) AS riderNickName, (SELECT SUM(price) FROM pabile_inventories WHERE order_id = po.id) AS `grandTotal`, (SELECT SUM(price) FROM pabile_fb_orders WHERE order_id = po.id) AS `grandTotalFb`, DATE(date) as dateOnly'))
         ->where("po.id", $orderId)
         ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')
         ->first();
