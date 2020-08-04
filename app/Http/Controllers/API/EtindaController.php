@@ -69,7 +69,7 @@ class EtindaController extends BaseController
             $items = $items->groupBy("pi.product_id", "pi.price")->get();
         }
 
-        foreach($items as $item){
+        /* foreach($items as $item){
             $specs = DB::table("pabile_product_specs as pps")
             ->select("pps.*", "psk.name")
             ->join('pabile_spec_keys as psk', 'pps.key', '=', 'psk.id')
@@ -77,7 +77,7 @@ class EtindaController extends BaseController
             ->get();
 
             $item->specs = $specs;
-        }
+        } */
 
         if($returnAsData){
             return $items;
