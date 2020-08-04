@@ -38,7 +38,7 @@ class EtindaController extends BaseController
         $records = $this->getOrderItems($request);
 
         foreach($records as $record){
-            $record->inventory = $this->getInventoryByProductId($record->product_id);
+            //$record->inventory = $this->getInventoryByProductId($record->product_id);
         }
 
         return $this->sendResponse($records, 'getFbOrders');
