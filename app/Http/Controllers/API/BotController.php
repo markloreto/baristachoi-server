@@ -336,10 +336,10 @@ class BotController extends BaseController
         $reason = "Authentication Failed";
       }elseif ($itemsCount > 25) {
         $success = 0;
-        $reason = "Maximum items we can deliver is not more than 25";
+        $reason = "Maximum cart items we can deliver is not more than 25";
       }elseif ($isClientActive && $itemsCount < 5) {
         $success = 0;
-        $reason = "5 or more items is the minimum order";
+        $reason = "5 or more cart items is the minimum order";
       }
       else{
 

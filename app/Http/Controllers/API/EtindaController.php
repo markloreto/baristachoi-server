@@ -332,20 +332,28 @@ class EtindaController extends BaseController
             ["client_id" => $clientId, "date" => $date, "schedule" => $schedule, "changeFor" => $changeFor, "notes" => $notes, "created_at" => Carbon::today(), "status_id" => 1, "origin" => $origin]
         );
 
-        foreach($items as $item){
-            //DB::statement("UPDATE pabile_inventories SET price = " . $item["price"] . ", order_id = " . $id . " WHERE product_id = " . $item["productId"] .  " AND (order_id IS NULL AND inventory_out_id IS NULL) ORDER BY id ASC LIMIT " . $item["qty"]);
-            DB::table("pabile_inventories")->whereRaw('product_id = ? AND order_id IS NULL', [$item["productId"]])
-            ->orderBy('id', 'asc')
-            ->limit($item["qty"])
-            ->update([ 
-                'price' => $item["price"], 
-                'order_id' => $id
-             ]);
-        }
+        
 
-        if(!$bot)
+        if(!$bot){
+            foreach($items as $item){
+                //DB::statement("UPDATE pabile_inventories SET price = " . $item["price"] . ", order_id = " . $id . " WHERE product_id = " . $item["productId"] .  " AND (order_id IS NULL AND inventory_out_id IS NULL) ORDER BY id ASC LIMIT " . $item["qty"]);
+                DB::table("pabile_inventories")->whereRaw('product_id = ? AND order_id IS NULL', [$item["productId"]])
+                ->orderBy('id', 'asc')
+                ->limit($item["qty"])
+                ->update([ 
+                    'price' => $item["price"], 
+                    'order_id' => $id
+                ]);
+            }
             return $this->sendResponse($id, 'submitOrder');
+        }
         else{
+            foreach($items as $item){
+                DB::table('pabile_fb_orders')->insert(
+                    ['order_id' => $id, 'product_id' => $item["productId"], 'qty' => $item["qty"], 'price' => $item["price"]]
+                );
+            }
+            
             return $id;
         }
     }
