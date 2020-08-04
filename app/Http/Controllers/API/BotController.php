@@ -82,7 +82,8 @@ class BotController extends BaseController
               'lat' => $lat,
               'lng' => $lng,
               'mobile' => $mobile,
-              'prefix_id' => $prefix
+              'prefix_id' => $prefix,
+
           ]);
         }else{
           
@@ -320,16 +321,27 @@ class BotController extends BaseController
 
       DB::table('pabile_temp_orders')->where('token', $token)->delete();
 
+      $isClientActive = DB::table('pabile_clients')->where('messenger_id', $messengerId)->count();
+
       $success = 1;
       $itemsCount = 0;
+      $reason = "";
 
       foreach($items as $item){
         $itemsCount+= intval($item["qty"]);
       }
 
-      if($itemsCount > 100 || $hashedMessengerId != $token){
+      if($hashedMessengerId != $token){
         $success = 0;
-      }else{
+        $reason = "Authentication Failed";
+      }elseif ($itemsCount > 25) {
+        $success = 0;
+        $reason = "Maximum items we can deliver is not more than 25";
+      }elseif ($isClientActive && $itemsCount < 5) {
+        $success = 0;
+        $reason = "5 or more items is the minimum order";
+      }
+      else{
 
         foreach($items as $item){
           DB::table("pabile_temp_orders")->insert(
@@ -346,7 +358,7 @@ class BotController extends BaseController
         $response = $client->post("https://api.chatfuel.com/bots/5f1d5f37cf7d166801d21c5a/users/" . $messengerId . "/send?chatfuel_token=mELtlMAHYqR0BvgEiMq8zVek3uYUK3OJMbtyrdNPTrQB9ndV0fM7lWTFZbM4MZvD&chatfuel_message_tag=POST_PURCHASE_UPDATE&chatfuel_block_name=CartIn");
       }
 
-      return $this->sendResponse($success, 'fbOrder');
+      return $this->sendResponse(["status" => $success, "reason" => $reason], 'fbOrder');
     }
 
     public function botGetToken(Request $request){
