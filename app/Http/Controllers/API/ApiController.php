@@ -1059,13 +1059,13 @@ class ApiController extends BaseController
         $data = $request->all();
 
         $client = new Berkayk\OneSignal\OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
-        $client->sendNotificationToAll(
+        dd($client->sendNotificationToAll(
             "Some Message", 
             $url = null, 
             $data = null, 
             $buttons = null, 
             $schedule = null
-        );
+        ));
 
         /* OneSignal::sendNotificationToAll(
             "Some Message", 
