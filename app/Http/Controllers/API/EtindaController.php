@@ -32,10 +32,23 @@ class EtindaController extends BaseController
         $data = $request->all();
         $orderId = $data["orderId"];
 
-        $request->request->add([
-            "returnAsData" => true
-        ]);
-        $records = $this->getOrderItems($request);
+        $items = DB::table("pabile_fb_orders as pi")->where("pi.order_id", $orderId)
+        ->select(DB::raw('pp.*, qty, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `Photo`, (SELECT name FROM pabile_product_categories WHERE id = pp.category_id) AS categoryName'))
+        ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id')
+        ->groupBy("pi.product_id", "pi.price")
+        ->get();
+
+        foreach($items as $item){
+            $specs = DB::table("pabile_product_specs as pps")
+            ->select("pps.*", "psk.name")
+            ->join('pabile_spec_keys as psk', 'pps.key', '=', 'psk.id')
+            ->where("pps.product_id", $item->id)
+            ->get();
+
+            $item->specs = $specs;
+        }
+
+        return $this->sendResponse($items, 'getOrderItems');
 
         foreach($records as $record){
             $record->inventory = $this->getFbInventoryByProductId($record->id);
@@ -53,11 +66,8 @@ class EtindaController extends BaseController
     public function getOrderItems(Request $request){
         $data = $request->all();
         $orderId = $data["orderId"];
-        $returnAsData = (isset($data["returnAsData"])) ? true : false;
 
-        $table = "pabile_inventories as pi";
-
-        $items = DB::table($table)->where("pi.order_id", $orderId)
+        $items = DB::table("pabile_inventories as pi")->where("pi.order_id", $orderId)
         ->select(DB::raw('pp.*, COUNT(pi.product_id) AS qty, AVG(pi.price) AS `var_price`, (COUNT(pi.product_id) * AVG(pi.price)) AS subTotal, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `Photo`, (SELECT name FROM pabile_product_categories WHERE id = pp.category_id) AS categoryName'))
         ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id')
         ->groupBy("pi.product_id", "pi.price")
@@ -73,11 +83,7 @@ class EtindaController extends BaseController
             $item->specs = $specs;
         }
 
-        if($returnAsData){
-            return $items;
-        }else{
-            return $this->sendResponse($items, 'getOrderItems');
-        }
+        return $this->sendResponse($items, 'getOrderItems');
     }
 
     public function searchProducts(Request $request){
