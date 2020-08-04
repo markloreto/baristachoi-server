@@ -34,7 +34,43 @@ class EtindaController extends BaseController
 
         $records = DB::table("pabile_fb_orders")->where('order_id', $orderId)->get();
 
+        foreach($records as $record){
+            $request->request->add([
+                'q' => '', 
+                'pid' => $record->product_id, 
+                "changeFor" => null,
+                "returnAsData" => true
+            ]);
+            $record->product = $this->searchProducts($request);
+        }
+
         return $this->sendResponse($records, 'getFbOrders');
+    }
+
+    public function searchProducts(Request $request){
+        $data = $request->all();
+        $q = $data["q"];
+        $pid = (isset($data["pid"])) ? $data["pid"] : null;
+        $returnAsData = (isset($data["returnAsData"])) ? true : false;
+
+        if($pid){
+            $where = [["pp.id", $pid]];
+        }else{
+            $where = [['pp.name', 'like', "%" . $q . "%"]];
+        }
+
+        $records = DB::table("pabile_products as pp")
+        ->where($where)
+        ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
+        ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
+        ->limit(10)
+        ->get();
+
+        if($returnAsData){
+            return $records;
+        }else{
+            return $this->sendResponse($records, 'searchProducts');
+        }
     }
 
     public function createProductCategory(Request $request){
@@ -192,27 +228,6 @@ class EtindaController extends BaseController
         $barcode = $data["barcode"];
         $record = DB::table("pabile_products")->where("barcode", $barcode)->get();
         return $this->sendResponse($record, 'checkBarcode');
-    }
-
-    public function searchProducts(Request $request){
-        $data = $request->all();
-        $q = $data["q"];
-        $pid = (isset($data["pid"])) ? $data["pid"] : null;
-
-        if($pid){
-            $where = [["pp.id", $pid]];
-        }else{
-            $where = [['pp.name', 'like', "%" . $q . "%"]];
-        }
-
-        $records = DB::table("pabile_products as pp")
-        ->where($where)
-        ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
-        ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
-        ->limit(10)
-        ->get();
-
-        return $this->sendResponse($records, 'searchProducts');
     }
 
     public function purchase(Request $request){
