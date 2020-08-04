@@ -377,6 +377,47 @@ class EtindaController extends BaseController
         return $this->sendResponse($records, 'getProductTags');
     }
 
+    public function deliveries(Request $request){
+        $data = $request->all();
+        $records = DB::table("pabile_orders as po")
+        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName, (SELECT nickName FROM pabile_riders WHERE id = po.rider_id) AS riderNickName, (SELECT SUM(price) FROM pabile_inventories WHERE order_id = po.id) AS `grandTotal`, (SELECT SUM(price) FROM pabile_fb_orders WHERE order_id = po.id) AS `grandTotalFb`, DATE(date) as dateOnly'))
+        ->where([["status_id", "!=", 5], ["status_id", "!=", 6]])
+        ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')
+        ->orderBy("po.id", "desc")
+
+        ->get()->groupBy("name");
+
+        foreach($records as $record){
+            foreach($record as $rec){
+                if($rec->client_id){
+                    $client = DB::table("pabile_clients as pc")
+                    ->join('locations as l', 'l.id_3', '=', 'pc.brgy_id')
+                    ->select(DB::raw('pc.*, l.name_3, l.varname_3, (SELECT `network` FROM pabile_mobile_prefixes WHERE id = pc.prefix_id) AS mobile_network'))
+                    ->where("pc.id", $rec->client_id)->first();
+                    $rec->client = $client;
+                }else{
+                    $rec->client = null;
+                }
+            }
+        }
+
+        return $this->sendResponse($records, 'deliveries');
+    }
+
+    public function voidOrder(Request $request){
+        $data = $request->all();
+        $orderId = $data["orderId"];
+
+        DB::table('pabile_orders')->where('id', $orderId)->delete();
+        DB::table('pabile_inventories')->where("order_id", $orderId)
+        ->update([ 
+            'price' => null, 
+            'order_id' => null
+        ]);
+
+        return $this->sendResponse("", 'voidOrder');
+    }
+
     public function submitOrder(Request $request){
         $data = $request->all();
         $clientId = $data["clientId"];
@@ -422,50 +463,27 @@ class EtindaController extends BaseController
         }
     }
 
-    public function deliveries(Request $request){
-        $data = $request->all();
-        $records = DB::table("pabile_orders as po")
-        ->select(DB::raw('po.*, pos.name, (SELECT name FROM pabile_riders WHERE id = po.rider_id) AS riderName, (SELECT nickName FROM pabile_riders WHERE id = po.rider_id) AS riderNickName, (SELECT SUM(price) FROM pabile_inventories WHERE order_id = po.id) AS `grandTotal`, (SELECT SUM(price) FROM pabile_fb_orders WHERE order_id = po.id) AS `grandTotalFb`, DATE(date) as dateOnly'))
-        ->where([["status_id", "!=", 5], ["status_id", "!=", 6]])
-        ->join('pabile_order_status as pos', 'pos.id', '=', 'po.status_id')
-        ->orderBy("po.id", "desc")
-
-        ->get()->groupBy("name");
-
-        foreach($records as $record){
-            foreach($record as $rec){
-                if($rec->client_id){
-                    $client = DB::table("pabile_clients as pc")
-                    ->join('locations as l', 'l.id_3', '=', 'pc.brgy_id')
-                    ->select(DB::raw('pc.*, l.name_3, l.varname_3, (SELECT `network` FROM pabile_mobile_prefixes WHERE id = pc.prefix_id) AS mobile_network'))
-                    ->where("pc.id", $rec->client_id)->first();
-                    $rec->client = $client;
-                }else{
-                    $rec->client = null;
-                }
-            }
-        }
-
-        return $this->sendResponse($records, 'deliveries');
-    }
-
-    public function voidOrder(Request $request){
-        $data = $request->all();
-        $orderId = $data["orderId"];
-
-        DB::table('pabile_orders')->where('id', $orderId)->delete();
-        DB::table('pabile_inventories')->where("order_id", $orderId)
-        ->update([ 
-            'price' => null, 
-            'order_id' => null
-        ]);
-
-        return $this->sendResponse("", 'voidOrder');
-    }
-
     public function processOrder(Request $request){
         $data = $request->all();
         $orderId = $data["orderId"];
+        $isFb = $data["isFb"];
+        
+        if($isFb){
+            $items = DB::table("pabile_fb_orders")->where("order_id", $orderId)->get();
+
+            foreach($items as $item){
+                //DB::statement("UPDATE pabile_inventories SET price = " . $item["price"] . ", order_id = " . $id . " WHERE product_id = " . $item["productId"] .  " AND (order_id IS NULL AND inventory_out_id IS NULL) ORDER BY id ASC LIMIT " . $item["qty"]);
+                DB::table("pabile_inventories")->whereRaw('product_id = ? AND order_id IS NULL', [$item->product_id])
+                ->orderBy('id', 'asc')
+                ->limit($item->qty)
+                ->update([ 
+                    'price' => $item->price, 
+                    'order_id' => $orderId
+                ]);
+            }
+
+            DB::table("pabile_fb_orders")->where("order_id", $orderId)->delete();
+        }
 
         DB::table('pabile_orders')->where("id", $orderId)
         ->update([ 
