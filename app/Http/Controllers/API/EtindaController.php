@@ -32,19 +32,54 @@ class EtindaController extends BaseController
         $data = $request->all();
         $orderId = $data["orderId"];
 
-        $records = DB::table("pabile_fb_orders")->where('order_id', $orderId)->get();
+        $request->request->add([
+            "returnAsData" => true
+        ]);
+        $records = $this->getOrderItems($request);
 
         foreach($records as $record){
-            $request->request->add([
-                'q' => '', 
-                'pid' => $record->product_id, 
-                "changeFor" => null,
-                "returnAsData" => true
-            ]);
-            $record->product = $this->searchProducts($request);
+            $record->inventory = $this->getInventoryByProductId($record->product_id);
         }
 
         return $this->sendResponse($records, 'getFbOrders');
+    }
+
+    public function getInventoryByProductId($productId){
+        //(SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory
+        $inventory = DB::table("pabile_inventories")->where("product_id", $productId)->whereNull("order_id")->count();
+        return $inventory;
+    }
+
+    public function getOrderItems(Request $request){
+        $data = $request->all();
+        $orderId = $data["orderId"];
+        $returnAsData = (isset($data["returnAsData"])) ? true : false;
+
+        $table = "pabile_inventories as pi";
+        if($returnAsData)
+            $table = "pabile_fb_orders as pi";
+
+        $items = DB::table($table)->where("pi.order_id", $orderId)
+        ->select(DB::raw('pp.*, COUNT(pi.product_id) AS qty, AVG(pi.price) AS `var_price`, (COUNT(pi.product_id) * AVG(pi.price)) AS subTotal, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `Photo`, (SELECT name FROM pabile_product_categories WHERE id = pp.category_id) AS categoryName'))
+        ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id')
+        ->groupBy("pi.product_id", "pi.price")
+        ->get();
+
+        foreach($items as $item){
+            $specs = DB::table("pabile_product_specs as pps")
+            ->select("pps.*", "psk.name")
+            ->join('pabile_spec_keys as psk', 'pps.key', '=', 'psk.id')
+            ->where("pps.product_id", $item->id)
+            ->get();
+
+            $item->specs = $specs;
+        }
+
+        if($returnAsData){
+            return $items;
+        }else{
+            return $this->sendResponse($items, 'getOrderItems');
+        }
     }
 
     public function searchProducts(Request $request){
@@ -407,29 +442,6 @@ class EtindaController extends BaseController
         }
 
         return $this->sendResponse($records, 'deliveries');
-    }
-
-    public function getOrderItems(Request $request){
-        $data = $request->all();
-        $orderId = $data["orderId"];
-
-        $items = DB::table("pabile_inventories as pi")->where("pi.order_id", $orderId)
-        ->select(DB::raw('pp.*, COUNT(pi.product_id) AS qty, AVG(pi.price) AS `var_price`, (COUNT(pi.product_id) * AVG(pi.price)) AS subTotal, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `Photo`, (SELECT name FROM pabile_product_categories WHERE id = pp.category_id) AS categoryName'))
-        ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id')
-        ->groupBy("pi.product_id", "pi.price")
-        ->get();
-
-        foreach($items as $item){
-            $specs = DB::table("pabile_product_specs as pps")
-            ->select("pps.*", "psk.name")
-            ->join('pabile_spec_keys as psk', 'pps.key', '=', 'psk.id')
-            ->where("pps.product_id", $item->id)
-            ->get();
-
-            $item->specs = $specs;
-        }
-
-        return $this->sendResponse($items, 'getOrderItems');
     }
 
     public function voidOrder(Request $request){
