@@ -205,6 +205,16 @@ class BotController extends BaseController
           $json["messages"][0]["attachment"]["payload"]["elements"] = $orders;
 
           DB::table('pabile_temp_orders')->where('token', $token)->delete();
+          $client = new Berkayk\OneSignal\OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
+          $client->sendNotificationCustom(
+            [
+                'contents' => [
+                    "en" => 'Cool works : ' . date('H:i:s')
+                ],
+                'included_segments' => ['All']
+    
+            ]
+          );
         }
       }
 
