@@ -44,6 +44,8 @@ class EtindaController extends BaseController
             ->where("pps.product_id", $item->id)
             ->get();
 
+            $item->inventory = $this->getFbInventoryByProductId($item->id);
+
             $item->specs = $specs;
         }
 
