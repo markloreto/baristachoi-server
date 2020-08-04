@@ -467,22 +467,21 @@ class EtindaController extends BaseController
         $data = $request->all();
         $orderId = $data["orderId"];
         $isFb = $data["isFb"];
+        $items = $data["items"];
         
         if($isFb){
-            $items = DB::table("pabile_fb_orders")->where("order_id", $orderId)->get();
-
             foreach($items as $item){
                 //DB::statement("UPDATE pabile_inventories SET price = " . $item["price"] . ", order_id = " . $id . " WHERE product_id = " . $item["productId"] .  " AND (order_id IS NULL AND inventory_out_id IS NULL) ORDER BY id ASC LIMIT " . $item["qty"]);
-                DB::table("pabile_inventories")->whereRaw('product_id = ? AND order_id IS NULL', [$item->product_id])
-                ->orderBy('id', 'asc')
-                ->limit($item->qty)
-                ->update([ 
-                    'price' => $item->price, 
-                    'order_id' => $orderId
-                ]);
+                if($item["qty"]){
+                    DB::table("pabile_inventories")->whereRaw('product_id = ? AND order_id IS NULL', [$item["id"]])
+                    ->orderBy('id', 'asc')
+                    ->limit($item["qty"])
+                    ->update([ 
+                        'price' => $item["price"], 
+                        'order_id' => $orderId
+                    ]);
+                }
             }
-
-            DB::table("pabile_fb_orders")->where("order_id", $orderId)->delete();
         }
 
         DB::table('pabile_orders')->where("id", $orderId)
