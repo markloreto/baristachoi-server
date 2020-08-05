@@ -8,7 +8,7 @@ return array(
 	|
 	|
 	*/
-    'app_id' => '96b3cf41-b886-4873-a4b0-be8c626e749b',
+    'app_id' => 'b569aa6f-f4f8-4bc4-92ec-44542cfd370a',
 
     /*
 	|--------------------------------------------------------------------------
@@ -18,6 +18,6 @@ return array(
     |
 	|
 	*/
-    'rest_api_key' => 'MTMzNjNmN2UtNGIyYy00Y2ZhLWJiMzgtNzRjMzRmZjEwOGUw',
+    'rest_api_key' => 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0',
     'user_auth_key' => 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz'
 );;
