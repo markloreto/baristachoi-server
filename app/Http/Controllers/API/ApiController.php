@@ -29,12 +29,12 @@ class ApiController extends BaseController
     public function oneSignal(Request $request){
         $data = $request->all();
 
-        OneSignal::sendNotificationToAll(
-            "Some Message!!!", 
-            $url = null, 
-            $data = null, 
-            $buttons = null, 
-            $schedule = null
+        OneSignal::sendNotificationToSegment(
+            "Test message with custom heading and subtitle",
+            "admins", 
+            null, null, null, null, 
+            "Custom Heading", 
+            "Custom subtitle"
         );
     }
 
