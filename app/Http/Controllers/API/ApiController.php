@@ -29,8 +29,9 @@ class ApiController extends BaseController
     public function oneSignal(Request $request){
         $data = $request->all();
 
-        OneSignal::sendNotificationToAll(
+        OneSignal::sendNotificationToSegment(
             "Mark Loreto bought 3 items with the sum of ₱500.89",
+            "admins", 
             "http://localhost:4200/tabs/delivery", 
             null, null, null, 
             "May Bumili!", 
