@@ -27,6 +27,29 @@ use Maatwebsite\Excel\Facades\Excel;
 //
 class ApiController extends BaseController
 {
+    public function oneSignal(Request $request){
+        $data = $request->all();
+
+        /* $client = new OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
+        $client->sendNotificationCustom(
+            [
+                'contents' => [
+                    "en" => 'Cool works : ' . date('H:i:s')
+                ],
+                'included_segments' => ['admins']
+    
+            ]
+        ); */
+
+        OneSignal::sendNotificationToAll(
+            "Some Message!", 
+            $url = null, 
+            $data = null, 
+            $buttons = null, 
+            $schedule = null
+        );
+    }
+
     public $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     public function getDepot(){
 
@@ -1056,28 +1079,7 @@ class ApiController extends BaseController
 
     }
 
-    public function oneSignal(Request $request){
-        $data = $request->all();
-
-        $client = new Berkayk\OneSignal\OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
-        $client->sendNotificationCustom(
-            [
-                'contents' => [
-                    "en" => 'Cool works : ' . date('H:i:s')
-                ],
-                'included_segments' => ['admins']
     
-            ]
-        );
-
-        /* OneSignal::sendNotificationToAll(
-            "Some Message", 
-            $url = null, 
-            $data = null, 
-            $buttons = null, 
-            $schedule = null
-        ); */
-    }
 
     public function paymentStatus(Request $request){
         $data = $request->all();
