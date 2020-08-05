@@ -1064,7 +1064,7 @@ class ApiController extends BaseController
             "Test message with custom heading and subtitle",
             "admins", 
             "http://localhost:4200/tabs/delivery", null, null, null, 
-            "Custom Heading", 
+            "Custom Heading !", 
             "Custom subtitle"
         );/* sendNotificationUsingTags(
             "Some Message",
