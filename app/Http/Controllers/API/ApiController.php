@@ -16,7 +16,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Collection;
 use OneSignal;
-use OneSignalClient;
 
 use Rap2hpoutre\FastExcel\FastExcel;
 
@@ -30,7 +29,7 @@ class ApiController extends BaseController
     public function oneSignal(Request $request){
         $data = $request->all();
 
-        /* $client = new OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
+        $client = new OneSignal('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
         $client->sendNotificationCustom(
             [
                 'contents' => [
@@ -39,15 +38,15 @@ class ApiController extends BaseController
                 'included_segments' => ['admins']
     
             ]
-        ); */
+        );
 
-        OneSignal::sendNotificationToAll(
+        /* OneSignal::sendNotificationToAll(
             "Some Message!", 
             $url = null, 
             $data = null, 
             $buttons = null, 
             $schedule = null
-        );
+        ); */
     }
 
     public $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
