@@ -1062,7 +1062,7 @@ class ApiController extends BaseController
         $client = new OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
         $client->sendNotificationToSegment(
             "Test message with custom heading and subtitle",
-            "Testers", 
+            "admins", 
             "http://localhost:4200/tabs/delivery", null, null, null, 
             "Custom Heading", 
             "Custom subtitle"
