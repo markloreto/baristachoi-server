@@ -30,11 +30,12 @@ class ApiController extends BaseController
         $data = $request->all();
 
         OneSignal::sendNotificationToSegment(
-            "Test message with custom heading and subtitle",
+            "Mark Loreto bought 3 items with the sum of ₱500.89",
             "admins", 
-            null, null, null, null, 
-            "Custom Heading", 
-            "Custom subtitle"
+            "http://localhost:4200/tabs/delivery", 
+            null, null, null, 
+            "May Bumili!", 
+            "facebook notification"
         );
     }
 
