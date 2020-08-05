@@ -1060,14 +1060,8 @@ class ApiController extends BaseController
         $data = $request->all();
 
         $client = new OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
-        $client->sendNotificationToSegment(
-            "Test message with custom heading and subtitle",
-            "admins", 
-            "http://localhost:4200/tabs/delivery", null, null, null, 
-            "Custom Heading !", 
-            "Custom subtitle"
-        );/* sendNotificationUsingTags(
-            "Some Message",
+        $client->sendNotificationUsingTags(
+            "Some Message!!!",
             array(
                 ["key" => "session_count", "relation" => ">", "value" => '2'],
                 ["key" => "first_session", "relation" => ">", "value" => '2000'],
@@ -1076,7 +1070,7 @@ class ApiController extends BaseController
             $data = null,
             $buttons = null,
             $schedule = null
-        ); */
+        );
 
         /* OneSignal::sendNotificationToAll(
             "Some Message", 
