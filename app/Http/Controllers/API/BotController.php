@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Collection;
 use OneSignal;
+use OneSignalClient;
 
 use Rap2hpoutre\FastExcel\FastExcel;
 
@@ -206,6 +207,14 @@ class BotController extends BaseController
 
           DB::table('pabile_temp_orders')->where('token', $token)->delete();
           
+          $client = new OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
+          $client->sendNotificationToAll(
+              "Some Message", 
+              $url = null, 
+              $data = null, 
+              $buttons = null, 
+              $schedule = null
+          );
         }
       }
 
