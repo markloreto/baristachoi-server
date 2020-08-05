@@ -32,7 +32,9 @@ class ApiController extends BaseController
         OneSignal::sendNotificationToAll(
             "Mark Loreto bought 3 items with the sum of ₱500.89",
             "http://localhost:4200/tabs/delivery", 
-            null, null, null, 
+            [
+                "uid" => 1
+            ], null, null, 
             "May Bumili!", 
             "facebook notification"
         );
