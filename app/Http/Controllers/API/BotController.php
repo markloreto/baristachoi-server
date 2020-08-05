@@ -123,6 +123,7 @@ class BotController extends BaseController
           $total = 0;
           $orders = [];
           $ordersSave= [];
+          $totalItems = 0;
           
           foreach($items as $item){
             $d = DB::table("pabile_products as pp")
@@ -131,6 +132,7 @@ class BotController extends BaseController
             ->select(DB::raw('pp.*, ppc.name AS category_name, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
             ->first();
 
+            $totalItems += $item->qty;
             $d->qty = $item->qty;
             $total += $item->qty * $d->price;
 
@@ -207,13 +209,18 @@ class BotController extends BaseController
 
           DB::table('pabile_temp_orders')->where('token', $token)->delete();
           
-          $client = new OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
-          $client->sendNotificationToAll(
-              "Some Message", 
-              $url = null, 
-              $data = null, 
-              $buttons = null, 
-              $schedule = null
+          OneSignal::sendNotificationToAll(
+            $name . " bought " .$totalItems . " items with the sum of ₱ " . $total,
+            "http://localhost:4200/tabs/delivery", 
+            [
+                "type" => "fbOrder",
+                "orderId" => $orderId,
+                "clientId" => $realClientId
+            ], 
+            null, 
+            null, 
+            "May Bumili!", 
+            "facebook notification"
           );
         }
       }
