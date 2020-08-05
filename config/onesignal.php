@@ -20,4 +20,4 @@ return array(
 	*/
     'rest_api_key' => 'MTMzNjNmN2UtNGIyYy00Y2ZhLWJiMzgtNzRjMzRmZjEwOGUw',
     'user_auth_key' => 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz'
-);
+);;
