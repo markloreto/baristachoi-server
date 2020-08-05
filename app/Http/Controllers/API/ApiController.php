@@ -1060,15 +1060,11 @@ class ApiController extends BaseController
         $data = $request->all();
 
         $client = new OneSignalClient('b569aa6f-f4f8-4bc4-92ec-44542cfd370a', 'MTEwYzFhYTMtYzA2NC00NDkzLWJlMDYtYWVkM2VjOTdjZGQ0', 'Yjg0YmIwNGUtNGJmZC00MDEzLWFlMTAtODAwNzBlMDFlMmQz');
-        $client->sendNotificationUsingTags(
-            "Some Message!!!",
-            array(
-                ["key" => "session_count", "relation" => ">", "value" => '2'],
-                ["key" => "first_session", "relation" => ">", "value" => '2000'],
-            ),
-            $url = "http://localhost:4200/tabs/delivery",
-            $data = null,
-            $buttons = null,
+        $client->sendNotificationToAll(
+            "Some Message!!!", 
+            $url = null, 
+            $data = null, 
+            $buttons = null, 
             $schedule = null
         );
 
