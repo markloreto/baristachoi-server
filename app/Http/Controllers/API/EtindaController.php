@@ -588,7 +588,7 @@ class EtindaController extends BaseController
         ->whereRaw('pi.order_id IS NULL')
         ->orderBy("Date", "desc")
         ->groupBy("pi.purchase_id", "pi.product_id", "pi.cost")
-        ->limit(20)
+        ->limit(10)
         ->offset($offset)
         ->get();
 
