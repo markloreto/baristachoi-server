@@ -482,6 +482,8 @@ class EtindaController extends BaseController
                     ]);
                 }
             }
+
+            DB::table('pabile_fb_orders')->where("order_id", $orderId)->delete();
         }
 
         DB::table('pabile_orders')->where("id", $orderId)
