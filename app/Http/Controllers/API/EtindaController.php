@@ -409,6 +409,7 @@ class EtindaController extends BaseController
         $orderId = $data["orderId"];
 
         DB::table('pabile_orders')->where('id', $orderId)->delete();
+        DB::table('pabile_fb_orders')->where('order_id', $orderId)->delete();
         DB::table('pabile_inventories')->where("order_id", $orderId)
         ->update([ 
             'price' => null, 
