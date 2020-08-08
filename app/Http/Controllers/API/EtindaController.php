@@ -92,13 +92,14 @@ class EtindaController extends BaseController
         $q = $data["q"];
         $pid = (isset($data["pid"])) ? $data["pid"] : null;
         $returnAsData = (isset($data["returnAsData"])) ? true : false;
+        $ids = [];
 
         if($pid){
             $where = [["pp.id", $pid]];
         }else{
             $where = [['pp.name', 'like', "%" . $q . "%"]];
             $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
-            $ids = [];
+            
             foreach($tags as $tag){
                 $ids[] = $tag->product_id;
             }
