@@ -99,9 +99,13 @@ class EtindaController extends BaseController
         }else{
             $where = [['pp.name', 'like', "%" . $q . "%"]];
             $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
-            
+            $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
             foreach($tags as $tag){
                 $ids[] = $tag->product_id;
+            }
+
+            foreach($specs as $spec){
+                $ids[] = $spec->product_id;
             }
         }
 
@@ -115,6 +119,7 @@ class EtindaController extends BaseController
         if($returnAsData){
             return $records->limit(20)->get();
         }else{
+            $records = $records->orWhere('description', 'like', "%" . $q . "%");
             return $this->sendResponse($records->orWhereIn("pp.id", $ids)->limit(20)->get(), 'searchProducts');
         }
     }
