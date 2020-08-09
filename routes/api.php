@@ -132,6 +132,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/orderInfo', 'API\EtindaController@orderInfo');
 	Route::get('/getCategoriesById', 'API\EtindaController@getCategoriesById');
 	Route::get('/getFbOrders', 'API\EtindaController@getFbOrders');
+	
 
 	Route::post('/createSpecKeys', 'API\EtindaController@createSpecKeys');
 	Route::post('/createNewProduct', 'API\EtindaController@createNewProduct');
@@ -148,6 +149,7 @@ Route::middleware('auth:api')->group( function () {
 
 Route::get('/ETinda', 'API\PHPController@ETinda');
 Route::get('/updateMobilePrefix', 'API\EtindaController@updateMobilePrefix');
+Route::get('/getProductAvgCost', 'API\EtindaController@getProductAvgCost');
 
 //E-Tinda Bot
 Route::get('/botMainProductCategories', 'API\EtindaController@botMainProductCategories');

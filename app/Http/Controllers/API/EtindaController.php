@@ -28,6 +28,14 @@ use Illuminate\Support\Facades\Storage;
 //
 class EtindaController extends BaseController
 {
+    public function getProductAvgCost(Request $request){
+        $data = $request->all();
+        $product_id = $data["product_id"];
+        $record = DB::table("pabile_inventories")->where("product_id", $product_id)->avg('cost');
+
+        return $this->sendResponse($record, 'getProductAvgCost');
+    }
+
     public function getFbOrders(Request $request){
         $data = $request->all();
         $orderId = $data["orderId"];
