@@ -211,6 +211,7 @@ class EtindaController extends BaseController
         $barcode = $data["barcode"];
         $price = $data["price"];
         $modify = $data["modify"];
+        $isDesktop = (isset($data["isDesktop"])) ? $data["isDesktop"] : false;
 
         $seq = DB::table('pabile_products')->max('id');
 
@@ -219,13 +220,16 @@ class EtindaController extends BaseController
             DB::table("pabile_products")->where('id', $id)
             ->update(['name' => $name, 'category_id' => $category, 'description' => $description, 'enabled' => $enabled, 'barcode' => $barcode, 'price' => $price]);
             
-            $photosPrevious = DB::table("pabile_product_photos")->where("product_id", $id)->get();
+            if(!$isDesktop){
+                $photosPrevious = DB::table("pabile_product_photos")->where("product_id", $id)->get();
 
-            foreach($photosPrevious as $photo){
-                Storage::disk('local')->delete([$photo->photo, $photo->thumbnail]);
+                foreach($photosPrevious as $photo){
+                    Storage::disk('local')->delete([$photo->photo, $photo->thumbnail]);
+                }
+
+                DB::table('pabile_product_photos')->where('product_id', $id)->delete();
             }
-
-            DB::table('pabile_product_photos')->where('product_id', $id)->delete();
+            
             DB::table('pabile_product_specs')->where('product_id', $id)->delete();
             DB::table('pabile_product_tags')->where('product_id', $id)->delete();
         
