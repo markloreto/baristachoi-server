@@ -316,19 +316,24 @@ class EtindaController extends BaseController
     public function getProductDetails(Request $request){
         $data = $request->all();
         $productId = $data["productId"];
+        $isDesktop = $data["isDesktop"];
 
         $product = DB::table("pabile_products as pp")->select(DB::raw('pp.*, (SELECT parent_id FROM pabile_product_categories WHERE id = pp.category_id) AS parent_id, (SELECT name FROM pabile_product_categories WHERE id = pp.category_id) AS category_name'))->where("pp.id", $productId)->first();
         $specs = DB::table("pabile_product_specs as pps")->select(DB::raw('pps.*, (SELECT name FROM pabile_spec_keys WHERE id = pps.key) AS keyName'))->where("pps.product_id", $productId)->get();
 
-        $photos = DB::table("pabile_product_photos")->where("product_id", $productId)->get();
-        foreach($photos as $photo){
-            $base64 = base64_encode(Storage::disk('local')->get($photo->thumbnail));
-            $photo->thumbnailb64 = $base64;
+        if($isDesktop){
+            $photos = [];
+        }else{
+            $photos = DB::table("pabile_product_photos")->where("product_id", $productId)->get();
+            foreach($photos as $photo){
+                $base64 = base64_encode(Storage::disk('local')->get($photo->thumbnail));
+                $photo->thumbnailb64 = $base64;
 
-            $base64_2 = base64_encode(Storage::disk('local')->get($photo->photo));
-            $photo->photob64 = $base64_2;
+                $base64_2 = base64_encode(Storage::disk('local')->get($photo->photo));
+                $photo->photob64 = $base64_2;
+            }
         }
-
+        
         $tags = DB::table("pabile_product_tags")->where("product_id", $productId)->get();
 
 
