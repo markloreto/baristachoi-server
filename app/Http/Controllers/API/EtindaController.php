@@ -282,10 +282,17 @@ class EtindaController extends BaseController
 
     public function getProducts(Request $request){
         $data = $request->all();
-        $categoryId = $data["categoryId"];
+        $categoryId = intval($data["categoryId"]);
         
         $records = DB::table("pabile_products as pp")
-        ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))->where("pp.category_id", $categoryId)->get();
+        ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`, (SELECT COUNT(*) FROM pabile_product_photos WHERE product_id = pp.id) AS `numPhotos`'))->where("pp.category_id", $categoryId);
+        if($categoryId != 0){
+            $records->where("pp.category_id", $categoryId)->get();
+        }else{
+            $records->having('numPhotos', '=', 0)->get();
+        }
+        //->having('mySold', '!=', 0)
+        
         return $this->sendResponse($records, 'getProducts');
     }
 
