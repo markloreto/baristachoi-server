@@ -127,7 +127,10 @@ class EtindaController extends BaseController
         if($returnAsData){
             return $records->limit(20)->get();
         }else{
-            $records = $records->orWhere('description', 'like', "%" . $q . "%");
+            if(!$pid){
+                $records = $records->orWhere('description', 'like', "%" . $q . "%");
+            }
+            
             return $this->sendResponse($records->orWhereIn("pp.id", $ids)->limit(50)->get(), 'searchProducts');
         }
     }
