@@ -165,3 +165,5 @@ Route::post('/botSetLocation', 'API\BotController@botSetLocation');
 Route::post('/botSetAddress', 'API\BotController@botSetAddress');
 Route::post('/botSummary', 'API\BotController@botSummary');
 Route::post('/botAddKeyword', 'API\BotController@botAddKeyword');
+
+Route::get('/botTimeNow', 'API\BotController@botTimeNow');

@@ -31,6 +31,13 @@ class BotController extends BaseController
 {
     //BOT
 
+    public function botTimeNow(){
+      $now   = Carbon::now();
+      $time  = $now->format('H:i:s A');
+
+      return $this->sendResponse($time, 'botTimeNow');
+    }
+
     public function botAddKeyword(Request $request){
       $data = $request->all();
       $keyword = $data["keyword"];
