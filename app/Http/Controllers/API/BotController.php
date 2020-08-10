@@ -42,12 +42,12 @@ class BotController extends BaseController
       );
 
       OneSignal::sendNotificationToAll(
-        "A client is search for '" . $keyword . "' but no result",
+        "A client is searching for '" . $keyword . "' but no result",
         "https://dashboard.chatfuel.com/bot/5f1d5f37cf7d166801d21c5a/livechat?folder=all&conversationId=" . $messengerId, 
         null, 
         null, 
         null, 
-        "Item not found", 
+        "Item not found!", 
         "facebook notification"
       );
 
