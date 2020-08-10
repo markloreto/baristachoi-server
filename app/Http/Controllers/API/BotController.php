@@ -415,7 +415,7 @@ class BotController extends BaseController
         ]);
 
         $start = '06:00:00';
-        $end   = '11:00:00';
+        $end   = '21:00:00';
         $now   = Carbon::now();
         $time  = $now->format('H:i:s');
 
