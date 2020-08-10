@@ -35,9 +35,20 @@ class BotController extends BaseController
       $data = $request->all();
       $keyword = $data["keyword"];
       $messengerId = $data["messenger_uid"];
+      
 
       DB::table("pabile_no_results")->insert(
         ["keyword" => $keyword, "messenger_id" => $messengerId]
+      );
+
+      OneSignal::sendNotificationToAll(
+        "A client is search for '" . $keyword . "' but no result",
+        "https://dashboard.chatfuel.com/bot/5f1d5f37cf7d166801d21c5a/livechat?folder=all&conversationId=" . $messengerId, 
+        null, 
+        null, 
+        null, 
+        "Item not found", 
+        "facebook notification"
       );
 
       return $this->sendResponse(1, 'botAddKeyword');
