@@ -31,6 +31,18 @@ class BotController extends BaseController
 {
     //BOT
 
+    public function botAddKeyword(Request $request){
+      $data = $request->all();
+      $keyword = $data["keyword"];
+      $messengerId = $data["messenger_uid"];
+
+      DB::table("pabile_no_results")->insert(
+        ["keyword" => $keyword, "messenger_id" => $messengerId]
+      );
+
+      return $this->sendResponse(1, 'botAddKeyword');
+    }
+
     public function botSummary(Request $request){
       $data = $request->all();
       $token = $data["token"];
