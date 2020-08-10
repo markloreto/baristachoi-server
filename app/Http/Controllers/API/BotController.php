@@ -32,8 +32,14 @@ class BotController extends BaseController
     //BOT
 
     public function botTimeNow(){
+      $start = '06:00:00';
+      $end   = '21:00:00';
       $now   = Carbon::now();
-      $time  = $now->format('H:i:s A');
+      $time  = $now->format('H:i:s');
+
+      if ($time >= $start && $time <= $end) {
+        
+      }
 
       return $this->sendResponse($time, 'botTimeNow');
     }
@@ -408,7 +414,16 @@ class BotController extends BaseController
             ]
         ]);
 
-        $response = $client->post("https://api.chatfuel.com/bots/5f1d5f37cf7d166801d21c5a/users/" . $messengerId . "/send?chatfuel_token=mELtlMAHYqR0BvgEiMq8zVek3uYUK3OJMbtyrdNPTrQB9ndV0fM7lWTFZbM4MZvD&chatfuel_message_tag=POST_PURCHASE_UPDATE&chatfuel_block_name=CartIn");
+        $start = '06:00:00';
+        $end   = '11:00:00';
+        $now   = Carbon::now();
+        $time  = $now->format('H:i:s');
+
+        if ($time >= $start && $time <= $end) {
+          $response = $client->post("https://api.chatfuel.com/bots/5f1d5f37cf7d166801d21c5a/users/" . $messengerId . "/send?chatfuel_token=mELtlMAHYqR0BvgEiMq8zVek3uYUK3OJMbtyrdNPTrQB9ndV0fM7lWTFZbM4MZvD&chatfuel_message_tag=POST_PURCHASE_UPDATE&chatfuel_block_name=CartIn");
+        }else{
+          $response = $client->post("https://api.chatfuel.com/bots/5f1d5f37cf7d166801d21c5a/users/" . $messengerId . "/send?chatfuel_token=mELtlMAHYqR0BvgEiMq8zVek3uYUK3OJMbtyrdNPTrQB9ndV0fM7lWTFZbM4MZvD&chatfuel_message_tag=POST_PURCHASE_UPDATE&chatfuel_block_name=operatingHours");
+        } 
       }
 
       return $this->sendResponse(["status" => $success, "reason" => $reason], 'fbOrder');
