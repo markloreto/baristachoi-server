@@ -211,7 +211,7 @@ class EtindaController extends BaseController
         $barcode = $data["barcode"];
         $price = $data["price"];
         $modify = $data["modify"];
-        $isDesktop = (isset($data["isDesktop"])) ? ($data["isDesktop"] == "false") ? false : true : false;
+        $isDesktop = (isset($data["isDesktop"])) ? (($data["isDesktop"] == "false") ? false : true) : false;
 
         $seq = DB::table('pabile_products')->max('id');
 
@@ -327,7 +327,7 @@ class EtindaController extends BaseController
     public function getProductDetails(Request $request){
         $data = $request->all();
         $productId = $data["productId"];
-        $isDesktop = (isset($data["isDesktop"])) ? ($data["isDesktop"] == "false") ? false : true : false;
+        $isDesktop = (isset($data["isDesktop"])) ? (($data["isDesktop"] == "false") ? false : true) : false;
 
         $product = DB::table("pabile_products as pp")->select(DB::raw('pp.*, (SELECT parent_id FROM pabile_product_categories WHERE id = pp.category_id) AS parent_id, (SELECT name FROM pabile_product_categories WHERE id = pp.category_id) AS category_name'))->where("pp.id", $productId)->first();
         $specs = DB::table("pabile_product_specs as pps")->select(DB::raw('pps.*, (SELECT name FROM pabile_spec_keys WHERE id = pps.key) AS keyName'))->where("pps.product_id", $productId)->get();
