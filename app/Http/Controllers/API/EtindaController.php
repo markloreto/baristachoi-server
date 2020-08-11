@@ -348,7 +348,7 @@ class EtindaController extends BaseController
         $tags = DB::table("pabile_product_tags")->where("product_id", $productId)->get();
 
 
-        return $this->sendResponse(array("product" => $product, "specs" => $specs, "photos" => $photos, "tags" => $tags), 'getProductDetails');
+        return $this->sendResponse(array("product" => $product, "specs" => $specs, "photos" => $photos, "tags" => $tags, "isDesktop" => $isDesktop), 'getProductDetails');
     }
 
     public function pabileBrgyList(Request $request){
