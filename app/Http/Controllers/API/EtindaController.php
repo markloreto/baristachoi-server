@@ -285,11 +285,14 @@ class EtindaController extends BaseController
         $categoryId = intval($data["categoryId"]);
         
         $records = DB::table("pabile_products as pp")
-        ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`, (SELECT COUNT(*) FROM pabile_product_photos WHERE product_id = pp.id) AS `numPhotos`'));
-        if($categoryId != 0){
+        ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`, (SELECT COUNT(*) FROM pabile_product_photos WHERE product_id = pp.id) AS `numPhotos`, (SELECT COUNT(*) FROM pabile_product_specs WHERE product_id = pp.id) AS `numSpecs`'));
+        if($categoryId > 0){
             $records = $records->where("pp.category_id", $categoryId)->get();
         }else{
-            $records = $records->having('numPhotos', '=', 0)->get();
+            if($categoryId === 0)
+                $records = $records->having('numPhotos', '=', 0)->get();
+            else
+                $records = $records->having('numSpecs', '=', 0)->get();
         }
         //->having('mySold', '!=', 0)
         
