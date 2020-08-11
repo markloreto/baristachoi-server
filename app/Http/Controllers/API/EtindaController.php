@@ -211,7 +211,14 @@ class EtindaController extends BaseController
         $barcode = $data["barcode"];
         $price = $data["price"];
         $modify = $data["modify"];
-        $isDesktop = (isset($data["isDesktop"])) ? (($data["isDesktop"] == "false") ? false : true) : false;
+        $isDesktop = false;
+
+        if(isset($data["isDesktop"])){
+            if($data["isDesktop"] == "false")
+                $isDesktop = false;
+            else
+                $isDesktop = true;
+        }
 
         $seq = DB::table('pabile_products')->max('id');
 
