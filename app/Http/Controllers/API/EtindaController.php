@@ -211,14 +211,7 @@ class EtindaController extends BaseController
         $barcode = $data["barcode"];
         $price = $data["price"];
         $modify = $data["modify"];
-        $isDesktop = false;
-
-        if(isset($data["isDesktop"])){
-            if($data["isDesktop"] == "false")
-                $isDesktop = false;
-            else
-                $isDesktop = true;
-        }
+        $isDesktop = (isset($data["isDesktop"])) ? $data["isDesktop"] : false;
 
         $seq = DB::table('pabile_products')->max('id');
 
@@ -284,7 +277,7 @@ class EtindaController extends BaseController
             );
         }
 
-        return $this->sendResponse($id, 'createNewProduct');
+        return $this->sendResponse($id, 'createNewProduct ');
     }
 
     public function getProducts(Request $request){
