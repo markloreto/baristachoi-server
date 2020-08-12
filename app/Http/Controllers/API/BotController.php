@@ -78,7 +78,7 @@ class BotController extends BaseController
 
     $json = json_decode('{
       "messages": [
-         {"text": "' . $totalRecords . ' search result found. showing record '. ($offset + 1) .' to ' . $recordsCount . '"},
+         {"text": "' . $totalRecords . ' search result found. showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . '"},
          {"text": "Select a product you want to add to the cart"},
          {
            "attachment":{
