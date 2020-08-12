@@ -56,6 +56,7 @@ class BotController extends BaseController
     $records = $recordsQ->limit($limit)->offset($offset)->get();
     $recordsCount = count($records);
     $totalRecords = $recordsQ->count();
+    $isThereNext = ($totalRecords > (($offset + $recordsCount) + $limit)) ? true : false;//$recordsQ->offset(($page + 1) * 10)->count();
     
 
     foreach($records as $r){
@@ -74,9 +75,35 @@ class BotController extends BaseController
       ];
     }
 
+    $next = "";
+    if($isThereNext){
+      $next = ',
+      {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "button",
+            "text": "Show more result for `' . $q . '`",
+            "buttons": [
+              {
+                "type": "show_block",
+                "block_names": ["search results"],
+                "title": "Show Block"
+              }
+            ]
+          }
+        }
+      }
+      ';
+    }
+
     $json = json_decode('{
+      "set_attributes": 
+      {
+        "u-search-page": "' . ($page + 1) . '",
+      },
       "messages": [
-         {"text": "' . $totalRecords . ' search result found. showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . '"},
+         {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
          {"text": "Select a product you want to add to the cart"},
          {
            "attachment":{
@@ -87,7 +114,7 @@ class BotController extends BaseController
                "elements":[]
              }
            }
-         }
+         }' . $next . '
        ]
      }', true);
 
