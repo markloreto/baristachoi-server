@@ -59,12 +59,12 @@ class BotController extends BaseController
         "title" => $r->name . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->brand) ? ", " . $r->brand : "") . (($r->flavor) ? ", " . $r->flavor : ""),
         "subtitle" => "₱ " . $r->price,
         "image_url" => $thumb,
-        "buttons":[
-          {
-            "url": "https://rockets.chatfuel.com/api/welcome",
-            "type":"json_plugin_url",
-            "title":"Select"
-          }
+        "buttons" => [
+
+            "url" => "https://rockets.chatfuel.com/api/welcome",
+            "type" => "json_plugin_url",
+            "title" => "Select"
+
         ]
       ];
     }
