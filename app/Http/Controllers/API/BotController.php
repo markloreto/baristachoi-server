@@ -57,15 +57,15 @@ class BotController extends BaseController
     foreach($records as $r){
       $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($r->thumbnail, 'pabile/');
       $items[] = [
-        "title" => $r->name . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->brand) ? ", " . $r->brand : "") . (($r->flavor) ? ", " . $r->flavor : ""),
+        "title" => "Test", // . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->brand) ? ", " . $r->brand : "") . (($r->flavor) ? ", " . $r->flavor : ""),
         "subtitle" => "₱ " . $r->price,
         "image_url" => $thumb,
         "buttons" => [
-
+            [
             "url" => "https://rockets.chatfuel.com",
             "type" => "web_url",
             "title" => "Select"
-
+            ]
         ]
       ];
     }
