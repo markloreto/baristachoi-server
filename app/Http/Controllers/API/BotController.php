@@ -55,7 +55,7 @@ class BotController extends BaseController
     
 
     foreach($records as $r){
-      $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($r->thumbnail, 'pabile/');
+      $thumb = 'https://markloreto.xyz/pabile-photos/' . str_replace("pabile/", "", $r->thumbnail);
       $items[] = [
         "title" => $r->name . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->brand) ? ", " . $r->brand : "") . (($r->flavor) ? ", " . $r->flavor : ""),
         "subtitle" => "₱ " . $r->price,
