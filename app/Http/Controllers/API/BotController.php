@@ -42,7 +42,7 @@ class BotController extends BaseController
           'contents'       => [
               'en' => $itemName
           ],
-          'big_picture' => $photo,
+          'chrome_web_image' => $photo,
           'included_segments' => array('All')
       ];
 
