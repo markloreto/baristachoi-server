@@ -30,6 +30,26 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function botItemSelected(Request $request){
+      $data = $request->all();
+      $itemName = $data["itemName"];
+      $photo = $data["photo"];
+
+      $parameters = [
+          'headings'       => [
+              'en' => 'Someone is adding an item to their cart!'
+          ],
+          'contents'       => [
+              'en' => $itemName
+          ],
+          'big_picture' => $photo,
+          'included_segments' => array('All')
+      ];
+
+      OneSignal::sendNotificationCustom($parameters);
+
+      return $this->sendResponse(1, 'botItemSelected');
+    }
 
     public function botTimeNow(){
       $start = '06:00:00';
