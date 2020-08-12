@@ -44,7 +44,6 @@ class BotController extends BaseController
           ],
           'chrome_web_image' => $photo,
           'included_segments' => array('All'),
-          'web_url' => $photo,
           'url' => $photo
       ];
 
