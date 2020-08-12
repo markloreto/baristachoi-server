@@ -79,6 +79,7 @@ class BotController extends BaseController
     $json = json_decode('{
       "messages": [
          {"text": "' . $totalRecords . ' search result found. showing record '. ($offset + 1) .' to ' . $recordsCount . '"},
+         {"text": "Select a product you want to add to the cart"},
          {
            "attachment":{
              "type":"template",
@@ -92,7 +93,7 @@ class BotController extends BaseController
        ]
      }', true);
 
-     $json["messages"][1]["attachment"]["payload"]["elements"] = $items;
+     $json["messages"][2]["attachment"]["payload"]["elements"] = $items;
 
     return response()->json($json);
 
