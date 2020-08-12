@@ -33,6 +33,9 @@ class BotController extends BaseController
   public function botSearchProduct(Request $request){
     $data = $request->all();
     $q = $data["q"];
+    $page = intval($data["page"]);
+    $offset = $page * 10;
+    $limit = 10;
     $ids = [];
     $items = [];
 
@@ -46,12 +49,15 @@ class BotController extends BaseController
         $ids[] = $spec->product_id;
     }
 
-    $records = DB::table("pabile_products as pp")
+    $recordsQ = DB::table("pabile_products as pp")
     ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids)
     ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
-    ->limit(10)
-    ->get();
+    ->limit($limit)
+    ->offset($offset);
 
+    $records = $recordsQ->get();
+    $recordsCount = count($records);
+    $totalRecords = $records->count();
     
 
     foreach($records as $r){
@@ -64,7 +70,7 @@ class BotController extends BaseController
             [
             "block_names" => ["product selected"],
             "type" => "show_block",
-            "title" => "₱ " . $r->price . " 👍"
+            "title" => "₱ " . $r->price
             ]
         ]
       ];
@@ -72,6 +78,7 @@ class BotController extends BaseController
 
     $json = json_decode('{
       "messages": [
+         {"text": "' . $totalRecords . ' search result found. showing record '. ($offset + 1) .' to ' . $recordsCount . '"},
          {
            "attachment":{
              "type":"template",
@@ -85,7 +92,7 @@ class BotController extends BaseController
        ]
      }', true);
 
-     $json["messages"][0]["attachment"]["payload"]["elements"] = $items;
+     $json["messages"][1]["attachment"]["payload"]["elements"] = $items;
 
     return response()->json($json);
 
