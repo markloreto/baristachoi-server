@@ -103,7 +103,7 @@ class BotController extends BaseController
         "u-search-page": "' . ($page + 1) . '",
       },
       "messages": [
-         {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . '"},
+         {"text": ""},
          {"text": "Select a product you want to add to the cart"},
          {
            "attachment":{
