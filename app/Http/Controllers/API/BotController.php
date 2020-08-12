@@ -43,7 +43,9 @@ class BotController extends BaseController
               'en' => $itemName
           ],
           'chrome_web_image' => $photo,
-          'included_segments' => array('All')
+          'included_segments' => array('All'),
+          'web_url' => $photo,
+          'url' => $photo
       ];
 
       OneSignal::sendNotificationCustom($parameters);
