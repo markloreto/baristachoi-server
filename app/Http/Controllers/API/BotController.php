@@ -55,7 +55,7 @@ class BotController extends BaseController
 
     $records = $recordsQ->limit($limit)->offset($offset)->get();
     $recordsCount = count($records);
-    $totalRecords = $records->count();
+    $totalRecords = $recordsQ->count();
     
 
     foreach($records as $r){
