@@ -52,9 +52,10 @@ class BotController extends BaseController
     ->limit(10)
     ->get();
 
-    $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($r->thumbnail, 'pabile/');
+    
 
     foreach($records as $r){
+      $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($r->thumbnail, 'pabile/');
       $items[] = [
         "title" => $r->name . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->brand) ? ", " . $r->brand : "") . (($r->flavor) ? ", " . $r->flavor : ""),
         "subtitle" => "₱ " . $r->price,
