@@ -33,7 +33,7 @@ class BotController extends BaseController
     public function botItemSelected(Request $request){
       $data = $request->all();
       $itemName = $data["itemName"];
-      $photo = $data["photo"];
+      $photo = str_replace("thumbnail", "photo", $data["photo"]);
 
       $parameters = [
           'headings'       => [
