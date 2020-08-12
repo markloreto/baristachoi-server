@@ -48,7 +48,7 @@ class BotController extends BaseController
 
     $records = DB::table("pabile_products as pp")
     ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids)
-    ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
+    ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
     ->limit(10)
     ->get();
 
@@ -57,7 +57,7 @@ class BotController extends BaseController
     foreach($records as $r){
       $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($r->thumbnail, 'pabile/');
       $items[] = [
-        "title" => "Test", // . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->brand) ? ", " . $r->brand : "") . (($r->flavor) ? ", " . $r->flavor : ""),
+        "title" => $r->name . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->brand) ? ", " . $r->brand : "") . (($r->flavor) ? ", " . $r->flavor : ""),
         "subtitle" => "₱ " . $r->price,
         "image_url" => $thumb,
         "buttons" => [
