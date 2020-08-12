@@ -371,12 +371,12 @@ class EtindaController extends BaseController
     }
 
     public function getMobilePrefix($mobile){
-        $uMobilePrefix = substr($mobile, 0, 4);
+        $uMobilePrefix = intval(substr($mobile, 0, 4));
 
         $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
         
         if($prefixRec == null){
-            $uMobilePrefix = substr($mobile, 0, 3);
+            $uMobilePrefix = intval(substr($mobile, 0, 3));
 
             $prefixRec = DB::table("pabile_mobile_prefixes")->where("prefix", $uMobilePrefix)->first();
         }
