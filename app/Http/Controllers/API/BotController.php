@@ -30,6 +30,67 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+  public function botSearchProduct(Request $request){
+    $data = $request->all();
+    $q = $data["q"];
+    $ids = [];
+    $items = [];
+
+    $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
+    $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
+    foreach($tags as $tag){
+        $ids[] = $tag->product_id;
+    }
+
+    foreach($specs as $spec){
+        $ids[] = $spec->product_id;
+    }
+
+    $records = DB::table("pabile_products as pp")
+    ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids)
+    ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT thumbnail FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
+    ->limit(10)
+    ->get();
+
+    $thumb = 'https://markloreto.xyz/pabile-photos/' . ltrim($r->thumbnail, 'pabile/');
+
+    foreach($records as $r){
+      $items[] = [
+        "title" => $r->name . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->brand) ? ", " . $r->brand : "") . (($r->flavor) ? ", " . $r->flavor : ""),
+        "subtitle" => "₱ " . $r->price,
+        "image_url" => $thumb,
+        "buttons":[
+          {
+            "url": "https://rockets.chatfuel.com/api/welcome",
+            "type":"json_plugin_url",
+            "title":"Select"
+          }
+        ]
+      ];
+    }
+
+    $json = json_decode('{
+      "messages": [
+         {
+           "attachment":{
+             "type":"template",
+             "payload":{
+               "template_type":"generic",
+               "image_aspect_ratio": "square",
+               "elements":[]
+             }
+           }
+         }
+       ]
+     }', true);
+
+     $json["messages"][0]["attachment"]["payload"]["elements"] = $items;
+
+    return response()->json($json);
+
+
+  }
+
     public function botItemSelected(Request $request){
       $data = $request->all();
       $itemName = $data["itemName"];

@@ -166,5 +166,7 @@ Route::post('/botSetAddress', 'API\BotController@botSetAddress');
 Route::post('/botSummary', 'API\BotController@botSummary');
 Route::post('/botAddKeyword', 'API\BotController@botAddKeyword');
 Route::post('/botItemSelected', 'API\BotController@botItemSelected');
+Route::post('/botSearchProduct', 'API\BotController@botSearchProduct');
+
 
 Route::get('/botTimeNow', 'API\BotController@botTimeNow');
