@@ -62,8 +62,8 @@ class BotController extends BaseController
         "image_url" => $thumb,
         "buttons" => [
 
-            "url" => "https://rockets.chatfuel.com/api/welcome",
-            "type" => "json_plugin_url",
+            "url" => "https://rockets.chatfuel.com",
+            "type" => "web_url",
             "title" => "Select"
 
         ]
