@@ -201,7 +201,7 @@ class BotController extends BaseController
               ]
             ];
           }else{
-            $totalRecords--;
+            //$totalRecords--;
             $isThereNext--;
             $recordsCount--;
           }
