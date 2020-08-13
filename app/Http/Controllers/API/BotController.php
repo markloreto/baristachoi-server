@@ -49,8 +49,6 @@ class BotController extends BaseController
       }');
 
       return response()->json($json);
-
-      return $this->sendResponse($records, 'getBotMainProductCategoryList');
     }
 
     public function BotCheckCartItem(Request $request){
