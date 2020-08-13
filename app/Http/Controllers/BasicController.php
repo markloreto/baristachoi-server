@@ -24,6 +24,8 @@ class BasicController extends Controller
 
         $path = storage_path("app/pabile/" . $photo);
         $maskPath = storage_path("app/public/mask.png");
+        $fontPath = storage_path("app/pabile/price.ttf");
+
         $img = Image::make($path);
         $img->resize(500, 500);
         $w = $img->width();
@@ -33,11 +35,9 @@ class BasicController extends Controller
         $watermark->resize($w, $h);
         $img->insert($watermark);
 
-        $img->text('₱ 25.40', 0, 0, function($font) {
-            $font->size(24);
-            $font->align('center');
-            $font->valign('top');
-            $font->angle(45);
+        $img->text('₱ 25.40', 40, 400, function($font) {
+            $font->size(72);
+            $font->file($fontPath);
         });
  
         return $img->response();
