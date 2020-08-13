@@ -55,12 +55,11 @@ class BotController extends BaseController
 
     $r = clone $recordsQ;
     $r2 = clone $recordsQ;
-    $r3 = clone $recordsQ;
 
     $records = $r->limit($limit)->offset($offset)->get();
     $recordsCount = count($records);
     $totalRecords = $r2->count();
-    $isThereNext = $r3->offset((($page + 1) * 10))->count();
+    $isThereNext = (($offset + $recordsCount) + $limit);//$r3->offset((($page + 1) * 10))->count();
     
 
     foreach($records as $r){
