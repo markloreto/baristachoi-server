@@ -22,8 +22,8 @@ class BasicController extends Controller
         $mainPhoto = DB::table("pabile_product_photos")->select("photo")->where([["primary", 1], ["product_id", $id]])->first();
         $photo = str_replace("pabile/", "", $mainPhoto->photo);
 
-        //$path = storage_path("app/pabile/" . $photo);
-        $img = Image::make("app/pabile/" . $photo);
+        $path = storage_path("app/pabile/" . $photo);
+        $img = Image::make($path);
  
         return $img->response();
     }
