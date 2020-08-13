@@ -42,7 +42,7 @@ class BotController extends BaseController
       );
 
       $json = json_decode('{
-          "redirect_to_blocks": ["my cart"]
+          "redirect_to_blocks": ["item added"]
       }');
 
       return response()->json($json);
@@ -93,6 +93,7 @@ class BotController extends BaseController
               "set_attributes"=> 
                 [
                   "u-product-id" => $r->id,
+                  "u-product-name" => $r->name
                 ],
                 "block_names" => ["ask quantity"],
                 "type" => "show_block",
