@@ -98,6 +98,10 @@ class BotController extends BaseController
     }
 
     $json = json_decode('{
+      "set_attributes":
+    {
+      "u-search-page": "1"
+    },
       "messages": [
          {"text": ""},
          {"text": "Select a product you want to add to the cart"},
