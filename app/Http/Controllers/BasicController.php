@@ -25,7 +25,8 @@ class BasicController extends Controller
         $path = storage_path("app/pabile/" . $photo);
         $maskPath = storage_path("app/public/mask.png");
         $img = Image::make($path);
-        $img->mask($maskPath, true);
+        $watermark = Image::make($maskPath);
+        $img->insert($watermark, 'center');
  
         return $img->response();
     }
