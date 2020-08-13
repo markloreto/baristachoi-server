@@ -167,7 +167,7 @@ class BotController extends BaseController
       }
 
       $recordsQ = DB::table("pabile_products as pp")
-      ->whereRaw('(SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) != 0 AND pp.name LIKE "%' .$q. '%"')->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids)
+      ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids)
       ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'));
 
       $r = clone $recordsQ;
@@ -181,24 +181,27 @@ class BotController extends BaseController
       
       if($totalRecords){
         foreach($records as $r){
-          $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
-          $items[] = [
-            "title" => $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
-            "subtitle" => $r->description,
-            "image_url" => $thumb,
-            "buttons" => [
-                [
-                "set_attributes"=> 
+          if($r->inventory){
+            $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
+            $items[] = [
+              "title" => $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
+              "subtitle" => $r->description,
+              "image_url" => $thumb,
+              "buttons" => [
                   [
-                    "u-product-id" => $r->id,
-                    "u-product-name" => $r->name
-                  ],
-                  "block_names" => ["ask quantity"],
-                  "type" => "show_block",
-                  "title" => "Add to cart"
-                ]
-            ]
-          ];
+                  "set_attributes"=> 
+                    [
+                      "u-product-id" => $r->id,
+                      "u-product-name" => $r->name
+                    ],
+                    "block_names" => ["ask quantity"],
+                    "type" => "show_block",
+                    "title" => "Add to cart"
+                  ]
+              ]
+            ];
+          }
+          
         }
   
         $next = "";
