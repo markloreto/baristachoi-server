@@ -30,11 +30,7 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
-    public function BotCheckCartItem(Request $request){
-
-    }
-
-    public function botCartClear(Request $request){
+    public function BotCheckCartItem(){
       $data = $request->all();
       $product_id = $data["product_id"];
       $messenger_uid = $data["messenger_uid"];
@@ -51,6 +47,23 @@ class BotController extends BaseController
         $json["redirect_to_blocks"] = ["ask quantity"];
       }
       
+      return response()->json($json);
+    }
+
+    public function botCartClear(Request $request){
+      $data = $request->all();
+      $messenger_uid = $data["messenger_uid"];
+      $token = $data["token"];
+
+      DB::table("pabile_temp_orders")->where("token", $token)->delete();
+
+      $json = json_decode('{
+        "set_attributes":
+          {
+            "u-cart-items": 0
+          }
+      }');
+
       return response()->json($json);
     }
 
