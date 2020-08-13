@@ -38,7 +38,8 @@ class BotController extends BaseController
         "set_attributes":
           {
             "u-product-id": "' . $product_id . '"
-          }
+          },
+          "redirect_to_blocks": ["ask quantity"]
       }');
 
       return response()->json($json);
