@@ -32,6 +32,13 @@ class BasicController extends Controller
         $watermark = Image::make($maskPath);
         $watermark->resize($w, $h);
         $img->insert($watermark);
+
+        $img->text('₱ 25.40', 0, 0, function($font) {
+            $font->size(24);
+            $font->align('center');
+            $font->valign('top');
+            $font->angle(45);
+        });
  
         return $img->response();
     }
