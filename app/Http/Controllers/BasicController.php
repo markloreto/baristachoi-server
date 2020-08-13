@@ -13,6 +13,7 @@ use App\Services\PayUService\Exception;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use File;
+use Response;
 
 class BasicController extends Controller
 {
