@@ -35,7 +35,7 @@ class BasicController extends Controller
         $watermark->resize($w, $h);
         $img->insert($watermark);
 
-        $peso = Image::make($pesoPath);
+        $peso = Image::make($pesoPath, 10, 20);
         $img->insert($pesoPath);
 
         $img->text('125.40', 50, 60, function($font) {
