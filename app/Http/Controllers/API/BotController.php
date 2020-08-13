@@ -260,7 +260,6 @@ class BotController extends BaseController
           },
             "messages": [
               {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
-              {"text": "Select a product you want to add to the cart"},
               {
                 "attachment":{
                   "type":"template",
@@ -287,11 +286,12 @@ class BotController extends BaseController
                     ]
                   }
                 }
-              }
+              },
+              {"text": "Select a product you want to add to the cart"},
             ]
           }', true);
     
-          $json["messages"][2]["attachment"]["payload"]["elements"] = $items;
+          $json["messages"][1]["attachment"]["payload"]["elements"] = $items;
         }else{
           $json = json_decode('{
             "messages": [
