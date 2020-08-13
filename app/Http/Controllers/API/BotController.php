@@ -67,7 +67,7 @@ class BotController extends BaseController
         ];
       }
 
-      $chunks = array_chunk($cars, 10);
+      $chunks = array_chunk($items, 10);
 
       foreach($chunks as $chunk){
         $messages[] = [
