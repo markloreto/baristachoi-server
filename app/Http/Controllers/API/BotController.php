@@ -122,9 +122,7 @@ class BotController extends BaseController
       $json["set_attributes"] = [
         "u-cart-items" => $items
       ];
-      $json["redirect_to_blocks"] = [
-        "redirect_to_blocks" => ["after cart options"]
-      ];
+      $json["redirect_to_blocks"] = ["after cart options"];
 
       return response()->json($json);
     }
