@@ -170,3 +170,4 @@ Route::post('/botSearchProduct', 'API\BotController@botSearchProduct');
 
 
 Route::get('/botTimeNow', 'API\BotController@botTimeNow');
+Route::get('/botAddtoCart', 'API\BotController@botAddtoCart');

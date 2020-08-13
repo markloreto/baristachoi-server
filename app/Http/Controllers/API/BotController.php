@@ -30,108 +30,124 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
-  public function botSearchProduct(Request $request){
-    $data = $request->all();
-    $q = $data["q"];
-    $page = intval($data["page"]);
-    $offset = $page * 10;
-    $limit = 10;
-    $ids = [];
-    $items = [];
+    public function botAddtoCart(Request $request){
+      $data = $request->all();
+      $product_id = $data["product_id"];
 
-    $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
-    $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
-    foreach($tags as $tag){
-        $ids[] = $tag->product_id;
-    }
-
-    foreach($specs as $spec){
-        $ids[] = $spec->product_id;
-    }
-
-    $recordsQ = DB::table("pabile_products as pp")
-    ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids)
-    ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'));
-
-    $r = clone $recordsQ;
-    $r2 = clone $recordsQ;
-    $r3 = clone $recordsQ;
-
-    $records = $r->limit($limit)->offset($offset)->get();
-    $recordsCount = count($records);
-    $totalRecords = $r2->count();
-    $isThereNext = $totalRecords - ($offset + $recordsCount);
-    
-
-    foreach($records as $r){
-      $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
-      $items[] = [
-        "title" => $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
-        "subtitle" => $r->description,
-        "image_url" => $thumb,
-        "buttons" => [
-            [
-            "url" => "url",
-            "type" => "json_plugin_url",
-            "title" => "Add to cart"
-            ]
-        ]
-      ];
-    }
-
-    $next = "";
-    if($isThereNext){
-      $next = '{
-        "type": "show_block",
-        "block_names": ["search results"],
-        "title": "Show more result"
-      },';
-    }
-
-    $json = json_decode('{
-      "set_attributes":
+      $json = json_decode('{
+        "set_attributes":
     {
-      "u-search-page": "' . ($page + 1) . '"
+      "u-product-id": "'.$product_id.'"
     },
-      "messages": [
-         {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
-         {"text": "Select a product you want to add to the cart"},
-         {
-           "attachment":{
-             "type":"template",
-             "payload":{
-               "template_type":"generic",
-               "image_aspect_ratio": "square",
-               "elements":[]
-             }
-           }
-         },
-         {
-          "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "button",
-              "text": "What do you wan to do?",
-              "buttons": [
-                ' . $next . '
-                {
-                  "type": "show_block",
-                  "block_names": ["Initial"],
-                  "title": "try another search"
-                }
+    "redirect_to_blocks": ["ask quantity"]
+      }', true);
+
+      return response()->json($json);
+
+    }
+
+    public function botSearchProduct(Request $request){
+      $data = $request->all();
+      $q = $data["q"];
+      $page = intval($data["page"]);
+      $offset = $page * 10;
+      $limit = 10;
+      $ids = [];
+      $items = [];
+
+      $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
+      $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
+      foreach($tags as $tag){
+          $ids[] = $tag->product_id;
+      }
+
+      foreach($specs as $spec){
+          $ids[] = $spec->product_id;
+      }
+
+      $recordsQ = DB::table("pabile_products as pp")
+      ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids)
+      ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'));
+
+      $r = clone $recordsQ;
+      $r2 = clone $recordsQ;
+      $r3 = clone $recordsQ;
+
+      $records = $r->limit($limit)->offset($offset)->get();
+      $recordsCount = count($records);
+      $totalRecords = $r2->count();
+      $isThereNext = $totalRecords - ($offset + $recordsCount);
+      
+
+      foreach($records as $r){
+        $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
+        $items[] = [
+          "title" => $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
+          "subtitle" => $r->description,
+          "image_url" => $thumb,
+          "buttons" => [
+              [
+              "url" => "https://markloreto.xyz/api/botAddtoCart?product_id=" . $r->id,
+              "type" => "json_plugin_url",
+              "title" => "Add to cart"
               ]
+          ]
+        ];
+      }
+
+      $next = "";
+      if($isThereNext){
+        $next = '{
+          "type": "show_block",
+          "block_names": ["search results"],
+          "title": "Show more result"
+        },';
+      }
+
+      $json = json_decode('{
+        "set_attributes":
+      {
+        "u-search-page": "' . ($page + 1) . '"
+      },
+        "messages": [
+          {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
+          {"text": "Select a product you want to add to the cart"},
+          {
+            "attachment":{
+              "type":"template",
+              "payload":{
+                "template_type":"generic",
+                "image_aspect_ratio": "square",
+                "elements":[]
+              }
+            }
+          },
+          {
+            "attachment": {
+              "type": "template",
+              "payload": {
+                "template_type": "button",
+                "text": "What do you wan to do?",
+                "buttons": [
+                  ' . $next . '
+                  {
+                    "type": "show_block",
+                    "block_names": ["Initial"],
+                    "title": "try another search"
+                  }
+                ]
+              }
             }
           }
-        }
-       ]
-     }', true);
+        ]
+      }', true);
 
-     $json["messages"][2]["attachment"]["payload"]["elements"] = $items;
+      $json["messages"][2]["attachment"]["payload"]["elements"] = $items;
 
-    return response()->json($json);
+      return response()->json($json);
 
 
-  }
+    }
 
     public function botItemSelected(Request $request){
       $data = $request->all();
