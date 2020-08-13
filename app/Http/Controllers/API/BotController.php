@@ -259,7 +259,6 @@ class BotController extends BaseController
                   "template_type": "button",
                   "text": "*' . $q  . '* not found 😥",
                   "buttons": [
-                    ' . $next . '
                     {
                       "type": "show_block",
                       "block_names": ["Initial"],
