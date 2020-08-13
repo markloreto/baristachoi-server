@@ -35,10 +35,10 @@ class BasicController extends Controller
         $watermark->resize($w, $h);
         $img->insert($watermark);
 
-        $img->text('₱ 25.40', 40, 400, function($font) {
-            //$fontPath = storage_path("app/public/price.ttf");
-            $font->size(54);
-            //$font->file($fontPath);
+        $img->text('25.40', 40, 400, function($font) {
+            $fontPath = storage_path("app/public/price.ttf");
+            $font->size(60);
+            $font->file($fontPath);
         });
  
         return $img->response();
