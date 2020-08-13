@@ -177,7 +177,8 @@ class BotController extends BaseController
 
       $records = $r->forPage(($page+1), $limit)->get(); //$r->limit($limit)->offset($offset)->get();
       $recordsCount = count($records);
-      $totalRecords = $r2->count();
+      $totalRecords = $r2->addSelect(DB::raw('count(pp.id) as `count`'))->get();//->count();
+      $totalRecords = $totalRecords->first()->count;
       $isThereNext = $totalRecords - ($offset + $recordsCount);
 
       if($totalRecords){
