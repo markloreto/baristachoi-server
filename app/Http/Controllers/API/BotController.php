@@ -89,7 +89,7 @@ class BotController extends BaseController
               [
               "set_attributes"=> 
                 [
-                  "u-product-id" => "'.$r->id.'",
+                  "u-product-id" => $r->id,
                 ],
                 "block_names" => ["ask quantity"],
                 "type" => "show_block",
