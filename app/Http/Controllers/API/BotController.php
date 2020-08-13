@@ -200,6 +200,8 @@ class BotController extends BaseController
                   ]
               ]
             ];
+          }else{
+            
           }
           
         }
