@@ -35,8 +35,8 @@ class BasicController extends Controller
         $watermark->resize($w, $h);
         $img->insert($watermark);
 
-        $peso = Image::make($pesoPath, 10, 20);
-        $img->insert($pesoPath);
+        $peso = Image::make($pesoPath);
+        $img->insert($pesoPath, 10, 20);
 
         $img->text('125.40', 50, 60, function($font) {
             $fontPath = storage_path("app/public/price.ttf");
