@@ -86,6 +86,7 @@ class BotController extends BaseController
       $token = $data["token"];
       $items = [];
       $messages = [];
+      $total = 0;
 
       $recordsQ = DB::table("pabile_products as pp")->addBinding($token)
       ->whereIn('pp.id', function($query) use ($token){
@@ -97,6 +98,7 @@ class BotController extends BaseController
       ->get();
 
       foreach($recordsQ as $r){
+        $total += $item->qty * $d->price;
         $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
         $items[] = [
           "title" => "[ " . $r->qty . "x ] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
@@ -140,7 +142,8 @@ class BotController extends BaseController
 
       $json["messages"] = $messages;
       $json["set_attributes"] = [
-        "u-cart-items" => $items
+        "u-cart-items" => $items,
+        "u-cart-total" => $total
       ];
       $json["redirect_to_blocks"] = ["after cart options"];
 
