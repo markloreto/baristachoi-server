@@ -270,6 +270,7 @@ class BotController extends BaseController
                   }
                 }
               },
+              {"text": "Select a product you want to add to the cart"},
               {
                 "attachment": {
                   "type": "template",
@@ -287,7 +288,6 @@ class BotController extends BaseController
                   }
                 }
               },
-              {"text": "Select a product you want to add to the cart"}
             ]
           }', true);
     
