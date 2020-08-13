@@ -91,7 +91,7 @@ class BotController extends BaseController
                 [
                   "u-product-id" => "'.$r->id.'",
                 ],
-                "block_names" => ["Block 1"],
+                "block_names" => ["ask quantity"],
                 "type" => "show_block",
                 "title" => "Add to cart"
               ]
