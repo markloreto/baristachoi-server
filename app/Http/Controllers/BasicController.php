@@ -25,9 +25,7 @@ class BasicController extends Controller
         $path = storage_path("app/pabile/" . $photo);
         $maskPath = storage_path("app/public/mask.png");
         $img = Image::make($path);
-        $img->resize(500, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        $img->resize(500, 260);
         $w = $img->width();
         $h = $img->height();
 
