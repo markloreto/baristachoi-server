@@ -87,9 +87,13 @@ class BotController extends BaseController
           "image_url" => $thumb,
           "buttons" => [
               [
-              "url" => "https://markloreto.xyz/api/botAddtoCart?product_id=" . $r->id,
-              "type" => "json_plugin_url",
-              "title" => "Add to cart"
+              "set_attributes"=> 
+                [
+                  "u-product-id" => "'.$r->id.'",
+                ],
+                "block_names" => ["Block 1"],
+                "type" => "show_block",
+                "title" => "Add to cart"
               ]
           ]
         ];
