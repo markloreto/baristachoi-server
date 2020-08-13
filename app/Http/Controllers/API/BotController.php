@@ -81,24 +81,11 @@ class BotController extends BaseController
 
     $next = "";
     if($isThereNext){
-      $next = ',
-      {
-        "attachment": {
-          "type": "template",
-          "payload": {
-            "template_type": "button",
-            "text": "Press the button below to show more result for `' . $q . '`",
-            "buttons": [
-              {
-                "type": "show_block",
-                "block_names": ["search results"],
-                "title": "Show more result"
-              }
-            ]
-          }
-        }
-      }
-      ';
+      $next = '{
+        "type": "show_block",
+        "block_names": ["search results"],
+        "title": "Show more result"
+      }';
     }
 
     $json = json_decode('{
@@ -118,7 +105,24 @@ class BotController extends BaseController
                "elements":[]
              }
            }
-         }' . $next . '
+         },
+         {
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "button",
+              "text": "",
+              "buttons": [
+                ' . $next . '
+                {
+                  "type": "show_block",
+                  "block_names": ["Initial"],
+                  "title": "try another search"
+                }
+              ]
+            }
+          }
+        }
        ]
      }', true);
 
