@@ -37,7 +37,7 @@ class BotController extends BaseController
       $json = json_decode('{
         "set_attributes":
           {
-            "u-token": "' . $hashedMessengerId . '"
+            "u-product-id": "' . $product_id . '"
           }
       }');
 
