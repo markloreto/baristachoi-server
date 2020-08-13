@@ -36,11 +36,10 @@ class BotController extends BaseController
 
       $json = json_decode('{
         "set_attributes":
-        {
-          "u-product-id": "'.$product_id.'"
-        },
-        "redirect_to_blocks": ["ask quantity"]
-      }', true);
+          {
+            "u-token": "' . $hashedMessengerId . '"
+          }
+      }');
 
       return response()->json($json);
 
