@@ -26,6 +26,7 @@ Route::get('chrono/abc/{depot_id}/{year}/{month}', 'BasicController@abc');
 Route::get('generatePaymentCode/{days}', 'BasicController@generatePaymentCode');
 Route::get('attachmentView/{id}', 'BasicController@attachmentView');
 Route::get('profilePhoto/{id}', 'BasicController@profilePhoto');
+Route::get('botPhotoGallery/{id}', 'BasicController@botPhotoGallery');
 
 Route::get('pabile-photos/{filename}', function ($filename)
 {

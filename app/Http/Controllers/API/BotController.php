@@ -71,8 +71,8 @@ class BotController extends BaseController
         "image_url" => $thumb,
         "buttons" => [
             [
-            "block_names" => ["product selected"],
-            "type" => "show_block",
+            "url" => "url",
+            "type" => "json_plugin_url",
             "title" => "₱ " . $r->price
             ]
         ]

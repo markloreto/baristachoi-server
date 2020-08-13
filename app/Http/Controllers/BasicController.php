@@ -16,6 +16,25 @@ use Carbon\Carbon;
 class BasicController extends Controller
 {
     //
+    public function botPhotoGallery($id){
+        $mainPhoto = DB::table("pabile_product_photos")->select("photo")->where([["primary", 1], ["product_id", $id]])->first();
+        $photo = str_replace("pabile/", "", $mainPhoto->photo);
+
+        $path = storage_path("app/pabile/" . $photo);
+ 
+        if (!File::exists($path)) {
+            abort(404);
+        }
+    
+        $file = File::get($path);
+        $type = File::mimeType($path);
+    
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+    
+        return $response;
+    }
+
     public function profilePhoto($id){
         $staffs = DB::table("staffs")->where('id', $id)->first();
         $img = Image::make($staffs->photo);
