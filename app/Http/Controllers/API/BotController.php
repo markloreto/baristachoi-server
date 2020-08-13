@@ -76,7 +76,7 @@ class BotController extends BaseController
     }
 
     $next = "";
-    if(1){
+    if($totalRecords > $isThereNext){
       $next = ',
       {
         "attachment": {
