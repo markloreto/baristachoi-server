@@ -30,20 +30,27 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function BotCheckCartItem(Request $request){
+
+    }
+
     public function botCartClear(Request $request){
       $data = $request->all();
+      $product_id = $data["product_id"];
       $messenger_uid = $data["messenger_uid"];
       $token = $data["token"];
 
-      DB::table("pabile_temp_orders")->where("token", $token)->delete();
-
       $json = json_decode('{
-        "set_attributes":
-          {
-            "u-cart-items": 0
-          }
-      }');
+        
+      }', true);
 
+      $query = DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]])->count();
+      if($query){
+        $json["redirect_to_blocks"] = ["item exist"];
+      }else{
+        $json["redirect_to_blocks"] = ["ask quantity"];
+      }
+      
       return response()->json($json);
     }
 
@@ -134,10 +141,22 @@ class BotController extends BaseController
       $qty = $data["qty"];
       $messenger_uid = $data["messenger_uid"];
       $token = $data["token"];
+      
 
-      DB::table("pabile_temp_orders")->insert(
-        ["token" => $token, "product_id" => $product_id, "qty" => $qty]
-      );
+      $query = DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]]);
+      $c = clone $query;
+
+      if($c->count()){
+        $query = $query->get();
+        DB::table('pabile_temp_orders')->where([["product_id", $product_id], ["token", $token]])
+          ->update([ 
+              'qty' => $qty
+          ]);
+      }else{
+        DB::table("pabile_temp_orders")->insert(
+          ["token" => $token, "product_id" => $product_id, "qty" => $qty]
+        );
+      }
 
       $json = json_decode('{
           "redirect_to_blocks": ["item added"]
@@ -195,7 +214,7 @@ class BotController extends BaseController
                     "u-product-id" => $r->id,
                     "u-product-name" => $r->name
                   ],
-                  "block_names" => ["ask quantity"],
+                  "block_names" => ["check if item in cart"],
                   "type" => "show_block",
                   "title" => "Add to cart"
                 ]

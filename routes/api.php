@@ -173,4 +173,6 @@ Route::get('/botTimeNow', 'API\BotController@botTimeNow');
 Route::post('/botCartItems', 'API\BotController@botCartItems');
 Route::post('/botCartRemove', 'API\BotController@botCartRemove');
 Route::post('/botCartClear', 'API\BotController@botCartClear');
+Route::post('/BotCheckCartItem', 'API\BotController@BotCheckCartItem');
+
 
