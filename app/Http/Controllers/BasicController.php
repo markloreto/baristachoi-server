@@ -37,17 +37,17 @@ class BasicController extends Controller
         $img->insert($watermark);
 
         $peso = Image::make($pesoPath);
-        $img->insert($pesoPath, "top-left", 5, 18);
+        $img->insert($pesoPath, "top-left", 0, 8);
 
         $img->text($p->price, 50, 60, function($font) {
-            $fontPath = storage_path("app/public/price.ttf");
+            $fontPath = storage_path("app/public/Roboto-Bold.ttf");
             $font->size(48);
             $font->color("#464646");
             $font->file($fontPath);
         });
 
         $img->text($p->price, 48, 58, function($font) {
-            $fontPath = storage_path("app/public/price.ttf");
+            $fontPath = storage_path("app/public/Roboto-Bold.ttf");
             $font->size(48);
             $font->color("#ffffff");
             $font->file($fontPath);
