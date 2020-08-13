@@ -56,7 +56,7 @@ class BotController extends BaseController
     $records = $recordsQ->limit($limit)->offset($offset)->get();
     $recordsCount = count($records);
     $totalRecords = $recordsQ->count();
-    $isThereNext = ($totalRecords > (($offset + $recordsCount) + $limit)) ? true : false;//$recordsQ->offset(($page + 1) * 10)->count();
+    $isThereNext = $recordsQ->offset(($page + 1) * 10)->count();
     
 
     foreach($records as $r){
