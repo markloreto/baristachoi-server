@@ -287,7 +287,7 @@ class BotController extends BaseController
                   }
                 }
               },
-              {"text": "Select a product you want to add to the cart"},
+              {"text": "Select a product you want to add to the cart"}
             ]
           }', true);
     
