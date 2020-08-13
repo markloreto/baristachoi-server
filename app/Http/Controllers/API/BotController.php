@@ -73,7 +73,7 @@ class BotController extends BaseController
             [
             "url" => "url",
             "type" => "json_plugin_url",
-            "title" => "₱ " . $r->price
+            "title" => "Add to cart"
             ]
         ]
       ];
