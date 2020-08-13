@@ -99,7 +99,12 @@ class BotController extends BaseController
         "messages": []
       }', true);
 
+      $items = DB::table("pabile_temp_orders")->where("token", $token)->count();
+
       $json["messages"] = $messages;
+      $json["set_attributes"] = [
+        "u-cart-items" => $items
+      ];
 
       return response()->json($json);
     }
@@ -210,7 +215,7 @@ class BotController extends BaseController
               "type": "template",
               "payload": {
                 "template_type": "button",
-                "text": "What do you wan to do?",
+                "text": "What do you want to do?",
                 "buttons": [
                   ' . $next . '
                   {
