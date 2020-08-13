@@ -171,4 +171,4 @@ Route::post('/botAddtoCart', 'API\BotController@botAddtoCart');
 
 Route::get('/botTimeNow', 'API\BotController@botTimeNow');
 Route::post('/botCartItems', 'API\BotController@botCartItems');
-
+Route::post('/botCartRemove', 'API\BotController@botCartRemove');
