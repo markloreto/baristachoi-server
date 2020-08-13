@@ -201,11 +201,14 @@ class BotController extends BaseController
               ]
             ];
           }else{
-            
+            $totalRecords--;
+            $isThereNext--;
+            $recordsCount--;
           }
           
         }
   
+
         $next = "";
         if($isThereNext){
           $next = '{
@@ -214,46 +217,69 @@ class BotController extends BaseController
             "title": "Show more result"
           },';
         }
-  
-        $json = json_decode('{
-          "set_attributes":
-        {
-          "u-search-page": "' . ($page + 1) . '"
-        },
-          "messages": [
-            {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
-            {"text": "Select a product you want to add to the cart"},
-            {
-              "attachment":{
-                "type":"template",
-                "payload":{
-                  "template_type":"generic",
-                  "image_aspect_ratio": "square",
-                  "elements":[]
+
+        if($totalRecords){
+          $json = json_decode('{
+            "set_attributes":
+          {
+            "u-search-page": "' . ($page + 1) . '"
+          },
+            "messages": [
+              {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
+              {"text": "Select a product you want to add to the cart"},
+              {
+                "attachment":{
+                  "type":"template",
+                  "payload":{
+                    "template_type":"generic",
+                    "image_aspect_ratio": "square",
+                    "elements":[]
+                  }
+                }
+              },
+              {
+                "attachment": {
+                  "type": "template",
+                  "payload": {
+                    "template_type": "button",
+                    "text": "What do you want to do?",
+                    "buttons": [
+                      ' . $next . '
+                      {
+                        "type": "show_block",
+                        "block_names": ["Initial"],
+                        "title": "try another search"
+                      }
+                    ]
+                  }
                 }
               }
-            },
-            {
-              "attachment": {
-                "type": "template",
-                "payload": {
-                  "template_type": "button",
-                  "text": "What do you want to do?",
-                  "buttons": [
-                    ' . $next . '
-                    {
-                      "type": "show_block",
-                      "block_names": ["Initial"],
-                      "title": "try another search"
-                    }
-                  ]
+            ]
+          }', true);
+    
+          $json["messages"][2]["attachment"]["payload"]["elements"] = $items;
+        }else{
+          $json = json_decode('{
+            "messages": [
+              {
+                "attachment": {
+                  "type": "template",
+                  "payload": {
+                    "template_type": "button",
+                    "text": "*' . $q  . '* not found 😥",
+                    "buttons": [
+                      {
+                        "type": "show_block",
+                        "block_names": ["Initial"],
+                        "title": "try another search"
+                      }
+                    ]
+                  }
                 }
               }
-            }
-          ]
-        }', true);
-  
-        $json["messages"][2]["attachment"]["payload"]["elements"] = $items;
+            ]
+          }', true);
+        }
       }else{
         $json = json_decode('{
           "messages": [
