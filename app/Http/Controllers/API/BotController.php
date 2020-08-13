@@ -165,15 +165,19 @@ class BotController extends BaseController
           ->update([ 
               'qty' => $qty
           ]);
+
+          $json = json_decode('{
+            "redirect_to_blocks": ["item updated"]
+          }');
       }else{
         DB::table("pabile_temp_orders")->insert(
           ["token" => $token, "product_id" => $product_id, "qty" => $qty]
         );
-      }
 
-      $json = json_decode('{
+        $json = json_decode('{
           "redirect_to_blocks": ["item added"]
-      }');
+        }');
+      }
 
       return response()->json($json);
 
