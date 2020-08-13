@@ -22,19 +22,10 @@ class BasicController extends Controller
         $mainPhoto = DB::table("pabile_product_photos")->select("photo")->where([["primary", 1], ["product_id", $id]])->first();
         $photo = str_replace("pabile/", "", $mainPhoto->photo);
 
-        $path = storage_path("app/pabile/" . $photo);
+        //$path = storage_path("app/pabile/" . $photo);
+        $img = Image::make("app/pabile/" . $photo);
  
-        if (!File::exists($path)) {
-            abort(404);
-        }
-    
-        $file = File::get($path);
-        $type = File::mimeType($path);
-    
-        $response = Response::make($file, 200);
-        $response->header("Content-Type", $type);
-    
-        return $response;
+        return $img->response();
     }
 
     public function profilePhoto($id){
