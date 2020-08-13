@@ -39,20 +39,20 @@ class BasicController extends Controller
         $peso = Image::make($pesoPath);
         $img->insert($pesoPath, "top-left", 0, 8);
 
-        $img->text($p->price, 48, 58, function($font) {
-            $fontPath = storage_path("app/public/Roboto-Bold.ttf");
-            $font->size(42);
-            $font->color("#ffffff");
-            $font->file($fontPath);
-        });
-
         $img->text($p->price, 50, 60, function($font) {
             $fontPath = storage_path("app/public/Roboto-Bold.ttf");
-            $font->size(42);
+            $font->size(38);
             $font->color("#464646");
             $font->file($fontPath);
         });
 
+        $img->text($p->price, 46, 56, function($font) {
+            $fontPath = storage_path("app/public/Roboto-Bold.ttf");
+            $font->size(38);
+            $font->color("#ffffff");
+            $font->file($fontPath);
+        });
+ 
         return $img->response();
     }
 
