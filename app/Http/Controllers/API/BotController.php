@@ -39,7 +39,7 @@ class BotController extends BaseController
       $message = "";
 
       foreach($records as $record){
-        $message += $record->name . " *" . $record->catCount . "*\r\n";
+        $message .= $record->name . " *" . $record->catCount . "*\r\n";
       }
 
       $json = json_decode('{
