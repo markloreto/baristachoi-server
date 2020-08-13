@@ -38,6 +38,7 @@ class BasicController extends Controller
         $img->text('125.40', 50, 60, function($font) {
             $fontPath = storage_path("app/public/price.ttf");
             $font->size(48);
+            $font->color("#464646");
             $font->file($fontPath);
         });
  
