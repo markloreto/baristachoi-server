@@ -38,7 +38,7 @@ class BotController extends BaseController
       $messages = [];
 
       $recordsQ = DB::table("pabile_products as pp")
-      ->where('pp.name', 'like', "%" . $q . "%")->whereIn('pp.id', function($query) use ($token){
+      ->whereIn('pp.id', function($query) use ($token){
         $query->select('product_id')
           ->from("pabile_temp_orders")
           ->where('token', $token);
