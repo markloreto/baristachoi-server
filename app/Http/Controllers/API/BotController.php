@@ -270,13 +270,12 @@ class BotController extends BaseController
                   }
                 }
               },
-              {"text": "Select a product you want to add to the cart"},
               {
                 "attachment": {
                   "type": "template",
                   "payload": {
                     "template_type": "button",
-                    "text": "What do you want to do?",
+                    "text": "Select an item you want to add to your Cart or choose another option below",
                     "buttons": [
                       ' . $next . '
                       {
