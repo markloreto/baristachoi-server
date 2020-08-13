@@ -179,80 +179,101 @@ class BotController extends BaseController
       $totalRecords = $r2->count();
       $isThereNext = $totalRecords - ($offset + $recordsCount);
       
-
-      foreach($records as $r){
-        $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
-        $items[] = [
-          "title" => $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
-          "subtitle" => $r->description,
-          "image_url" => $thumb,
-          "buttons" => [
-              [
-              "set_attributes"=> 
+      if($totalRecords){
+        foreach($records as $r){
+          $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
+          $items[] = [
+            "title" => $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
+            "subtitle" => $r->description,
+            "image_url" => $thumb,
+            "buttons" => [
                 [
-                  "u-product-id" => $r->id,
-                  "u-product-name" => $r->name
-                ],
-                "block_names" => ["ask quantity"],
-                "type" => "show_block",
-                "title" => "Add to cart"
-              ]
-          ]
-        ];
-      }
-
-      $next = "";
-      if($isThereNext){
-        $next = '{
-          "type": "show_block",
-          "block_names": ["search results"],
-          "title": "Show more result"
-        },';
-      }
-
-      $json = json_decode('{
-        "set_attributes":
-      {
-        "u-search-page": "' . ($page + 1) . '"
-      },
-        "messages": [
-          {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
-          {"text": "Select a product you want to add to the cart"},
-          {
-            "attachment":{
-              "type":"template",
-              "payload":{
-                "template_type":"generic",
-                "image_aspect_ratio": "square",
-                "elements":[]
-              }
-            }
-          },
-          {
-            "attachment": {
-              "type": "template",
-              "payload": {
-                "template_type": "button",
-                "text": "What do you want to do?",
-                "buttons": [
-                  ' . $next . '
-                  {
-                    "type": "show_block",
-                    "block_names": ["Initial"],
-                    "title": "try another search"
-                  }
+                "set_attributes"=> 
+                  [
+                    "u-product-id" => $r->id,
+                    "u-product-name" => $r->name
+                  ],
+                  "block_names" => ["ask quantity"],
+                  "type" => "show_block",
+                  "title" => "Add to cart"
                 ]
+            ]
+          ];
+        }
+  
+        $next = "";
+        if($isThereNext){
+          $next = '{
+            "type": "show_block",
+            "block_names": ["search results"],
+            "title": "Show more result"
+          },';
+        }
+  
+        $json = json_decode('{
+          "set_attributes":
+        {
+          "u-search-page": "' . ($page + 1) . '"
+        },
+          "messages": [
+            {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
+            {"text": "Select a product you want to add to the cart"},
+            {
+              "attachment":{
+                "type":"template",
+                "payload":{
+                  "template_type":"generic",
+                  "image_aspect_ratio": "square",
+                  "elements":[]
+                }
+              }
+            },
+            {
+              "attachment": {
+                "type": "template",
+                "payload": {
+                  "template_type": "button",
+                  "text": "What do you want to do?",
+                  "buttons": [
+                    ' . $next . '
+                    {
+                      "type": "show_block",
+                      "block_names": ["Initial"],
+                      "title": "try another search"
+                    }
+                  ]
+                }
               }
             }
-          }
-        ]
-      }', true);
-
-      $json["messages"][2]["attachment"]["payload"]["elements"] = $items;
+          ]
+        }', true);
+  
+        $json["messages"][2]["attachment"]["payload"]["elements"] = $items;
+      }else{
+        $json = json_decode('{
+          "messages": [
+            {
+              "attachment": {
+                "type": "template",
+                "payload": {
+                  "template_type": "button",
+                  "text": "*' . $q  . '* not found 😥",
+                  "buttons": [
+                    ' . $next . '
+                    {
+                      "type": "show_block",
+                      "block_names": ["Initial"],
+                      "title": "try another search"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }', true);
+      }
 
       return response()->json($json);
-
-
     }
 
     public function botItemSelected(Request $request){
