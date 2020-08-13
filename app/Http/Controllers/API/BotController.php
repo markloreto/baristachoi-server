@@ -98,7 +98,7 @@ class BotController extends BaseController
       ->get();
 
       foreach($recordsQ as $r){
-        $total += $item->qty * $d->price;
+        $total += $r->qty * $r->price;
         $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
         $items[] = [
           "title" => "[ " . $r->qty . "x ] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
