@@ -85,7 +85,7 @@ class BotController extends BaseController
         "type": "show_block",
         "block_names": ["search results"],
         "title": "Show more result"
-      }';
+      },';
     }
 
     $json = json_decode('{
