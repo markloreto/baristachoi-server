@@ -69,6 +69,10 @@ class BotController extends BaseController
         "title" => $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
         "subtitle" => $r->description,
         "image_url" => $thumb,
+        "default_action" => [
+          "type" => "show_block",
+          "block_names" => ["product selected"],
+        ],
         "buttons" => [
             [
             "block_names" => ["product selected"],
