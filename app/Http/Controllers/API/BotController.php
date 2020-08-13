@@ -38,9 +38,7 @@ class BotController extends BaseController
 
       DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]])->delete();
 
-      $json = json_decode('{
-          "redirect_to_blocks": ["item remove"]
-      }');
+      $json = json_decode('{}');
 
       return response()->json($json);
     }
