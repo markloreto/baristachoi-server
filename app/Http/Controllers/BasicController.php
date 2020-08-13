@@ -24,16 +24,19 @@ class BasicController extends Controller
 
         $path = storage_path("app/pabile/" . $photo);
         $maskPath = storage_path("app/public/mask.png");
-        
+        $pesoPath = storage_path("app/public/peso.png");
 
         $img = Image::make($path);
         $img->resize(500, 500);
         $w = $img->width();
         $h = $img->height();
 
-        $watermark = Image::make($maskPath);
+        $watermark = Image::make($maskPath);     
         $watermark->resize($w, $h);
         $img->insert($watermark);
+
+        $peso = Image::make($pesoPath);
+        $img->insert($pesoPath);
 
         $img->text('125.40', 50, 60, function($font) {
             $fontPath = storage_path("app/public/price.ttf");
