@@ -178,7 +178,8 @@ class BotController extends BaseController
       $recordsCount = count($records);
       $totalRecords = $r2->count();
       $isThereNext = $totalRecords - ($offset + $recordsCount);
-      
+      $count = 0;
+
       if($totalRecords){
         foreach($records as $r){
           if($r->inventory !== 0){
@@ -201,6 +202,7 @@ class BotController extends BaseController
               ]
             ];
           }else{
+            $count++;
             $totalRecords--;
             $isThereNext--;
             $recordsCount--;
@@ -225,7 +227,7 @@ class BotController extends BaseController
             "u-search-page": "' . ($page + 1) . '"
           },
             "messages": [
-              {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
+              {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' . $count : '') . ' showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
               {"text": "Select a product you want to add to the cart"},
               {
                 "attachment":{
