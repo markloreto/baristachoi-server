@@ -35,9 +35,9 @@ class BasicController extends Controller
         $watermark->resize($w, $h);
         $img->insert($watermark);
 
-        $img->text('25.40', 40, 400, function($font) {
+        $img->text('25.40', 50, 30, function($font) {
             $fontPath = storage_path("app/public/price.ttf");
-            $font->size(60);
+            $font->size(48);
             $font->file($fontPath);
         });
  
