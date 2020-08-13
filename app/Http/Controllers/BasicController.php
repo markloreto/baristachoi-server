@@ -39,7 +39,7 @@ class BasicController extends Controller
         $peso = Image::make($pesoPath);
         $img->insert($pesoPath, "top-left", 0, 8);
 
-        $img->text($p->price, 58, 60, function($font) {
+        $img->text($p->price, 44, 56, function($font) {
             $fontPath = storage_path("app/public/Roboto-Bold.ttf");
             $font->size(38);
             $font->color("#464646");
