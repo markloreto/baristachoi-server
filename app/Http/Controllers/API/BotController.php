@@ -55,11 +55,12 @@ class BotController extends BaseController
 
     $r = clone $recordsQ;
     $r2 = clone $recordsQ;
+    $r3 = clone $recordsQ;
 
     $records = $r->limit($limit)->offset($offset)->get();
     $recordsCount = count($records);
     $totalRecords = $r2->count();
-    $isThereNext = (($offset + $recordsCount) + $limit);//$r3->offset((($page + 1) * 10))->count();
+    $isThereNext = $r3->limit($limit)->offset((($page + 1) * $limit))->count();
     
 
     foreach($records as $r){
@@ -79,7 +80,7 @@ class BotController extends BaseController
     }
 
     $next = "";
-    if($totalRecords > $isThereNext){
+    if($isThereNext){
       $next = ',
       {
         "attachment": {
