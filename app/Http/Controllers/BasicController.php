@@ -24,7 +24,7 @@ class BasicController extends Controller
 
         $path = storage_path("app/pabile/" . $photo);
         $maskPath = storage_path("app/public/mask.png");
-        $fontPath = storage_path("app/pabile/price.ttf");
+        $fontPath = storage_path("app/public/price.ttf");
 
         $img = Image::make($path);
         $img->resize(500, 500);
