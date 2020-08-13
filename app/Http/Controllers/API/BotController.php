@@ -182,6 +182,7 @@ class BotController extends BaseController
 
       if($totalRecords){
         foreach($records as $r){
+          $count++;
           if($r->inventory !== 0){
             $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
             $items[] = [
@@ -202,7 +203,6 @@ class BotController extends BaseController
               ]
             ];
           }else{
-            $count++;
             $totalRecords--;
             $isThereNext--;
             $recordsCount--;
