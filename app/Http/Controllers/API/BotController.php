@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
-    public function BotCheckCartItem(){
+    public function BotCheckCartItem(Request $request){
       $data = $request->all();
       $product_id = $data["product_id"];
       $messenger_uid = $data["messenger_uid"];
