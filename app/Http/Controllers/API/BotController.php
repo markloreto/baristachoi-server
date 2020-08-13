@@ -104,7 +104,7 @@ class BotController extends BaseController
     $json = json_decode('{
       "set_attributes":
     {
-      "u-search-page": "1"
+      "u-search-page": "' . ($page + 1) . '"
     },
       "messages": [
          {"text": "' . (($page === 0) ? $totalRecords . ' search result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
