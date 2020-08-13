@@ -20,6 +20,7 @@ class BasicController extends Controller
     //
     public function botPhotoGallery($id){
         $mainPhoto = DB::table("pabile_product_photos")->select("photo")->where([["primary", 1], ["product_id", $id]])->first();
+        $p = DB::table("pabile_products")->select("price")->where("id", $id)->first();
         $photo = str_replace("pabile/", "", $mainPhoto->photo);
 
         $path = storage_path("app/pabile/" . $photo);
@@ -38,10 +39,17 @@ class BasicController extends Controller
         $peso = Image::make($pesoPath);
         $img->insert($pesoPath, "top-left", 5, 18);
 
-        $img->text('125.40', 50, 60, function($font) {
+        $img->text($p->price, 50, 60, function($font) {
             $fontPath = storage_path("app/public/price.ttf");
             $font->size(48);
             $font->color("#464646");
+            $font->file($fontPath);
+        });
+
+        $img->text($p->price, 48, 58, function($font) {
+            $fontPath = storage_path("app/public/price.ttf");
+            $font->size(48);
+            $font->color("#ffffff");
             $font->file($fontPath);
         });
  
