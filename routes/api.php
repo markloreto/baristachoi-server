@@ -167,7 +167,7 @@ Route::post('/botSummary', 'API\BotController@botSummary');
 Route::post('/botAddKeyword', 'API\BotController@botAddKeyword');
 Route::post('/botItemSelected', 'API\BotController@botItemSelected');
 Route::post('/botSearchProduct', 'API\BotController@botSearchProduct');
-
+Route::post('/botAddtoCart', 'API\BotController@botAddtoCart');
 
 Route::get('/botTimeNow', 'API\BotController@botTimeNow');
-Route::get('/botAddtoCart', 'API\BotController@botAddtoCart');
+

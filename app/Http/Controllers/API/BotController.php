@@ -33,13 +33,16 @@ class BotController extends BaseController
     public function botAddtoCart(Request $request){
       $data = $request->all();
       $product_id = $data["product_id"];
+      $qty = $data["qty"];
+      $messenger_uid = $data["messenger_uid"];
+      $token = $data["token"];
+
+      DB::table("pabile_temp_orders")->insert(
+        ["token" => $token, "product_id" => $product_id, "qty" => $qty]
+      );
 
       $json = json_decode('{
-        "set_attributes":
-          {
-            "u-product-id": "' . $product_id . '"
-          },
-          "redirect_to_blocks": ["ask quantity"]
+          "redirect_to_blocks": ["my cart"]
       }');
 
       return response()->json($json);
