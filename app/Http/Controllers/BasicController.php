@@ -23,8 +23,9 @@ class BasicController extends Controller
         $photo = str_replace("pabile/", "", $mainPhoto->photo);
 
         $path = storage_path("app/pabile/" . $photo);
+        $maskPath = storage_path("app/public/mask.png");
         $img = Image::make($path);
-        $img->mask('public/mask.png');
+        $img->mask($maskPath);
  
         return $img->response();
     }
