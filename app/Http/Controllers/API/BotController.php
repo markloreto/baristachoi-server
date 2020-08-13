@@ -87,7 +87,7 @@ class BotController extends BaseController
           "type": "template",
           "payload": {
             "template_type": "button",
-            "text": "Press the button below to show more result for `' . $q . '`",
+            "text": "Press the button below to show more result for *' . $q . '*",
             "buttons": [
               {
                 "type": "show_block",
