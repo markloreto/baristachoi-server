@@ -30,6 +30,30 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function getBotProductCategoryList(Request $request){
+      $data = $request->all();
+      $catId = $data["catId"];
+
+      $records = DB::table("pabile_product_categories as ppc")->where("parent_id", $catId)
+      ->select(DB::raw('ppc.*, (SELECT COUNT(*) FROM pabile_products WHERE ppc.id = category_id) as prodCount'))
+      ->having("prodCount", "!=", 0)
+      ->get();
+
+      $message = "";
+
+      foreach($records as $record){
+        $message .= $record->name . " *" . $record->prodCount . "*\u000A";
+      }
+
+      $json = json_decode('{
+        "messages": [
+          {"text": "'.$message.'"}
+        ]
+      }');
+
+      return response()->json($json);
+    }
+
     public function botSelectMainCategory(Request $request){
       $data = $request->all();
       $q = trim($data["q"]);
