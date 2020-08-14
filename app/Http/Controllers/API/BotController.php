@@ -261,8 +261,13 @@ class BotController extends BaseController
       $token = $data["token"];
 
       DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]])->delete();
-
-      $json = json_decode('{}');
+      $c = DB::table("pabile_temp_orders")->where("token", $token)->count();
+      $json = json_decode('{
+        "set_attributes":
+    {
+      "u-cart-items": '.$c.'
+    }
+      }');
 
       return response()->json($json);
     }
@@ -793,7 +798,7 @@ class BotController extends BaseController
         
         if($pendingOrdersCount > 3){
           $json = json_decode('{
-            "redirect_to_blocks": ["tooManyPending"]
+            "redirect_to_blocks": ["pendingOrders"]
           }', true);
         }else{
           $total = 0;
@@ -841,11 +846,13 @@ class BotController extends BaseController
             ]);
           $orderId = $Etinda->submitOrder($request);
 
+          
           $json = json_decode('{
             "set_attributes":
             {
               "u-status": "active",
-              "u-id": '.$realClientId.'
+              "u-id": '.$realClientId.',
+              "u-cart-items": 0
             },
             "messages": [
               {
