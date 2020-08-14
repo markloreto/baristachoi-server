@@ -388,6 +388,21 @@ class BotController extends BaseController
       $messenger_uid = $data["messenger_uid"];
       $token = $data["token"];
       
+      $p = DB::table("pabile_products")->where("id", $product_id)->first();
+
+      $parameters = [
+          'headings'       => [
+              'en' => 'Someone is adding an item to their cart!'
+          ],
+          'contents'       => [
+              'en' => $p->name
+          ],
+          'chrome_web_image' => "https://markloreto.xyz/botPhotoGallery/" . $product_id,
+          'included_segments' => array('All'),
+          'url' => "https://markloreto.xyz/botPhotoGallery/" . $product_id
+      ];
+
+      OneSignal::sendNotificationCustom($parameters);
 
       $query = DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]]);
       $c = clone $query;
