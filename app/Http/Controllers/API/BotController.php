@@ -308,21 +308,32 @@ class BotController extends BaseController
       $limit = 10;
       $ids = [];
       $items = [];
+      $catId = (isset($data["catId"])) ? isset($data["catId"]) : false;
 
-      $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
-      $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
-      foreach($tags as $tag){
-          $ids[] = $tag->product_id;
+      if(!$catId){
+        $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
+        $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
+        foreach($tags as $tag){
+            $ids[] = $tag->product_id;
+        }
+
+        foreach($specs as $spec){
+            $ids[] = $spec->product_id;
+        }
       }
 
-      foreach($specs as $spec){
-          $ids[] = $spec->product_id;
-      }
+
+      
 
       $recordsQ = DB::table("pabile_products as pp")
-      ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids)
       ->select(DB::raw('pp.*, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
       ->having('inventory', '!=', 0);
+
+      if($catId){
+        $recordsQ = $recordsQ->where("category_id", $catId);
+      }else{
+        $recordsQ = $recordsQ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids);
+      }
 
       $r = clone $recordsQ;
       $r2 = clone $recordsQ;
