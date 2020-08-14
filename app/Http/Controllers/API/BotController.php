@@ -45,7 +45,7 @@ class BotController extends BaseController
           "u-brgy_id" => $main[0]->id_3,
           "u-brgy_name" => (($main[0]->varname_3) ? $main[0]->name_3 . " *" .$main[0]->varname_3. "*" : $main[0]->name_3)
         ];
-        $json["redirect_to_blocks"] = ["category search"];
+        $json["redirect_to_blocks"] = ["profile done"];
       }elseif(count($main) > 1){
         $json["redirect_to_blocks"] = ["multi brgy"];
       }else{
