@@ -649,7 +649,33 @@ class BotController extends BaseController
         "facebook notification"
       );
 
-      return $this->sendResponse(1, 'botAddKeyword');
+      $json = json_decode('{
+        "messages": [
+          {
+            "attachment": {
+              "type": "template",
+              "payload": {
+                "template_type": "button",
+                "text": "Your request has been posted! Thank you",
+                "buttons": [
+                  {
+                    "type": "show_block",
+                    "block_names": ["Request product"],
+                    "title": "New Request"
+                  },
+                  {
+                    "type": "show_block",
+                    "block_names": ["Main menu"],
+                    "title": "Go to Main menu"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }', true);
+
+      return response()->json($json);
     }
 
     public function botAddKeyword(Request $request){
