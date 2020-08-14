@@ -50,6 +50,8 @@ class BotController extends BaseController
       }else{
 
       }
+
+      return response()->json($json);
     }
 
     public function getBotMainProductCategoryList(Request $request){
