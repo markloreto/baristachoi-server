@@ -49,8 +49,10 @@ class BotController extends BaseController
         $json["redirect_to_blocks"] = ["product select"];
       }elseif(count($cat) > 1){
 
+        $json["redirect_to_blocks"] = ["multi category"];
       }else{
-
+        $json["redirect_to_blocks"] = ["category no result"];
+        
       }
 
       return response()->json($json);
@@ -59,11 +61,17 @@ class BotController extends BaseController
     public function getBotProductCategoryList(Request $request){
       $data = $request->all();
       $catId = $data["catId"];
+      $q = (isset($data["q"])) ? trim($data["q"]) : false;
 
       $records = DB::table("pabile_product_categories as ppc")->where("parent_id", $catId)
       ->select(DB::raw('ppc.*, (SELECT COUNT(*) FROM pabile_products WHERE ppc.id = category_id) as prodCount'))
-      ->having("prodCount", "!=", 0)
-      ->get();
+      ->having("prodCount", "!=", 0);
+
+      if($q){
+        $records = $records->where('name', 'like', "%" . $q . "%")->get();
+      }else{
+        $records = $records->get();
+      }
 
       $message = "";
 
