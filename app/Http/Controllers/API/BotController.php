@@ -43,7 +43,7 @@ class BotController extends BaseController
       $message = "";
 
       foreach($records as $record){
-        $message .= $record->brgy . ($record->varname_3) ? " *" . $record->varname_3 . "*\u000A" : "\u000A";
+        $message .= $record->brgy . (($record->varname_3) ? " *" . $record->varname_3 . "*\u000A" : "\u000A");
       }
 
       $json = json_decode('{
