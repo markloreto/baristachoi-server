@@ -235,7 +235,7 @@ class EtindaController extends BaseController
         
         }else{
             $id = DB::table("pabile_products")->insertGetId(
-                ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price]
+                ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price, "updated_at" => Carbon::today()]
             );
         }
 
