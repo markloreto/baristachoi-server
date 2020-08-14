@@ -34,6 +34,7 @@ class BotController extends BaseController
       $data = $request->all();
       $q = trim($data["q"]);
       $depotId = $data["depot_id"];
+      $confirmation = (isset($data["confirmation"])) ? $data["confirmation"] : false;
 
       $depotInfo = DB::table("pabile_depots")->where("id", $depotId)->first();
       $main = DB::table("locations")->select("name_3", "id_3", "varname_3")->where("id_2", $depotInfo->location_id)
@@ -50,7 +51,13 @@ class BotController extends BaseController
           "u-brgy_id" => $main[0]->id_3,
           "u-brgy_name" => (($main[0]->varname_3) ? $main[0]->name_3 . " *" .$main[0]->varname_3. "*" : $main[0]->name_3)
         ];
-        $json["redirect_to_blocks"] = ["profile done"];
+
+        if($confirmation){
+          $json["redirect_to_blocks"] = ["confirm delivery"];
+        }else{
+          $json["redirect_to_blocks"] = ["profile done"];
+        }
+        
       }elseif(count($main) > 1){
         $json["redirect_to_blocks"] = ["multi brgy"];
       }else{
