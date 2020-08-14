@@ -30,6 +30,31 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function botBrgyList(Request $request){
+      $data = $request->all();
+
+      $depotName = $data["depot_location"];
+      $depotId = $data["depot_id"];
+
+      $depotInfo = DB::table("pabile_depots")->where("id", $depotId)->first();
+      $records = DB::table("locations")->select(DB::raw("name_3 AS brgy, varname_3"))
+      ->where("id_2", $depotInfo->location_id)->get();
+
+      $message = "";
+
+      foreach($records as $record){
+        $message .= $record->brgy . ($record->varname_3) ? " *" . $record->varname_3 . "*\u000A" : "\u000A";
+      }
+
+      $json = json_decode('{
+        "messages": [
+          {"text": "'.$message.'"}
+        ]
+      }');
+
+      return response()->json($json);
+    }
+
     public function botSelectCategory(Request $request){
       $data = $request->all();
       $q = trim($data["q"]);
@@ -201,6 +226,7 @@ class BotController extends BaseController
       $items = [];
       $messages = [];
       $total = 0;
+      $totalItems = 0;
 
       $recordsQ = DB::table("pabile_products as pp")->addBinding($token)
       ->whereIn('pp.id', function($query) use ($token){
@@ -213,6 +239,7 @@ class BotController extends BaseController
 
       foreach($recordsQ as $r){
         $total += $r->qty * $r->price;
+        $totalItems += $r->qty;
         $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
         $items[] = [
           "title" => "[ " . $r->qty . "x ] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
@@ -252,11 +279,9 @@ class BotController extends BaseController
         "messages": []
       }', true);
 
-      $items = DB::table("pabile_temp_orders")->where("token", $token)->count();
-
       $json["messages"] = $messages;
       $json["set_attributes"] = [
-        "u-cart-items" => $items,
+        "u-cart-items" => $totalItems,
         "u-cart-total" => $total
       ];
       $json["redirect_to_blocks"] = ["after cart options"];

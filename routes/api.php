@@ -179,7 +179,7 @@ Route::post('/getBotMainProductCategoryList', 'API\BotController@getBotMainProdu
 Route::post('/botSelectMainCategory', 'API\BotController@botSelectMainCategory');
 Route::post('/getBotProductCategoryList', 'API\BotController@getBotProductCategoryList');
 Route::post('/botSelectCategory', 'API\BotController@botSelectCategory');
-
+Route::post('/botBrgyList', 'API\BotController@botBrgyList');
 
 
 
