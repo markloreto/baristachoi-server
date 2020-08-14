@@ -66,7 +66,8 @@ class BotController extends BaseController
 
       if(count($main) == 1){
         $json["set_attributes"] = [
-          "u-cat-id" => $main[0]->id,
+          "u-main-cat-id" => $main[0]->id,
+          "u-main-name" => $main[0]->name
         ];
         $json["redirect_to_blocks"] = ["category search"];
       }elseif(count($main) > 1){
