@@ -409,7 +409,7 @@ class BotController extends BaseController
       $messenger_uid = $data["messenger_uid"];
       $token = $data["token"];
       
-      $p = DB::table("pabile_products")->select("*", "UNIX_TIMESTAMP(updated_at) AS `updated_date`")->where("id", $product_id)->first();
+      $p = DB::table("pabile_products")->select(DB::raw('*, UNIX_TIMESTAMP(updated_at) AS `updated_date`'))->where("id", $product_id)->first();
 
       $parameters = [
           'headings'       => [
