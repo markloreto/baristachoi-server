@@ -33,8 +33,9 @@ class BotController extends BaseController
     public function botSelectCategory(Request $request){
       $data = $request->all();
       $q = trim($data["q"]);
+      $parent_id = trim($data["parent_id"]);
 
-      $cat = DB::table("pabile_product_categories")->where('name', 'like', "%" . $q . "%")->get();
+      $cat = DB::table("pabile_product_categories")->where([['name', 'like', "%" . $q . "%"], ["parent_id", $parent_id]])->get();
 
       $json = json_decode('{
         
