@@ -97,7 +97,11 @@ class BotController extends BaseController
         ];
         $json["redirect_to_blocks"] = ["category search"];
       }elseif(count($main) > 1){
-
+        $json["set_attributes"] = [
+          "u-main-cat-id" => $main[0]->id,
+          "u-main-name" => $main[0]->name
+        ];
+        $json["redirect_to_blocks"] = ["multi main category"];
       }else{
 
       }
@@ -106,10 +110,17 @@ class BotController extends BaseController
     }
 
     public function getBotMainProductCategoryList(Request $request){
+      $data = $request->all();
+      $q = (isset($data["q"])) ? trim($data["q"]) : "";
       $records = DB::table("pabile_product_main_categories as ppmc")
       ->select(DB::raw("ppmc.*, (SELECT COUNT(ppc.id) FROM pabile_product_categories ppc WHERE ppc.parent_id = ppmc.id AND (SELECT COUNT(*) FROM pabile_products WHERE category_id = ppc.id) != 0) AS `catCount`"))
-      ->having("catCount", "!=", 0)
-      ->get();
+      ->having("catCount", "!=", 0);
+
+      if($q){
+        $records->where('name', 'like', "%" . $q . "%")->get();
+      }else{
+        $records->get();
+      }
 
       $message = "";
 

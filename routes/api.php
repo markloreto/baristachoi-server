@@ -175,7 +175,7 @@ Route::post('/botCartRemove', 'API\BotController@botCartRemove');
 Route::post('/botCartClear', 'API\BotController@botCartClear');
 Route::post('/BotCheckCartItem', 'API\BotController@BotCheckCartItem');
 
-Route::get('/getBotMainProductCategoryList', 'API\BotController@getBotMainProductCategoryList');
+Route::post('/getBotMainProductCategoryList', 'API\BotController@getBotMainProductCategoryList');
 Route::post('/botSelectMainCategory', 'API\BotController@botSelectMainCategory');
 Route::get('/getBotProductCategoryList', 'API\BotController@getBotProductCategoryList');
 Route::post('/botSelectCategory', 'API\BotController@botSelectCategory');
