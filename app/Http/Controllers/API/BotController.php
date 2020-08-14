@@ -34,7 +34,7 @@ class BotController extends BaseController
       $data = $request->all();
       $q = trim($data["q"]);
       $depotId = $data["depot_id"];
-      $confirmation = (isset($data["confirmation"])) ? $data["confirmation"] : false;
+      $confirmation = (isset($data["confirmation"])) ? intval($data["confirmation"]) : false;
 
       $depotInfo = DB::table("pabile_depots")->where("id", $depotId)->first();
       $main = DB::table("locations")->select("name_3", "id_3", "varname_3")->where("id_2", $depotInfo->location_id)
