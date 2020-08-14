@@ -30,6 +30,31 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function botSetBrgy(Request $request){
+      $data = $request->all();
+      $q = trim($data["q"]);
+
+      $main = DB::table("pabile_depots")->select("name_3", "id_3", "varname_3")->where('name_3', 'like', "%" . $q . "%")->orWhere("varname_3", 'like', "%" . $q . "%")->get();
+
+      $json = json_decode('{
+        
+      }', true);
+
+      if(count($main) == 1){
+        $json["set_attributes"] = [
+          "u-brgy_id" => $main[0]->id_3,
+          "u-brgy_name" => (($main[0]->varname_3) ? $main[0]->name_3 . " *" .$main[0]->varname_3. "*" : $main[0]->name_3)
+        ];
+        $json["redirect_to_blocks"] = ["category search"];
+      }elseif(count($main) > 1){
+        $json["redirect_to_blocks"] = ["multi brgy"];
+      }else{
+        $json["redirect_to_blocks"] = ["No Brgy"];
+      }
+
+      return response()->json($json);
+    }
+
     public function botBrgyList(Request $request){
       $data = $request->all();
 
