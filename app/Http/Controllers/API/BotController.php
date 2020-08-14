@@ -301,7 +301,7 @@ class BotController extends BaseController
                     "buttons": [
                       {
                         "type": "show_block",
-                        "block_names": ["name of block"],
+                        "block_names": ["checkout"],
                         "title": "Checkout now"
                       }'.$sh.'
                     ]
