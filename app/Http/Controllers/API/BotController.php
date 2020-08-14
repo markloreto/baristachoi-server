@@ -264,6 +264,8 @@ class BotController extends BaseController
       $data = $request->all();
       $messenger_uid = $data["messenger_uid"];
       $token = $data["token"];
+      $ready = (isset($data["ready"])) ? $data["ready"] : 0;
+      $showCart = (isset($data["showCart"])) ? $data["showCart"] : 0;
       $items = [];
       $messages = [];
       $total = 0;
@@ -275,57 +277,93 @@ class BotController extends BaseController
           ->from("pabile_temp_orders")
           ->where('token', $token);
       })
-      ->select(DB::raw('pp.*, (SELECT `qty` FROM pabile_temp_orders WHERE product_id = pp.id AND token = ?) AS `qty`, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
-      ->get();
+      ->select(DB::raw('pp.*, (SELECT `qty` FROM pabile_temp_orders WHERE product_id = pp.id AND token = ?) AS `qty`, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'));
 
-      foreach($recordsQ as $r){
-        $total += $r->qty * $r->price;
-        $totalItems += $r->qty;
-        $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
-        $items[] = [
-          "title" => "[ " . $r->qty . "x ] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
-          "subtitle" => $r->description,
-          "image_url" => $thumb,
-          "buttons" => [
-              [
-              "set_attributes"=> 
-                [
-                  "u-product-id" => $r->id,
-                  "u-product-name" => $r->name
-                ],
-                "block_names" => ["ask item remove"],
-                "type" => "show_block",
-                "title" => "Remove from Cart"
-              ]
-          ]
-        ];
-      }
-
-      $chunks = array_chunk($items, 10);
-
-      foreach($chunks as $chunk){
-        $messages[] = [
-          "attachment" => [
-            "type" => "template",
-            "payload" => [
-              "template_type" => "generic",
-              "image_aspect_ratio" => "square",
-              "elements" => $chunk
+      if($ready){
+        $sh = "";
+        if($showCart){
+          $sh = ',{
+            "type": "show_block",
+            "block_names": ["view cart"],
+            "title": "View Cart"
+          }';
+        }
+        $recordsQ = $recordsQ->count();
+        if($recordsQ){
+          $json = json_decode('{
+            "messages": [
+              {
+                "attachment": {
+                  "type": "template",
+                  "payload": {
+                    "template_type": "button",
+                    "text": "Whenever you\'re ready for delivery of your order you may proceed to checkout",
+                    "buttons": [
+                      {
+                        "type": "show_block",
+                        "block_names": ["name of block"],
+                        "title": "Checkout now"
+                      }'.$sh.'
+                    ]
+                  }
+                }
+              }
             ]
-          ]
+          }', true);
+        }
+      }else{
+        $recordsQ = $recordsQ->get();
+        foreach($recordsQ as $r){
+          $total += $r->qty * $r->price;
+          $totalItems += $r->qty;
+          $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id;
+          $items[] = [
+            "title" => "[ " . $r->qty . "x ] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
+            "subtitle" => $r->description,
+            "image_url" => $thumb,
+            "buttons" => [
+                [
+                "set_attributes"=> 
+                  [
+                    "u-product-id" => $r->id,
+                    "u-product-name" => $r->name
+                  ],
+                  "block_names" => ["ask item remove"],
+                  "type" => "show_block",
+                  "title" => "Remove from Cart"
+                ]
+            ]
+          ];
+        }
+  
+        $chunks = array_chunk($items, 10);
+  
+        foreach($chunks as $chunk){
+          $messages[] = [
+            "attachment" => [
+              "type" => "template",
+              "payload" => [
+                "template_type" => "generic",
+                "image_aspect_ratio" => "square",
+                "elements" => $chunk
+              ]
+            ]
+          ];
+        }
+  
+        $json = json_decode('{
+          "messages": []
+        }', true);
+  
+        $json["messages"] = $messages;
+        $json["set_attributes"] = [
+          "u-cart-items" => $totalItems,
+          "u-cart-total" => $total
         ];
+        $json["redirect_to_blocks"] = ["after cart options"];
       }
 
-      $json = json_decode('{
-        "messages": []
-      }', true);
-
-      $json["messages"] = $messages;
-      $json["set_attributes"] = [
-        "u-cart-items" => $totalItems,
-        "u-cart-total" => $total
-      ];
-      $json["redirect_to_blocks"] = ["after cart options"];
+      
 
       return response()->json($json);
     }
