@@ -113,16 +113,13 @@ class BotController extends BaseController
       $data = $request->all();
       $q = (isset($data["q"])) ? trim($data["q"]) : false;
       $records = DB::table("pabile_product_main_categories as ppmc")
-      ->select(DB::raw("ppmc.*, (SELECT COUNT(ppc.id) FROM pabile_product_categories ppc WHERE ppc.parent_id = ppmc.id AND (SELECT COUNT(*) FROM pabile_products WHERE category_id = ppc.id) != 0) AS `catCount`"))
-      ->having("catCount", "!=", 0)->get();
+      ->select(DB::raw("ppmc.*, (SELECT COUNT(ppc.id) FROM pabile_product_categories ppc WHERE ppc.parent_id = ppmc.id AND (SELECT COUNT(*) FROM pabile_products WHERE category_id = ppc.id) != 0) AS `catCount`"));
 
-      /* if($q){
-        $records->where('name', 'like', "%" . $q . "%")->get();
+      if($q){
+        $records->where('name', 'like', "%" . $q . "%")->having("catCount", "!=", 0)->get();
       }else{
-        
-      } */
-
-      //$records;
+        $records->having("catCount", "!=", 0)->get();
+      }
 
       $message = "";
 
