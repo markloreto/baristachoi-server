@@ -308,7 +308,7 @@ class BotController extends BaseController
       $limit = 10;
       $ids = [];
       $items = [];
-      $catId = (isset($data["catId"])) ? isset($data["catId"]) : false;
+      $catId = (isset($data["catId"])) ? $data["catId"] : false;
 
       if(!$catId){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
