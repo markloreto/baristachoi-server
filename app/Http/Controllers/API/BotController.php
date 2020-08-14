@@ -403,8 +403,13 @@ class BotController extends BaseController
                       ' . $next . '
                       {
                         "type": "show_block",
-                        "block_names": ["Initial"],
+                        "block_names": ["'.$tryAnother.'"],
                         "title": "try another search"
+                      },
+                      {
+                        "type": "show_block",
+                        "block_names": ["Main menu"],
+                        "title": "Go back to main menu"
                       }
                     ]
                   }
@@ -426,8 +431,13 @@ class BotController extends BaseController
                     "buttons": [
                       {
                         "type": "show_block",
-                        "block_names": ["Initial"],
+                        "block_names": ["'.$tryAnother.'"],
                         "title": "try another search"
+                      },
+                      {
+                        "type": "show_block",
+                        "block_names": ["Main menu"],
+                        "title": "Go back to main menu"
                       }
                     ]
                   }
