@@ -623,6 +623,35 @@ class BotController extends BaseController
       return $this->sendResponse($time, 'botTimeNow');
     }
 
+    public function botRequest(Request $request){
+      $data = $request->all();
+      $keyword = $data["keyword"];
+      $messengerId = $data["messenger_uid"];
+      
+
+      DB::table("pabile_no_results")->insert(
+        ["keyword" => $keyword, "messenger_id" => $messengerId]
+      );
+
+      $count = DB::table("pabile_no_results")->where("keyword", $keyword)->count();
+      $countMessage = "";
+      if($count > 1){
+        $countMessage = "This has been requested " . $count . " times";
+      }
+
+      OneSignal::sendNotificationToAll(
+        "A client is requesting for '" . $keyword . "'"  .$countMessage,
+        "https://dashboard.chatfuel.com/bot/5f1d5f37cf7d166801d21c5a/livechat?folder=all&conversationId=" . $messengerId, 
+        null, 
+        null, 
+        null, 
+        "Item Request!", 
+        "facebook notification"
+      );
+
+      return $this->sendResponse(1, 'botAddKeyword');
+    }
+
     public function botAddKeyword(Request $request){
       $data = $request->all();
       $keyword = $data["keyword"];
