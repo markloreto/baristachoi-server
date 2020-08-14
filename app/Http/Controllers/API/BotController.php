@@ -30,6 +30,31 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function botSelectCategory(Request $request){
+      $data = $request->all();
+      $q = trim($data["q"]);
+
+      $cat = DB::table("pabile_product_categories")->where('name', 'like', "%" . $q . "%")->get();
+
+      $json = json_decode('{
+        
+      }', true);
+
+      if(count($cat) == 1){
+        $json["set_attributes"] = [
+          "u-cat-id" => $cat[0]->id,
+          "u-cat-name" => $cat[0]->name
+        ];
+        $json["redirect_to_blocks"] = ["product select"];
+      }elseif(count($cat) > 1){
+
+      }else{
+
+      }
+
+      return response()->json($json);
+    }
+
     public function getBotProductCategoryList(Request $request){
       $data = $request->all();
       $catId = $data["catId"];
