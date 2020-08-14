@@ -66,9 +66,20 @@ class BotController extends BaseController
       $depotName = $data["depot_location"];
       $depotId = $data["depot_id"];
 
+      $q = (isset($data["q"])) ? trim($data["q"]) : false;
+
       $depotInfo = DB::table("pabile_depots")->where("id", $depotId)->first();
+
       $records = DB::table("locations")->select(DB::raw("name_3 AS brgy, varname_3"))
-      ->where("id_2", $depotInfo->location_id)->get();
+      ->where("id_2", $depotInfo->location_id);
+
+      if($q){
+        $records = $records->where(function ($query) use ($q){
+          $query->where('name_3', 'like', "%" . $q . "%")->orWhere("varname_3", 'like', "%" . $q . "%");
+        })->get();
+      }else{
+        $records = $records->get();
+      }
 
       $message = "";
 
