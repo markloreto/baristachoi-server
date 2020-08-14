@@ -33,8 +33,13 @@ class BotController extends BaseController
     public function botSetBrgy(Request $request){
       $data = $request->all();
       $q = trim($data["q"]);
+      $depotId = $data["depot_id"];
 
-      $main = DB::table("pabile_depots")->select("name_3", "id_3", "varname_3")->where('name_3', 'like', "%" . $q . "%")->orWhere("varname_3", 'like', "%" . $q . "%")->get();
+      $depotInfo = DB::table("pabile_depots")->where("id", $depotId)->first();
+      $main = DB::table("locations")->select("name_3", "id_3", "varname_3")->where("id_2", $depotInfo->location_id)
+      ->where(function ($query) use ($q){
+        $query->where('name_3', 'like', "%" . $q . "%")->orWhere("varname_3", 'like', "%" . $q . "%");
+      })->get();
 
       $json = json_decode('{
         
