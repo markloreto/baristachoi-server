@@ -182,7 +182,6 @@ Route::post('/botSelectCategory', 'API\BotController@botSelectCategory');
 Route::post('/botBrgyList', 'API\BotController@botBrgyList');
 Route::post('/botSetBrgy', 'API\BotController@botSetBrgy');
 Route::post('/botRequest', 'API\BotController@botRequest');
-botRequest
 
 
 
