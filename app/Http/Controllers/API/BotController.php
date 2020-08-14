@@ -309,6 +309,7 @@ class BotController extends BaseController
       $ids = [];
       $items = [];
       $catId = (isset($data["catId"])) ? $data["catId"] : false;
+      $tryAnother = "Search for products";
 
       if(!$catId){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
@@ -328,6 +329,7 @@ class BotController extends BaseController
 
       if($catId){
         $recordsQ = $recordsQ->where("category_id", $catId);
+        $tryAnother = "Main Category Search";
       }else{
         $recordsQ = $recordsQ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids);
       }
@@ -446,8 +448,13 @@ class BotController extends BaseController
                   "buttons": [
                     {
                       "type": "show_block",
-                      "block_names": ["Initial"],
+                      "block_names": ["'.$tryAnother.'"],
                       "title": "try another search"
+                    },
+                    {
+                      "type": "show_block",
+                      "block_names": ["Main menu"],
+                      "title": "Go back to main menu"
                     }
                   ]
                 }
