@@ -103,7 +103,7 @@ class BotController extends BaseController
         ];
         $json["redirect_to_blocks"] = ["multi main category"];
       }else{
-
+        $json["redirect_to_blocks"] = ["main category no result"];
       }
 
       return response()->json($json);
