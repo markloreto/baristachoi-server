@@ -30,6 +30,27 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function botChekTimeDelivery(Request $request){
+      $data = $request->all();
+
+      $start = '06:00:00';
+      $end   = '21:00:00';
+      $now   = Carbon::now();
+      $time  = $now->format('H:i:s');
+
+      $json = json_decode('{
+        
+      }', true);
+
+      if ($time >= $start && $time <= $end) {
+        $json["redirect_to_blocks"] = ["profile check"];
+      }else{
+        $json["redirect_to_blocks"] = ["Beyond operating hours"];
+      }
+
+      return response()->json($json);
+    }
+
     public function botSetBrgy(Request $request){
       $data = $request->all();
       $q = trim($data["q"]);
