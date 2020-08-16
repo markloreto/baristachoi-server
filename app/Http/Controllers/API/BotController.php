@@ -129,7 +129,9 @@ class BotController extends BaseController
       $q = trim($data["q"]);
       $parent_id = trim($data["parent_id"]);
 
-      $cat = DB::table("pabile_product_categories")->where([['name', 'like', "%" . $q . "%"], ["parent_id", $parent_id]])->get();
+      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*, (SELECT COUNT(id) FROM pabile_products WHERE category_id = ppc.id) AS `bilang`"))->where([['name', 'like', "%" . $q . "%"], ["parent_id", $parent_id]])
+      ->having("`bilang`", "!=", 0)
+      ->get();
 
       $json = json_decode('{
         
