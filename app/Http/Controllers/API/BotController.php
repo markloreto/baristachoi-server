@@ -258,6 +258,13 @@ class BotController extends BaseController
         );
 
         $json["redirect_to_blocks"] = ["promo message", "item added"];
+        //
+        $sum = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
+        $json["set_attributes"] = [
+          "u-cart-items" => $sum
+        ];
+
+        //totalItems
       }else{
         $query = DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]])->count();
         if($query){
@@ -266,6 +273,8 @@ class BotController extends BaseController
           $json["redirect_to_blocks"] = ["ask quantity"];
         }
       }
+
+      
       
       return response()->json($json);
     }
@@ -294,7 +303,7 @@ class BotController extends BaseController
       $token = $data["token"];
 
       DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]])->delete();
-      $c = DB::table("pabile_temp_orders")->where("token", $token)->count();
+      $c = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
       $json = json_decode('{
         "set_attributes":
     {
@@ -447,7 +456,13 @@ class BotController extends BaseController
               'qty' => $qty
           ]);
 
+          $sum = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
+
           $json = json_decode('{
+            "set_attributes": 
+    {
+      "u-cart-items": '.$sum.'
+    },
             "redirect_to_blocks": ["item updated"]
           }');
       }else{
@@ -455,7 +470,13 @@ class BotController extends BaseController
           ["token" => $token, "product_id" => $product_id, "qty" => $qty]
         );
 
+        $sum = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
+
         $json = json_decode('{
+          "set_attributes": 
+    {
+      "u-cart-items": '.$sum.'
+    },
           "redirect_to_blocks": ["item added"]
         }');
       }
