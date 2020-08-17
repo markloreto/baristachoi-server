@@ -250,7 +250,7 @@ class BotController extends BaseController
         
       }', true);
 
-      $p = DB::table("pabile_products")->where("product_id", $product_id)->first();
+      $p = DB::table("pabile_products")->where("id", $product_id)->first();
 
       if(floatval($p->previous_price)){
         DB::table("pabile_temp_orders")->updateOrInsert(
