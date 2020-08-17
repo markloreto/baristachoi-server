@@ -53,7 +53,7 @@ class BasicController extends Controller
             $font->file($fontPath);
         });
 
-        if($p->previous_price || $p->previous_price != 0){
+        if($p->previous_price || floatval($p->previous_price) != 0){
             $smallPesoPath = storage_path("app/public/small_peso.png");
             $rubberStampPath = storage_path("app/public/pngguru.png");
             $img->insert($smallPesoPath, "top-left", 4, 70);
