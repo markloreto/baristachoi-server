@@ -57,7 +57,7 @@ class BasicController extends Controller
             $smallPesoPath = storage_path("app/public/small_peso.png");
             $rubberStampPath = storage_path("app/public/pngguru.png");
             $img->insert($smallPesoPath, "top-left", 4, 70);
-            $img->insert($rubberStampPath, "top-left", 290, 326);
+            $img->insert($rubberStampPath, "top-left", 170, 179);
 
             $img->text($p->previous_price, 30, 90, function($font) {
                 $fontPath = storage_path("app/public/BPtypewriteStrikethrough.ttf");
