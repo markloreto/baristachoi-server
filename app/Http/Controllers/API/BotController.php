@@ -250,11 +250,21 @@ class BotController extends BaseController
         
       }', true);
 
-      $query = DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]])->count();
-      if($query){
-        $json["redirect_to_blocks"] = ["item exist"];
+      $p = DB::table("pabile_products")->where("product_id", $product_id)->first();
+
+      if(floatval($p->previous_price)){
+        DB::table("pabile_temp_orders")->updateOrInsert(
+          ["token" => $token, "product_id" => $product_id], ["token" => $token, "product_id" => $product_id, "qty" => 1]
+        );
+
+        $json["redirect_to_blocks"] = ["promo message", "item added"];
       }else{
-        $json["redirect_to_blocks"] = ["ask quantity"];
+        $query = DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]])->count();
+        if($query){
+          $json["redirect_to_blocks"] = ["item exist"];
+        }else{
+          $json["redirect_to_blocks"] = ["ask quantity"];
+        }
       }
       
       return response()->json($json);
