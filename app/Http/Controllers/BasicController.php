@@ -57,7 +57,7 @@ class BasicController extends Controller
         if($p->previous_price){
             $smallPesoPath = storage_path("app/public/small_peso.png");
             $smallPeso = Image::make($smallPesoPath);
-            $img->insert($smallPesoPath, "top-left", 4, 50);
+            $img->insert($smallPesoPath, "top-left", 4, 75);
         }
  
         return $img->response();
