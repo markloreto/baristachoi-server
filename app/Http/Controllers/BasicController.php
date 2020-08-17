@@ -59,9 +59,9 @@ class BasicController extends Controller
             $smallPeso = Image::make($smallPesoPath);
             $img->insert($smallPesoPath, "top-left", 4, 75);
 
-            $img->text($p->previous_price, 30, 95, function($font) {
+            $img->text($p->previous_price, 25, 90, function($font) {
                 $fontPath = storage_path("app/public/BPtypewriteStrikethrough.ttf");
-                $font->size(18);
+                $font->size(20);
                 $font->color("#ffffff");
                 $font->file($fontPath);
             });
