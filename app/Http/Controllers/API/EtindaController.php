@@ -210,6 +210,7 @@ class EtindaController extends BaseController
         $primaryPhoto = intval($data["primaryPhoto"]);
         $barcode = $data["barcode"];
         $price = $data["price"];
+        $previous_price = $data["previous_price"];
         $modify = $data["modify"];
         $isDesktop = (isset($data["isDesktop"])) ? $data["isDesktop"] : false;
 
@@ -218,7 +219,7 @@ class EtindaController extends BaseController
         if($modify){
             $id = $modify;
             DB::table("pabile_products")->where('id', $id)
-            ->update(['name' => $name, 'category_id' => $category, 'description' => $description, 'enabled' => $enabled, 'barcode' => $barcode, 'price' => $price]);
+            ->update(['name' => $name, 'category_id' => $category, 'description' => $description, 'enabled' => $enabled, 'barcode' => $barcode, 'price' => $price, 'previous_price' => $previous_price]);
             
             if(!$isDesktop){
                 $photosPrevious = DB::table("pabile_product_photos")->where("product_id", $id)->get();
@@ -235,7 +236,7 @@ class EtindaController extends BaseController
         
         }else{
             $id = DB::table("pabile_products")->insertGetId(
-                ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price, "updated_at" => Carbon::today()]
+                ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price, "updated_at" => Carbon::today(), 'previous_price' => $previous_price]
             );
         }
 
