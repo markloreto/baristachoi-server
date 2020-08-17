@@ -37,7 +37,6 @@ class BasicController extends Controller
         $watermark->resize($w, $h);
         $img->insert($watermark);
 
-        $peso = Image::make($pesoPath);
         $img->insert($pesoPath, "top-left", 4, 10);
 
         $img->text($p->price, 58, 60, function($font) {
@@ -56,8 +55,9 @@ class BasicController extends Controller
 
         if($p->previous_price){
             $smallPesoPath = storage_path("app/public/small_peso.png");
-            //$smallPeso = Image::make($smallPesoPath);
+            $rubberStampPath = storage_path("app/public/pngguru.png");
             $img->insert($smallPesoPath, "top-left", 4, 70);
+            $img->insert($rubberStampPath, "top-left", 306, 326);
 
             $img->text($p->previous_price, 30, 90, function($font) {
                 $fontPath = storage_path("app/public/BPtypewriteStrikethrough.ttf");
