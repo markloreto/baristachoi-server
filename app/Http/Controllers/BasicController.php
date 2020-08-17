@@ -62,7 +62,7 @@ class BasicController extends Controller
             $img->text($p->previous_price, 30, 90, function($font) {
                 $fontPath = storage_path("app/public/BPtypewriteStrikethrough.ttf");
                 $font->size(20);
-                $font->color("#464646");
+                $font->color("#ffffff");
                 $font->file($fontPath);
             });
         }
