@@ -30,7 +30,7 @@ class BotController extends BaseController
     //BOT
     public function excelTest(Request $request){
       $products = DB::table("products")->limit(20)->get();
-      Excel::store(new ClientsExport($products), 'productsTest.xlsx');
+      Excel::store(new ProductsExport($products), 'productsTest.xlsx');
       //$exportation = new ClientsExport($filter->get());
       //return Excel::download($exportation, 'clients.xls');
     }
