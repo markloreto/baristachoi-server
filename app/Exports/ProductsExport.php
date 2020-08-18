@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Machine;
+use App\PabileProduct;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
