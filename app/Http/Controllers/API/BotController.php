@@ -28,6 +28,13 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
+    public function excelTest(Request $request){
+      $products = DB::table("products")->limit(20)->get();
+      Excel::store(new ClientsExport($products), 'productsTest.xlsx');
+      //$exportation = new ClientsExport($filter->get());
+      //return Excel::download($exportation, 'clients.xls');
+    }
+
     public function botChekTimeDelivery(Request $request){
       $data = $request->all();
 

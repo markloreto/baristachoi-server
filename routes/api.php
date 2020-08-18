@@ -184,6 +184,8 @@ Route::post('/botSetBrgy', 'API\BotController@botSetBrgy');
 Route::post('/botRequest', 'API\BotController@botRequest');
 Route::post('/botChekTimeDelivery', 'API\BotController@botChekTimeDelivery');
 
+Route::get('/excelTest', 'API\BotController@excelTest');
+
 
 
 
