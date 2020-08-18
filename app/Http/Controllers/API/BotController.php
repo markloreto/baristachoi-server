@@ -20,9 +20,7 @@ use OneSignalClient;
 
 use Rap2hpoutre\FastExcel\FastExcel;
 
-use App\Exports\MachinesExport;
-use App\Exports\CallsheetsExport;
-use App\Exports\ClientsExport;
+use App\Exports\ProductsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 
