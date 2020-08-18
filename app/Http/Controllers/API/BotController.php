@@ -30,7 +30,7 @@ class BotController extends BaseController
     //BOT
     public function excelTest(Request $request){
       $products = DB::table("pabile_products")->limit(20)->get();
-      $exportation = new ProductsExport($filter);
+      $exportation = new ProductsExport($products);
       Excel::store($exportation, 'productsTest.xlsx');
       //$exportation = new ClientsExport($filter->get());
       //return Excel::download($exportation, 'clients.xls');
