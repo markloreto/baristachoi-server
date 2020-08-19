@@ -28,15 +28,34 @@ use Illuminate\Support\Facades\Storage;
 class BotController extends BaseController
 {
     //BOT
-    public function excelTest(Request $request){
+    public function pricelist(Request $request){
       $products = DB::table("pabile_products as pp")->select(DB::raw('(SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 6) AS `brand`, pp.name, ppc.name AS `category`, (SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 1) AS `weight`, (SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 2) AS `color`, (SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 5) AS `flavor`, pp.price'))
       ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
       ->join('pabile_product_main_categories AS ppmc', 'ppc.parent_id', '=', 'ppmc.id')
       ->get();
       $exportation = new ProductsExport($products);
-      Excel::store($exportation, 'public/productsTest.xlsx');
-      //$exportation = new ClientsExport($filter->get());
-      //return Excel::download($exportation, 'clients.xls');
+      Excel::store($exportation, 'public/pricelist.xlsx');
+
+      $json = json_decode('{
+        "messages": [
+          {
+            "attachment": {
+              "type": "file",
+              "payload": {
+                "url": "https://markloreto.xyz/storage/pricelist.xlsx"
+              }
+            }
+          }
+        ]
+      }', true);
+
+      /* if ($time >= $start && $time <= $end) {
+        $json["redirect_to_blocks"] = ["profile check"];
+      }else{
+        $json["redirect_to_blocks"] = ["Beyond operating hours"];
+      } */
+
+      return response()->json($json);
     }
 
     public function botChekTimeDelivery(Request $request){
