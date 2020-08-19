@@ -42,7 +42,7 @@ class BotController extends BaseController
             "attachment": {
               "type": "file",
               "payload": {
-                "url": "https://markloreto.xyz/storage/pricelist.xlsx"
+                "url": "https://markloreto.xyz/storage/pricelist.pdf"
               }
             }
           }
