@@ -34,7 +34,7 @@ class BotController extends BaseController
       ->join('pabile_product_main_categories AS ppmc', 'ppc.parent_id', '=', 'ppmc.id')
       ->get();
       $exportation = new ProductsExport($products);
-      Excel::store($exportation, 'productsTest.xlsx');
+      Excel::store($exportation, 'public/productsTest.xlsx');
       //$exportation = new ClientsExport($filter->get());
       //return Excel::download($exportation, 'clients.xls');
     }
