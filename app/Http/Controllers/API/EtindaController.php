@@ -668,7 +668,6 @@ class EtindaController extends BaseController
         ->groupBy("pi.purchase_id", "pi.product_id", "pi.cost")
         ->limit(20)
         ->offset($offset)
-        ->havingRaw('pp.virtual_cost IS NOT NULL OR pp.virtual_cost != 0')
         ->get();
 
         return $this->sendResponse($records, 'getPurchases');
