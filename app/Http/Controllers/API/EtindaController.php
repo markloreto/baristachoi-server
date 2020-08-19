@@ -666,7 +666,7 @@ class EtindaController extends BaseController
         ->orderBy("pi.order_id", "desc")
         ->orderBy("pi.purchase_id", "desc")
         ->orderBy("Date", "desc")
-        ->groupBy("pi.order_id", "pi.purchase_id", "pi.product_id", "pi.cost", 'pc.name')
+        ->groupBy("pi.order_id", "pi.purchase_id", "pi.product_id", "pi.cost", 'pc.id')
         ->limit(20)
         ->offset($offset)
         ->get();
