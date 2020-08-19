@@ -548,11 +548,11 @@ class EtindaController extends BaseController
             foreach($items as $item){
                 //DB::statement("UPDATE pabile_inventories SET price = " . $item["price"] . ", order_id = " . $id . " WHERE product_id = " . $item["productId"] .  " AND (order_id IS NULL AND inventory_out_id IS NULL) ORDER BY id ASC LIMIT " . $item["qty"]);
                 if($item["qty"]){
-                    if($item["virtualCost"]){
+                    if($item["virtual_cost"]){
                         $models[0] = [
                             "qty" => $item["qty"],
-                            "id" => $item["productId"],
-                            "cost" => $item["virtualCost"]
+                            "id" => $item["id"],
+                            "cost" => $item["virtual_cost"]
                         ];
         
                         $request->request->add([
