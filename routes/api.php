@@ -132,7 +132,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/orderInfo', 'API\EtindaController@orderInfo');
 	Route::get('/getCategoriesById', 'API\EtindaController@getCategoriesById');
 	Route::get('/getFbOrders', 'API\EtindaController@getFbOrders');
-	
+	Route::get('/getVirtualList', 'API\EtindaController@getVirtualList');
 
 	Route::post('/createSpecKeys', 'API\EtindaController@createSpecKeys');
 	Route::post('/createNewProduct', 'API\EtindaController@createNewProduct');
