@@ -34,7 +34,7 @@ class BotController extends BaseController
       ->join('pabile_product_main_categories AS ppmc', 'ppc.parent_id', '=', 'ppmc.id')
       ->get();
       $exportation = new ProductsExport($products);
-      Excel::store($exportation, 'public/pricelist.pdf', \Maatwebsite\Excel\Excel::MPDF);
+      Excel::store($exportation, 'public/pricelist.pdf', null, \Maatwebsite\Excel\Excel::MPDF);
 
       $json = json_decode('{
         "messages": [
