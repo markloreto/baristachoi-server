@@ -211,6 +211,7 @@ class EtindaController extends BaseController
         $barcode = $data["barcode"];
         $price = $data["price"];
         $previous_price = $data["previous_price"];
+        $virtual_cost = $data["virtual_cost"];
         $modify = $data["modify"];
         $isDesktop = (isset($data["isDesktop"])) ? $data["isDesktop"] : false;
 
@@ -219,7 +220,7 @@ class EtindaController extends BaseController
         if($modify){
             $id = $modify;
             DB::table("pabile_products")->where('id', $id)
-            ->update(['name' => $name, 'category_id' => $category, 'description' => $description, 'enabled' => $enabled, 'barcode' => $barcode, 'price' => $price, 'previous_price' => $previous_price]);
+            ->update(['name' => $name, 'category_id' => $category, 'description' => $description, 'enabled' => $enabled, 'barcode' => $barcode, 'price' => $price, 'previous_price' => $previous_price, 'virtual_cost' => $virtual_cost]);
             
             if(!$isDesktop){
                 $photosPrevious = DB::table("pabile_product_photos")->where("product_id", $id)->get();
@@ -236,7 +237,7 @@ class EtindaController extends BaseController
         
         }else{
             $id = DB::table("pabile_products")->insertGetId(
-                ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price, "updated_at" => Carbon::today(), 'previous_price' => $previous_price]
+                ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price, "updated_at" => Carbon::today(), 'previous_price' => $previous_price, 'virtual_cost' => $virtual_cost]
             );
         }
 
@@ -307,26 +308,7 @@ class EtindaController extends BaseController
         return $this->sendResponse($record, 'checkBarcode');
     }
 
-    public function purchase(Request $request){
-        $data = $request->all();
-        $date = $data["date"];
-        $models = $data["models"];
-        $depot_id = $data["depot_id"];
-
-        foreach($models as $model){
-            $id = DB::table("pabile_purchases")->insertGetId(
-                ["created_at" => $date, "depot_id" => $depot_id]
-            );
-
-            for ($x = 0; $x < $model["qty"]; $x++) {
-                DB::table("pabile_inventories")->insert(
-                    ["product_id" => $model["id"], "cost" => $model["cost"], "price" => null/* $model["price"] */, "purchase_id" => $id]
-                );
-            }
-        }
-
-        return $this->sendResponse("Success", 'searchProducts');
-    }
+    
 
     public function getProductDetails(Request $request){
         $data = $request->all();
@@ -467,6 +449,27 @@ class EtindaController extends BaseController
 
         return $this->sendResponse("", 'voidOrder');
     }
+    
+    public function purchase(Request $request){
+        $data = $request->all();
+        $date = $data["date"];
+        $models = $data["models"];
+        $depot_id = $data["depot_id"];
+
+        foreach($models as $model){
+            $id = DB::table("pabile_purchases")->insertGetId(
+                ["created_at" => $date, "depot_id" => $depot_id]
+            );
+
+            for ($x = 0; $x < $model["qty"]; $x++) {
+                DB::table("pabile_inventories")->insert(
+                    ["product_id" => $model["id"], "cost" => $model["cost"], "price" => null/* $model["price"] */, "purchase_id" => $id]
+                );
+            }
+        }
+
+        return $this->sendResponse("Success", 'searchProducts');
+    }
 
     public function submitOrder(Request $request){
         $data = $request->all();
@@ -476,6 +479,7 @@ class EtindaController extends BaseController
         $changeFor = $data["changeFor"];
         $notes = $data["notes"];
         $items = $data["items"];
+        $depot_id = $data["depot_id"];
         $bot = (isset($data["bot"])) ? true : false;
         $origin = (isset($data["origin"])) ? $data["origin"] : "pos";
 
@@ -629,6 +633,8 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($records, 'updateMobilePrefix');
     }
+    
+    
 
     public function getPurchases(Request $request){
         $data = $request->all();
