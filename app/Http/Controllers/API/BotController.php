@@ -29,7 +29,7 @@ class BotController extends BaseController
 {
     //BOT
     public function pricelist(Request $request){
-      $products = DB::table("pabile_products as pp")->select(DB::raw('(SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 6) AS `brand`, pp.name, ppc.name AS `category`, (SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 1) AS `weight`, (SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 2) AS `color`, (SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 5) AS `flavor`, pp.price'))
+      $products = DB::table("pabile_products as pp")->select(DB::raw('IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 6), `N/A`) AS `brand`, pp.name, ppc.name AS `category`, IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 1), `N/A`) AS `weight`, IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 2), `N/A`) AS `color`, IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 5), `N/A`) AS `flavor`, pp.price'))
       ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
       ->join('pabile_product_main_categories AS ppmc', 'ppc.parent_id', '=', 'ppmc.id')
       ->get();
