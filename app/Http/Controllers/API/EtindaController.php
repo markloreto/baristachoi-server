@@ -653,6 +653,17 @@ class EtindaController extends BaseController
 
         return $this->sendResponse($records, 'updateMobilePrefix');
     }
+
+    public function remitVirtual(Request $request){
+        $data = $request->all();
+        $ids = $data["ids"];
+
+        DB::table("pabile_purchases")whereIn("id", $ids)->update([ 
+            'virtual_remitted' => 1
+        ]);
+
+        return $this->sendResponse($ids, 'remitVirtual');
+    }
     
     public function getVirtualList(Request $request){
         $data = $request->all();
