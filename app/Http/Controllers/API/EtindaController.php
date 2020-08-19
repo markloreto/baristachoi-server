@@ -658,9 +658,10 @@ class EtindaController extends BaseController
         $data = $request->all();
         $offset = $data["offset"];
 
-        $records = DB::table("pabile_inventories as pi")->select(DB::raw('pi.order_id, pi.purchase_id, pi.product_id, (SELECT DATE(created_at) FROM pabile_purchases WHERE id = pi.purchase_id) AS `Date`, (SELECT name FROM pabile_products WHERE id = pi.product_id) AS `Product Name`, pi.cost AS `Cost`, (SELECT COUNT(id) FROM pabile_inventories WHERE purchase_id = pi.purchase_id) AS `Loaded`, COUNT(pi.id) AS `Remaining`'))
+        $records = DB::table("pabile_inventories as pi")->select(DB::raw('pi.order_id, pi.purchase_id, pi.product_id, pc.name AS `client_name`, (SELECT DATE(created_at) FROM pabile_purchases WHERE id = pi.purchase_id) AS `Date`, (SELECT name FROM pabile_products WHERE id = pi.product_id) AS `Product Name`, pi.cost AS `Cost`, (SELECT COUNT(id) FROM pabile_inventories WHERE purchase_id = pi.purchase_id) AS `Loaded`, COUNT(pi.id) AS `Remaining`'))
         ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id')
         ->join('pabile_orders as po', 'po.id', '=', 'pi.order_id')
+        ->join('pabile_clients as pc', 'pc.id', '=', 'po.client_id')
         ->whereRaw('pi.order_id IS NOT NULL AND (pp.virtual_cost IS NOT NULL OR pp.virtual_cost != 0)')
         ->orderBy("pi.order_id", "desc")
         ->orderBy("pi.purchase_id", "desc")
