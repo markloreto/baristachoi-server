@@ -29,12 +29,23 @@ class BotController extends BaseController
 {
     //BOT
     public function pricelist(Request $request){
+      $data = $request->all();
+      $type = $data["type"];
+      
       $products = DB::table("pabile_products as pp")->select(DB::raw('IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 6), "N/A") AS `brand`, pp.name, ppc.name AS `category`, IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 1), "N/A") AS `weight`, IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 2), "N/A") AS `color`, IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 5), "N/A") AS `flavor`, pp.price'))
       ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
       ->join('pabile_product_main_categories AS ppmc', 'ppc.parent_id', '=', 'ppmc.id')
       ->get();
       $exportation = new ProductsExport($products);
-      Excel::store($exportation, 'public/pricelist.pdf', null, \Maatwebsite\Excel\Excel::MPDF);
+
+      if($type == "PDF"){
+        $format = "pdf";
+        Excel::store($exportation, 'public/pricelist.pdf', null, \Maatwebsite\Excel\Excel::MPDF);
+      }else{
+        $format = "xlsx";
+        Excel::store($exportation, 'public/pricelist.xlsx');
+      }
+      
 
       $json = json_decode('{
         "messages": [
@@ -42,7 +53,7 @@ class BotController extends BaseController
             "attachment": {
               "type": "file",
               "payload": {
-                "url": "https://markloreto.xyz/storage/pricelist.pdf"
+                "url": "https://markloreto.xyz/storage/pricelist.'.$format.'"
               }
             }
           }
