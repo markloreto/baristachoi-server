@@ -452,10 +452,11 @@ class EtindaController extends BaseController
     
     public function purchase(Request $request){
         $data = $request->all();
-        $date = $data["date"];
+        $date = (isset($data["date"])) ? $data["date"] : Carbon::now();
         $models = $data["models"];
         $depot_id = $data["depot_id"];
         $portable = (isset($data["portable"])) ? $data["portable"] : false;
+        
 
         foreach($models as $model){
             $id = DB::table("pabile_purchases")->insertGetId(
@@ -547,6 +548,21 @@ class EtindaController extends BaseController
             foreach($items as $item){
                 //DB::statement("UPDATE pabile_inventories SET price = " . $item["price"] . ", order_id = " . $id . " WHERE product_id = " . $item["productId"] .  " AND (order_id IS NULL AND inventory_out_id IS NULL) ORDER BY id ASC LIMIT " . $item["qty"]);
                 if($item["qty"]){
+                    if($item["virtualCost"]){
+                        $models[0] = [
+                            "qty" => $item["qty"],
+                            "id" => $item["productId"],
+                            "cost" => $item["virtualCost"]
+                        ];
+        
+                        $request->request->add([
+                            "models" => $models,
+                            "portable" => true
+                        ]);
+        
+                        $this->purchase($request);
+                    }
+
                     DB::table("pabile_inventories")->whereRaw('product_id = ? AND order_id IS NULL', [$item["id"]])
                     ->orderBy('id', 'asc')
                     ->limit($item["qty"])
