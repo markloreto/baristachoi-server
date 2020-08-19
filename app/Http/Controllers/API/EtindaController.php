@@ -662,7 +662,7 @@ class EtindaController extends BaseController
         ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id')
         ->join('pabile_orders as po', 'po.id', '=', 'pi.order_id')
         ->join('pabile_clients as pc', 'pc.id', '=', 'po.client_id')
-        ->join('pabile_purchases as pur', 'pur.id', '=', 'pi.purhase_id')
+        ->join('pabile_purchases as pur', 'pur.id', '=', 'pi.purchase_id')
         ->whereRaw('pi.order_id IS NOT NULL AND (pp.virtual_cost IS NOT NULL OR pp.virtual_cost != 0) AND pur.virtual_remitted IS NULL')
         ->orderBy("pi.order_id", "desc")
         ->orderBy("pi.purchase_id", "desc")
