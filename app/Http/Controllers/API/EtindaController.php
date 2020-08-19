@@ -654,6 +654,21 @@ class EtindaController extends BaseController
         return $this->sendResponse($records, 'updateMobilePrefix');
     }
 
+    public function pabilEdashboard(Request $request){
+        $virtual = DB::table("pabile_inventories as pi")
+        ->join('pabile_products as pp', 'pi.product_id', '=', 'pp.id')
+        ->join('pabile_orders as po', 'po.id', '=', 'pi.order_id')
+        ->join('pabile_purchases as pur', 'pur.id', '=', 'pi.purchase_id')
+        ->whereRaw('pi.order_id IS NOT NULL AND (pp.virtual_cost IS NOT NULL OR pp.virtual_cost != 0) AND pur.virtual_remitted IS NULL')
+        ->orderBy("pi.order_id", "desc")
+        ->orderBy("pi.purchase_id", "desc")
+        ->orderBy("Date", "desc")
+        ->groupBy("pi.order_id", "pi.purchase_id", "pi.product_id", "pi.cost")
+        ->count();
+
+        return $this->sendResponse(["virtual" => $virtual], 'pabilEdashboard');
+    }
+
     public function remitVirtual(Request $request){
         $data = $request->all();
         $ids = $data["ids"];
