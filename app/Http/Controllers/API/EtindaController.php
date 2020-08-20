@@ -93,11 +93,18 @@ class EtindaController extends BaseController
         $data = $request->all();
         $q = $data["q"];
         $pid = (isset($data["pid"])) ? $data["pid"] : null;
+        $orderId = (isset($data["orderId"])) ? $data["orderId"] : null;
         $returnAsData = (isset($data["returnAsData"])) ? true : false;
         $ids = [];
 
         if($pid){
             $where = [["pp.id", $pid]];
+        }elseif($orderId){
+            $items = DB::table("pabile_inventories as pi")->where("pi.order_id", $orderId)->get();
+            foreach($items as $item){
+                $ids[] = $item->product_id;
+            }
+            $where = [];
         }else{
             $where = [['pp.name', 'like', "%" . $q . "%"]];
             $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
@@ -120,7 +127,11 @@ class EtindaController extends BaseController
 
         if($returnAsData){
             return $records->limit(20)->get();
-        }else{
+        }elseif($orderId){
+            $records = $records->WhereIn("pp.id", $ids)->get();
+            return $this->sendResponse($records, 'searchProducts');
+        }
+        else{
             if(!$pid){
                 $records = $records->orWhere('description', 'like', "%" . $q . "%");
             }
