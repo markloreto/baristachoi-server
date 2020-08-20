@@ -57,13 +57,7 @@ class EtindaController extends BaseController
             $item->specs = $specs;
         }
 
-        return $this->sendResponse($items, 'getOrderItems');
-
-        foreach($records as $record){
-            $record->inventory = $this->getFbInventoryByProductId($record->id);
-        }
-
-        return $this->sendResponse($records, 'getFbOrders');
+        return $this->sendResponse($items, 'getFbOrders');;
     }
 
     public function getFbInventoryByProductId($productId){
