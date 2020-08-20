@@ -524,9 +524,9 @@ class BotController extends BaseController
       $json = json_decode('{
         
       }', true);
-      
+
       $json["set_attributes"] = [
-        "u-updates-date" => Carbon::now()
+        "u-updates-date" => Carbon::now()->toDateTimeString()
       ];
 
       return response()->json($json);
