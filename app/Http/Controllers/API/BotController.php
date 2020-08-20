@@ -1192,7 +1192,9 @@ class BotController extends BaseController
             }
         }');
       }else{
-        $json = json_decode('{}');
+        $json = json_decode('{
+          "date": "'.$date.'"
+        }');
       }
 
       return response()->json($json);
