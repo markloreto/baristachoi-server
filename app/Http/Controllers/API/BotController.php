@@ -72,8 +72,8 @@ class BotController extends BaseController
     public function botChekTimeDelivery(Request $request){
       $data = $request->all();
 
-      $start = '06:00:00';
-      $end   = '21:00:00';
+      $start = '07:00:00';
+      $end   = '22:00:00';
       $now   = Carbon::now();
       $time  = $now->format('H:i:s');
 
@@ -1222,8 +1222,8 @@ class BotController extends BaseController
             ]
         ]);
 
-        $start = '06:00:00';
-        $end   = '21:00:00';
+        $start = '07:00:00';
+        $end   = '22:00:00';
         $now   = Carbon::now();
         $time  = $now->format('H:i:s');
 
