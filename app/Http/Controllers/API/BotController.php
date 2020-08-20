@@ -556,7 +556,7 @@ class BotController extends BaseController
         $recordsQ = $recordsQ->where("category_id", $catId);
         $tryAnother = "Main Category Search";
       }elseif($latest){
-        $recordsQ = $recordsQ->whereDate("pp.updated_at", "<=", $data["latestDate"]);
+        $recordsQ = $recordsQ->whereDate("pp.updated_at", ">=", $data["latestDate"]);
       }else{
         $recordsQ = $recordsQ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids);
       }
