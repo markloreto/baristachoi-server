@@ -533,6 +533,7 @@ class BotController extends BaseController
       $ids = [];
       $items = [];
       $catId = (isset($data["catId"])) ? $data["catId"] : false;
+      $latest = (isset($data["latest"])) ? $data["catId"] : false;
       $tryAnother = "Search for products";
 
       if(!$catId){
@@ -1187,7 +1188,8 @@ class BotController extends BaseController
       $json = json_decode('{
         "set_attributes":
           {
-            "u-token": "' . $hashedMessengerId . '"
+            "u-token": "' . $hashedMessengerId . '",
+            "u-updates-date": "' . Carbon::now() . '"
           }
       }');
 
