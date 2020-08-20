@@ -520,6 +520,19 @@ class BotController extends BaseController
       return response()->json($json);
     }
 
+    public function updateLatestDate(Request $request){
+      $json = json_decode('{
+        
+      }', true);
+      
+      $json["set_attributes"] = [
+        "u-updates-date" => Carbon::now()
+      ];
+
+      return response()->json($json);
+
+    }
+
     public function checkLatestDate(Request $request){
       $data = $request->all();
       $date = ($data["date"] == "null") ? Carbon::now() : $data["date"];
