@@ -456,11 +456,8 @@ class BotController extends BaseController
         $json["redirect_to_blocks"] = ["after cart options"];
       }
 
-      
-
       return response()->json($json);
     }
-
 
     public function botAddtoCart(Request $request){
       $data = $request->all();
@@ -518,6 +515,29 @@ class BotController extends BaseController
     },
           "redirect_to_blocks": ["item added"]
         }');
+      }
+
+      return response()->json($json);
+    }
+
+    public function checkLatestDate(Request $request){
+      $data = $request->all();
+      $date = ($data["date"] == "null") ? Carbon::now() : $data["date"];
+
+      $recordsQ = DB::table("pabile_products as pp")
+      ->select(DB::raw('IF(pp.virtual_cost, 999, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL)) AS inventory'))
+      ->having('inventory', '!=', 0)->where("pp.updated_at", ">=", $date)->count();
+
+      $json = json_decode('{
+        
+      }', true);
+
+      if($recordsQ){
+        $json["set_attributes"] = [
+          "u-total-search-results" => $totalRecords
+        ];
+  
+        $json["redirect_to_blocks"] = ["with latest updates"];
       }
 
       return response()->json($json);
@@ -1202,25 +1222,6 @@ class BotController extends BaseController
       }
 
       return $this->sendResponse(["status" => $success, "reason" => $reason], 'fbOrder');
-    }
-
-    public function checkLatestDate(Request $request){
-      $data = $request->all();
-      $date = $data["date"];
-
-      if($date == "null"){
-        $json = json_decode('{
-          "set_attributes":
-            {
-              "u-updates-date": "' . Carbon::now() . '"
-            }
-        }');
-      }else{
-        $json = json_decode('{}');
-      }
-
-      return response()->json($json);
-
     }
 
     public function botGetToken(Request $request){
