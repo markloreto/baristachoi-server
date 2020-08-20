@@ -526,13 +526,13 @@ class BotController extends BaseController
 
       $recordsQ = DB::table("pabile_products as pp")
       ->select(DB::raw('IF(pp.virtual_cost, 999, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL)) AS inventory'))
-      ->having('inventory', '!=', 0)->where("pp.updated_at", ">=", $date)->count();
+      ->having('inventory', '!=', 0)->where("pp.updated_at", ">=", $date)->get();
 
       $json = json_decode('{
         
       }', true);
 
-      if($recordsQ){
+      if(count($recordsQ)){
         $json["set_attributes"] = [
           "u-total-search-results" => $totalRecords
         ];
@@ -664,7 +664,7 @@ class BotController extends BaseController
               }
             ]
           }', true);
-    
+          //u-updates-date
           $json["messages"][1]["attachment"]["payload"]["elements"] = $items;
           $json["set_attributes"] = [
             "u-total-search-results" => $totalRecords
