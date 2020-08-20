@@ -533,7 +533,7 @@ class BotController extends BaseController
       $ids = [];
       $items = [];
       $catId = (isset($data["catId"])) ? $data["catId"] : false;
-      $latest = (isset($data["latest"])) ? $data["catId"] : false;
+      $latest = (isset($data["latest"])) ? $data["latest"] : false;
       $tryAnother = "Search for products";
 
       if(!$catId){
@@ -555,6 +555,8 @@ class BotController extends BaseController
       if($catId){
         $recordsQ = $recordsQ->where("category_id", $catId);
         $tryAnother = "Main Category Search";
+      }elseif($latest){
+        $recordsQ = $recordsQ->whereDate("pp.updated_at", "<=", $data["latestDate"]);
       }else{
         $recordsQ = $recordsQ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids);
       }

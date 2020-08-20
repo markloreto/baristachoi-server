@@ -237,7 +237,7 @@ class EtindaController extends BaseController
         
         }else{
             $id = DB::table("pabile_products")->insertGetId(
-                ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price, "updated_at" => Carbon::today(), 'previous_price' => $previous_price, 'virtual_cost' => $virtual_cost]
+                ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => $enabled, "barcode" => $barcode, "price" => $price, "updated_at" => Carbon::now(), 'previous_price' => $previous_price, 'virtual_cost' => $virtual_cost]
             );
         }
 
@@ -492,7 +492,7 @@ class EtindaController extends BaseController
         }
 
         $id = DB::table('pabile_orders')->insertGetId(
-            ["client_id" => $clientId, "date" => $date, "schedule" => $schedule, "changeFor" => $changeFor, "notes" => $notes, "created_at" => Carbon::today(), "status_id" => 1, "origin" => $origin]
+            ["client_id" => $clientId, "date" => $date, "schedule" => $schedule, "changeFor" => $changeFor, "notes" => $notes, "created_at" => Carbon::now(), "status_id" => 1, "origin" => $origin]
         );
 
         
