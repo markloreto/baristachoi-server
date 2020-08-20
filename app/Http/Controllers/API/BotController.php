@@ -534,7 +534,7 @@ class BotController extends BaseController
 
       if(count($recordsQ)){
         $json["set_attributes"] = [
-          "u-total-search-results" => $totalRecords
+          "u-total-search-results" => count($recordsQ)
         ];
   
         $json["redirect_to_blocks"] = ["with latest updates"];
