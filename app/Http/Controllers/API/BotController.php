@@ -1184,7 +1184,7 @@ class BotController extends BaseController
       $data = $request->all();
       $date = $data["date"];
 
-      if(!$date){
+      if($date == "null"){
         $json = json_decode('{
           "set_attributes":
             {
@@ -1192,9 +1192,7 @@ class BotController extends BaseController
             }
         }');
       }else{
-        $json = json_decode('{
-          "date": "'.$date.'"
-        }');
+        $json = json_decode('{}');
       }
 
       return response()->json($json);
