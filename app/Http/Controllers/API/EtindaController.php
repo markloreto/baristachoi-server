@@ -128,7 +128,7 @@ class EtindaController extends BaseController
         if($returnAsData){
             return $records->limit(20)->get();
         }elseif($orderId){
-            $records = $records->WhereIn("pp.id", $ids)->get();
+            $records = $records->addSelect(DB::raw("(SELECT COUNT(*) FROM pabile_inventories WHERE order_id = ".$orderId.") AS qty"))->WhereIn("pp.id", $ids)->get();
             return $this->sendResponse($records, 'searchProducts');
         }
         else{
