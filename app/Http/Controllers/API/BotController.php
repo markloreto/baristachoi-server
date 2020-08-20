@@ -827,8 +827,13 @@ class BotController extends BaseController
               "type": "template",
               "payload": {
                 "template_type": "button",
-                "text": "Your request has been posted! Thank you",
+                "text": "The item/s that you requested has been listed to our unavailable products list, please subsribe to receive new product updates",
                 "buttons": [
+                  {
+                    "type": "show_block",
+                    "block_names": ["OTN test"],
+                    "title": "Subscribe"
+                  },
                   {
                     "type": "show_block",
                     "block_names": ["Request product"],
