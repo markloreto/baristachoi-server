@@ -646,6 +646,53 @@ class BotController extends BaseController
           }', true);
     
           $json["messages"][1]["attachment"]["payload"]["elements"] = $items;
+          $json["set_attributes"] = [
+            "u-total-search-results" => $totalRecords
+          ];
+        }else{
+          if($latest){
+            $json = json_decode('{
+              "set_attributes":
+                {
+                  "u-total-search-results": 0
+                }
+            }');
+          }else{
+            $json = json_decode('{
+              "messages": [
+                {
+                  "attachment": {
+                    "type": "template",
+                    "payload": {
+                      "template_type": "button",
+                      "text": "*' . $q  . '* not found 😥",
+                      "buttons": [
+                        {
+                          "type": "show_block",
+                          "block_names": ["'.$tryAnother.'"],
+                          "title": "try another search"
+                        },
+                        {
+                          "type": "show_block",
+                          "block_names": ["Main menu"],
+                          "title": "Go back to main menu"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }', true);
+          }
+        }
+      }else{
+        if($latest){
+          $json = json_decode('{
+            "set_attributes":
+              {
+                "u-total-search-results": 0
+              }
+          }');
         }else{
           $json = json_decode('{
             "messages": [
@@ -673,32 +720,7 @@ class BotController extends BaseController
             ]
           }', true);
         }
-      }else{
-        $json = json_decode('{
-          "messages": [
-            {
-              "attachment": {
-                "type": "template",
-                "payload": {
-                  "template_type": "button",
-                  "text": "*' . $q  . '* not found 😥",
-                  "buttons": [
-                    {
-                      "type": "show_block",
-                      "block_names": ["'.$tryAnother.'"],
-                      "title": "try another search"
-                    },
-                    {
-                      "type": "show_block",
-                      "block_names": ["Main menu"],
-                      "title": "Go back to main menu"
-                    }
-                  ]
-                }
-              }
-            }
-          ]
-        }', true);
+        
       }
 
       return response()->json($json);
