@@ -185,6 +185,7 @@ Route::post('/botBrgyList', 'API\BotController@botBrgyList');
 Route::post('/botSetBrgy', 'API\BotController@botSetBrgy');
 Route::post('/botRequest', 'API\BotController@botRequest');
 Route::post('/botChekTimeDelivery', 'API\BotController@botChekTimeDelivery');
+Route::post('/checkLatestDate', 'API\BotController@checkLatestDate');
 
 Route::get('/pricelist', 'API\BotController@pricelist');
 

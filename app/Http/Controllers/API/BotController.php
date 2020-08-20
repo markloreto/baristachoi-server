@@ -1180,6 +1180,25 @@ class BotController extends BaseController
       return $this->sendResponse(["status" => $success, "reason" => $reason], 'fbOrder');
     }
 
+    public function checkLatestDate(Request $request){
+      $data = $request->all();
+      $date = $data["date"];
+
+      if(!$date){
+        $json = json_decode('{
+          "set_attributes":
+            {
+              "u-updates-date": "' . Carbon::now() . '"
+            }
+        }');
+      }else{
+        $json = json_decode('{}');
+      }
+
+      return response()->json($json);
+
+    }
+
     public function botGetToken(Request $request){
       $data = $request->all();
       $messengerId = $data["messenger user id"];
