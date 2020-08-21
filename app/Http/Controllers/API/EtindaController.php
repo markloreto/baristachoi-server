@@ -443,7 +443,7 @@ class EtindaController extends BaseController
     public function voidOrder(Request $request){
         $data = $request->all();
         $orderId = $data["orderId"];
-
+        $returnOnly = (isset($data["returnOnly"])) ? $data["returnOnly"] : false;
         DB::table('pabile_orders')->where('id', $orderId)->delete();
         DB::table('pabile_fb_orders')->where('order_id', $orderId)->delete();
         DB::table('pabile_inventories')->where("order_id", $orderId)
@@ -452,7 +452,8 @@ class EtindaController extends BaseController
             'order_id' => null
         ]);
 
-        return $this->sendResponse("", 'voidOrder');
+        if(!$returnOnly)
+            return $this->sendResponse("", 'voidOrder');
     }
     
     public function purchase(Request $request){
@@ -491,6 +492,15 @@ class EtindaController extends BaseController
         $depot_id = $data["depot_id"];
         $bot = (isset($data["bot"])) ? true : false;
         $origin = (isset($data["origin"])) ? $data["origin"] : "pos";
+        $orderId = (isset($data["orderId"])) ? $data["orderId"] : false;
+
+        if($orderId){
+            $request->request->add([
+                "returnOnly" => true,
+            ]);
+            $this->voidOrder($request);
+        }
+
 
         if(isset($data["realClientId"])){
             $clientId = $data["realClientId"];
