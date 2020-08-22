@@ -71,7 +71,7 @@ class BasicController extends Controller
             }
         }
         if($agent->isMobile()){
-            $img->resize(250, null, function ($constraint) {
+            $img->resize(200, null, function ($constraint) {
                 $constraint->aspectRatio();
             });
             
