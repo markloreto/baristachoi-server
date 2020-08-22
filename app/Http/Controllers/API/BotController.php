@@ -30,6 +30,7 @@ class BotController extends BaseController
     //BOT
     public function weee(){
       $agent = new Agent();
+      $referer = request()->headers->get('referer');
 
       $json = json_decode('{
         "messages": [
@@ -38,7 +39,7 @@ class BotController extends BaseController
           {"text": "browser '.$agent->browser().'"},
           {"text": "isDesktop '.$agent->isDesktop().'"},
           {"text": "isRobot '.$agent->isRobot().'"},
-          {"text": "browser '.$agent->browser().'"}
+          {"text": "referer '.$referer.'"}
         ]
        }', true);
 
