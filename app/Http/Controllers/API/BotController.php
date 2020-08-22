@@ -37,7 +37,8 @@ class BotController extends BaseController
           {"text": "platform '.$agent->platform().'"},
           {"text": "browser '.$agent->browser().'"},
           {"text": "isDesktop '.$agent->isDesktop().'"},
-          {"text": "isRobot '.$agent->isRobot().'"}
+          {"text": "isRobot '.$agent->isRobot().'"},
+          {"text": "browser '.$agent->browser().'"}
         ]
        }', true);
 
