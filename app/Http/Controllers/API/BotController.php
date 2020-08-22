@@ -31,13 +31,17 @@ class BotController extends BaseController
     public function weee(){
       $agent = new Agent();
 
-      return response()->json([
-        "deviceName" => $agent->device(),
-        "platform" => $agent->device(),
-        "browser" => $agent->browser(),
-        "isDesktop" => $agent->isDesktop(),
-        "isRobot" => $agent->isRobot()
-      ]);
+      $json = json_decode('{
+        "messages": [
+          {"text": "deviceName '.$agent->device().'"},
+          {"text": "platform '.$agent->platform().'"},
+          {"text": "browser '.$agent->browser().'"},
+          {"text": "isDesktop '.$agent->isDesktop().'"},
+          {"text": "isRobot '.$agent->isRobot().'"},
+        ]
+       }', true);
+
+      return response()->json($json);
     }
 
     public function pricelist(Request $request){
