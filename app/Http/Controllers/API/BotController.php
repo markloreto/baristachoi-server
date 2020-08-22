@@ -168,7 +168,7 @@ class BotController extends BaseController
       $q = trim($data["q"]);
       $parent_id = $data["parent_id"];
 
-      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*, (SELECT COUNT(*) FROM pabile_products WHERE category_id = ppc.id) AS bilang"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
+      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id) AS bilang"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
       ->having("bilang", "!=", 0)
       ->get();
 
