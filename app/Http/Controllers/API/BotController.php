@@ -199,7 +199,7 @@ class BotController extends BaseController
       $q = (isset($data["q"])) ? trim($data["q"]) : false;
 
       $records = DB::table("pabile_product_categories as ppc")->where("parent_id", $catId)
-      ->select(DB::raw('ppc.*, (SELECT COUNT(*) FROM pabile_products WHERE ppc.id = category_id) as prodCount'))
+      ->select(DB::raw('ppc.*, (SELECT IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL)) FROM pabile_products pp WHERE pp.category_id = '.$catId.') AS prodCount'))
       ->having("prodCount", "!=", 0);
 
       if($q){
