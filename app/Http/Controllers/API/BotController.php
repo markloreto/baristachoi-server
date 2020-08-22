@@ -33,7 +33,10 @@ class BotController extends BaseController
 
       return response()->json([
         "deviceName" => $agent->device(),
-        "platform" => $agent->device()
+        "platform" => $agent->device(),
+        "browser" => $agent->browser(),
+        "isDesktop" => $agent->isDesktop(),
+        "isRobot" => $agent->isRobot()
       ]);
     }
 
