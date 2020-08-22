@@ -73,6 +73,8 @@ class BasicController extends Controller
             $constraint->aspectRatio();
         });
 
+        $img->encode('jpg', 75);
+
         return $img->response();
     }
 
