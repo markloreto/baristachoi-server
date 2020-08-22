@@ -568,6 +568,7 @@ class BotController extends BaseController
       $items = [];
       $catId = (isset($data["catId"])) ? $data["catId"] : false;
       $latest = (isset($data["latest"])) ? $data["latest"] : false;
+      $default = (isset($data["default"])) ? $data["default"] : false;
       $tryAnother = "Search for products";
 
       if(!$catId){
@@ -752,6 +753,13 @@ class BotController extends BaseController
             ]
           }', true);
         }
+        
+      }
+
+      if($default && !$totalRecords){
+        $json = json_decode('{
+          "redirect_to_blocks": ["cannot understand"]
+        }');
         
       }
 
