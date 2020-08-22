@@ -69,9 +69,6 @@ class BasicController extends Controller
                 });
             }
         }
-        $img->resize(300, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
 
         $img->encode('jpg', 75);
 
