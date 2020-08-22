@@ -32,7 +32,7 @@ class BotController extends BaseController
       $agent = new Agent();
 
       return response()->json([
-        "isMobile" => $agent->isMobile()
+        "deviceName" => $agent->device()
       ]);
     }
 
