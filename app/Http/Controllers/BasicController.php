@@ -70,12 +70,9 @@ class BasicController extends Controller
                 });
             }
         }
-        if($agent->isMobile()){
-            $img->resize(50, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            
-        }
+        $img->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
 
         return $img->response();
     }
