@@ -166,7 +166,7 @@ class BotController extends BaseController
     public function botSelectCategory(Request $request){
       $data = $request->all();
       $q = trim($data["q"]);
-      $parent_id = trim($data["parent_id"]);
+      $parent_id = $data["parent_id"];
 
       $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*, (SELECT COUNT(*) FROM pabile_products WHERE category_id = ppc.id) AS bilang"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
       ->having("bilang", "!=", 0)
