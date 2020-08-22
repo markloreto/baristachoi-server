@@ -640,7 +640,7 @@ class BotController extends BaseController
             "set_attributes":
           {
             "u-search-page": "' . ($page + 1) . '",
-            "u-total-search-results" => '.$totalRecords.'
+            "u-total-search-results" => "'.$totalRecords.'"
           },
             "messages": [
               {"text": "' . (($page === 0) ? $totalRecords . ' result found. ' : '') . 'showing record '. ($offset + 1) .' to ' . ($offset + $recordsCount) . (($page > 0) ? ' out of ' . $totalRecords : '') . '"},
