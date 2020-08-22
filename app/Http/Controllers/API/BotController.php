@@ -23,11 +23,19 @@ use Rap2hpoutre\FastExcel\FastExcel;
 use App\Exports\ProductsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
-
+use Jenssegers\Agent\Agent;
 //
 class BotController extends BaseController
 {
     //BOT
+    public function weee(){
+      $agent = new Agent();
+
+      return response()->json([
+        "isMobile" => $agent->isMobile()
+      ]);
+    }
+
     public function pricelist(Request $request){
       $data = $request->all();
       $type = $data["type"];
