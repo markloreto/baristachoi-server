@@ -14,13 +14,12 @@ use GuzzleHttp\Client;
 use Carbon\Carbon;
 use File;
 use Response;
-use Jenssegers\Agent\Agent;
 
 class BasicController extends Controller
 {
     //
     public function botPhotoGallery($id){
-        $agent = new Agent();
+
         $mainPhoto = DB::table("pabile_product_photos")->select("photo")->where([["primary", 1], ["product_id", $id]])->first();
         $p = DB::table("pabile_products")->select("price", "previous_price")->where("id", $id)->first();
         $photo = str_replace("pabile/", "", $mainPhoto->photo);

@@ -28,22 +28,6 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
-    public function weee(){
-      $agent = new Agent();
-      $referer = request()->headers->get('referer');
-
-      $json = json_decode('{
-        "messages": [
-          {"text": "deviceName '.$agent->device().'"},
-          {"text": "platform '.$agent->platform().'"},
-          {"text": "browser '.$agent->browser().'"},
-          {"text": "isDesktop '.$agent->isDesktop().'"},
-          {"text": "isRobot '.$agent->isRobot().'"}
-        ]
-       }', true);
-
-      return response()->json($json);
-    }
 
     public function pricelist(Request $request){
       $data = $request->all();
