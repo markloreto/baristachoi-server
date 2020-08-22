@@ -32,7 +32,8 @@ class BotController extends BaseController
       $agent = new Agent();
 
       return response()->json([
-        "deviceName" => $agent->device()
+        "deviceName" => $agent->device(),
+        "platform" => $agent->device()
       ]);
     }
 
