@@ -614,9 +614,9 @@ class BotController extends BaseController
           $admin = DB::table("pabile_clients AS pc")
           ->join("pabile_product_admins AS ppa", "ppa.client_id", "=", "pc.id")
           ->where([["pc.messenger_id", $messengerId], ["ppa.product_id", $r->id]])
-          ->get();
+          ->count();
 
-          if(count($admin)){
+          if($admin){
             $items[] = [
               "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
               "subtitle" => "status: " . ($r->enabled) ? "✅" : "☑️",
