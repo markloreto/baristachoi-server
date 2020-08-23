@@ -697,7 +697,7 @@ class BotController extends BaseController
                     ],
                     "block_names" => ["out of stock"],
                     "type" => "show_block",
-                    "title" => "Out of stock"
+                    "title" => "❗ Out of stock ❗"
                   ]
               ]
             ];
