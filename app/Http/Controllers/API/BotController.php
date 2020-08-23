@@ -28,6 +28,41 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
+    public function updateVirtualCost(Request $request){
+      $data = $request->all();
+      $productId = $data["productId"];
+      $cost = $data["cost"];
+      $messengerId = $data["messengerId"];
+
+      $additionalPrice = 0;
+
+      $details = DB::table("pabile_clients AS pc")
+          ->join("pabile_product_admins AS ppa", "ppa.client_id", "=", "pc.id")
+          ->where([["pc.messenger_id", $messengerId], ["ppa.product_id", $productId]])
+          ->first();
+
+      $p = DB::table("pabile_products")->where("product_id", $productId)->first();
+      
+      if($details->percentage){
+        $additionalPrice += ($p->price * ($details->percentage / 100));
+      }
+
+      if($details->additional){
+        $additionalPrice += $details->additional;
+      }
+
+      DB::table("pabile_products")->where("product_id", $productId)
+      ->update([ 
+          'virtual_cost' => $cost,
+          'price' => ($p->price + $additionalPrice)
+      ]);
+
+      $json = json_decode('{}', true);
+
+      return response()->json($json);
+
+    }
+    
     public function productStatus(Request $request){
       $data = $request->all();
       $productId = $data["productId"];
