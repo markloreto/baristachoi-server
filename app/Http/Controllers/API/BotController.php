@@ -44,7 +44,7 @@ class BotController extends BaseController
       $p = DB::table("pabile_products")->where("id", $productId)->first();
       
       if($details->percentage){
-        $additionalPrice += ($p->price * ($details->percentage / 100));
+        $additionalPrice += ($p->virtual_cost * ($details->percentage / 100));
       }
 
       if($details->additional){
@@ -54,7 +54,7 @@ class BotController extends BaseController
       DB::table("pabile_products")->where("id", $productId)
       ->update([ 
           'virtual_cost' => $cost,
-          'price' => ($p->price + $additionalPrice)
+          'price' => ($p->virtual_cost + $additionalPrice)
       ]);
 
       $json = json_decode('{}', true);
