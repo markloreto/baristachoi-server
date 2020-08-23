@@ -86,7 +86,6 @@ class BotController extends BaseController
       $products = DB::table("pabile_products as pp")->select(DB::raw('IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 6), "N/A") AS `brand`, pp.name, ppc.name AS `category`, IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 1), "N/A") AS `weight`, IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 2), "N/A") AS `color`, IFNULL((SELECT `value` FROM pabile_product_specs WHERE product_id = pp.id AND `key` = 5), "N/A") AS `flavor`, pp.price'))
       ->join('pabile_product_categories AS ppc', 'pp.category_id', '=', 'ppc.id')
       ->join('pabile_product_main_categories AS ppmc', 'ppc.parent_id', '=', 'ppmc.id')
-      ->where("pp.enabled", 1)
       ->get();
       $exportation = new ProductsExport($products);
 
@@ -220,7 +219,7 @@ class BotController extends BaseController
       $q = trim($data["q"]);
       $parent_id = $data["parent_id"];
 
-      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id AND pp.enabled = 1) AS bilang"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
+      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id) AS bilang"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
       ->having("bilang", "!=", 0)
       ->get();
 
@@ -251,7 +250,7 @@ class BotController extends BaseController
       $q = (isset($data["q"])) ? trim($data["q"]) : false;
 
       $records = DB::table("pabile_product_categories as ppc")->where("parent_id", $catId)
-      ->select(DB::raw('ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id AND pp.enabled = 1) AS prodCount'))
+      ->select(DB::raw('ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id) AS prodCount'))
       ->having("prodCount", "!=", 0);
 
       if($q){
@@ -637,7 +636,7 @@ class BotController extends BaseController
 
       $recordsQ = DB::table("pabile_products as pp")
       ->select(DB::raw('pp.*, UNIX_TIMESTAMP(pp.updated_at) AS `updated_date`, IF(pp.virtual_cost, 999, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL)) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
-      ->havingRaw('inventory != 0 AND pp.enabled = 1');
+      ->havingRaw('inventory != 0');
 
       if($catId){
         $recordsQ = $recordsQ->where("category_id", $catId);
@@ -684,7 +683,26 @@ class BotController extends BaseController
                   ]
               ]
             ];
-          }else{
+          }elseif(!$r->enabled){
+            $items[] = [
+              "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
+              "subtitle" => $r->description,
+              "image_url" => $thumb,
+              "buttons" => [
+                  [
+                  "set_attributes"=> 
+                    [
+                      "u-product-id" => $r->id,
+                      "u-product-name" => $r->name
+                    ],
+                    "block_names" => ["out of stock"],
+                    "type" => "show_block",
+                    "title" => "Out of stock"
+                  ]
+              ]
+            ];
+          }
+          else{
             $items[] = [
               "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
               "subtitle" => $r->description,
