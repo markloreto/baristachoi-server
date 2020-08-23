@@ -571,6 +571,7 @@ class BotController extends BaseController
       $latest = (isset($data["latest"])) ? $data["latest"] : false;
       $default = (isset($data["default"])) ? $data["default"] : false;
       $tryAnother = "Search for products";
+      $messengerId = (isset($data["messengerId"])) ? $data["messengerId"] : false;
 
       if(!$catId){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
@@ -609,23 +610,49 @@ class BotController extends BaseController
       if($totalRecords){
         foreach($records as $r){
           $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id . "?t=" . $r->updated_date;
-          $items[] = [
-            "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
-            "subtitle" => $r->description,
-            "image_url" => $thumb,
-            "buttons" => [
-                [
-                "set_attributes"=> 
+
+          $admin = DB::table("pabile_clients AS pc")
+          ->join("pabile_product_admins AS ppa", "ppa.client_id", "=", "pc.id")
+          ->where([["pc.messenger_id", $messengerId], ["ppa.product_id", $r->id]])
+          ->count();
+
+          if($admin){
+            $items[] = [
+              "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
+              "subtitle" => "status: " . ($r->enabled) ? "✅" : "☑️",
+              "image_url" => $thumb,
+              "buttons" => [
                   [
-                    "u-product-id" => $r->id,
-                    "u-product-name" => $r->name
-                  ],
-                  "block_names" => ["check if item in cart"],
-                  "type" => "show_block",
-                  "title" => "Add to cart"
-                ]
-            ]
-          ];
+                  "set_attributes"=> 
+                    [
+                      "u-product-id" => $r->id,
+                      "u-product-name" => $r->name
+                    ],
+                    "block_names" => ["administer product"],
+                    "type" => "show_block",
+                    "title" => "Administer"
+                  ]
+              ]
+            ];
+          }else{
+            $items[] = [
+              "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
+              "subtitle" => $r->description,
+              "image_url" => $thumb,
+              "buttons" => [
+                  [
+                  "set_attributes"=> 
+                    [
+                      "u-product-id" => $r->id,
+                      "u-product-name" => $r->name
+                    ],
+                    "block_names" => ["check if item in cart"],
+                    "type" => "show_block",
+                    "title" => "Add to cart"
+                  ]
+              ]
+            ];
+          }
         }
   
 
