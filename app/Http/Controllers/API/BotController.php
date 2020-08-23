@@ -41,7 +41,7 @@ class BotController extends BaseController
           ->where([["pc.messenger_id", $messengerId], ["ppa.product_id", $productId]])
           ->first();
 
-      $p = DB::table("pabile_products")->where("product_id", $productId)->first();
+      $p = DB::table("pabile_products")->where("id", $productId)->first();
       
       if($details->percentage){
         $additionalPrice += ($p->price * ($details->percentage / 100));
@@ -51,7 +51,7 @@ class BotController extends BaseController
         $additionalPrice += $details->additional;
       }
 
-      DB::table("pabile_products")->where("product_id", $productId)
+      DB::table("pabile_products")->where("id", $productId)
       ->update([ 
           'virtual_cost' => $cost,
           'price' => ($p->price + $additionalPrice)
@@ -68,7 +68,7 @@ class BotController extends BaseController
       $productId = $data["productId"];
       $status = $data["status"];
 
-      DB::table("pabile_products")->where("product_id", $productId)
+      DB::table("pabile_products")->where("id", $productId)
       ->update([ 
           'enabled' => $status
       ]);
