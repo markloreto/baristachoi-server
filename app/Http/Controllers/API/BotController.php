@@ -571,7 +571,7 @@ class BotController extends BaseController
       $latest = (isset($data["latest"])) ? $data["latest"] : false;
       $default = (isset($data["default"])) ? $data["default"] : false;
       $tryAnother = "Search for products";
-      $messengerId = (isset($data["messengerId"])) ? $data["messengerId"] : false;
+      $messengerId = (isset($data["messengerId"])) ? $data["messengerId"] : 0;
 
       if(!$catId){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
@@ -614,9 +614,9 @@ class BotController extends BaseController
           $admin = DB::table("pabile_clients AS pc")
           ->join("pabile_product_admins AS ppa", "ppa.client_id", "=", "pc.id")
           ->where([["pc.messenger_id", $messengerId], ["ppa.product_id", $r->id]])
-          ->count();
+          ->get();
 
-          if($admin){
+          if(count($admin)){
             $items[] = [
               "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
               "subtitle" => "status: " . ($r->enabled) ? "✅" : "☑️",
