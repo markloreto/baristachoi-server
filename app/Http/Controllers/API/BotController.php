@@ -219,8 +219,7 @@ class BotController extends BaseController
       $q = trim($data["q"]);
       $parent_id = $data["parent_id"];
 
-      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id) AS bilang"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
-      ->having("bilang", "!=", 0)
+      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
       ->get();
 
       $json = json_decode('{
@@ -250,8 +249,7 @@ class BotController extends BaseController
       $q = (isset($data["q"])) ? trim($data["q"]) : false;
 
       $records = DB::table("pabile_product_categories as ppc")->where("parent_id", $catId)
-      ->select(DB::raw('ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id) AS prodCount'))
-      ->having("prodCount", "!=", 0);
+      ->select(DB::raw('ppc.*'));
 
       if($q){
         $records = $records->where('name', 'like', "%" . $q . "%")->get();
@@ -683,7 +681,7 @@ class BotController extends BaseController
                   ]
               ]
             ];
-          }elseif(!$r->enabled){
+          }elseif(!$r->enabled || !$r->inventory){
             $items[] = [
               "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
               "subtitle" => $r->description,
