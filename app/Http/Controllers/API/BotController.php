@@ -170,7 +170,7 @@ class BotController extends BaseController
       $q = trim($data["q"]);
       $parent_id = $data["parent_id"];
 
-      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id) AS bilang"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
+      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id AND pp.enabled = 1) AS bilang"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
       ->having("bilang", "!=", 0)
       ->get();
 
@@ -201,7 +201,7 @@ class BotController extends BaseController
       $q = (isset($data["q"])) ? trim($data["q"]) : false;
 
       $records = DB::table("pabile_product_categories as ppc")->where("parent_id", $catId)
-      ->select(DB::raw('ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id) AS prodCount'))
+      ->select(DB::raw('ppc.*, (SELECT SUM(IF(pp.virtual_cost, 1, (SELECT COUNT(id) FROM pabile_inventories WHERE product_id = pp.id AND order_id IS NULL))) FROM pabile_products pp WHERE pp.category_id = ppc.id AND pp.enabled = 1) AS prodCount'))
       ->having("prodCount", "!=", 0);
 
       if($q){
@@ -586,7 +586,7 @@ class BotController extends BaseController
 
       $recordsQ = DB::table("pabile_products as pp")
       ->select(DB::raw('pp.*, UNIX_TIMESTAMP(pp.updated_at) AS `updated_date`, IF(pp.virtual_cost, 999, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL)) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'))
-      ->having('inventory', '!=', 0);
+      ->having([['inventory', '!=', 0], ["pp.enabled", 1]]);
 
       if($catId){
         $recordsQ = $recordsQ->where("category_id", $catId);
