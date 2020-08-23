@@ -571,7 +571,7 @@ class BotController extends BaseController
       $latest = (isset($data["latest"])) ? $data["latest"] : false;
       $default = (isset($data["default"])) ? $data["default"] : false;
       $tryAnother = "Search for products";
-      $messengerId = (isset($data["messengerId"])) ? $data["messengerId"] : 0;
+      $messengerId = (isset($data["messenger_id"])) ? $data["messenger_id"] : 0;
 
       if(!$catId){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
