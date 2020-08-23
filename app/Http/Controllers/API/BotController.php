@@ -619,7 +619,7 @@ class BotController extends BaseController
           if($admin){
             $items[] = [
               "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
-              "subtitle" => "status: " . ($r->enabled) ? "✅" : "☑️",
+              "subtitle" => "status: " . (($r->enabled) ? "✅" : "☑️"),
               "image_url" => $thumb,
               "buttons" => [
                   [
