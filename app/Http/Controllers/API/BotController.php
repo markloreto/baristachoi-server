@@ -54,7 +54,7 @@ class BotController extends BaseController
       DB::table("pabile_products")->where("id", $productId)
       ->update([ 
           'virtual_cost' => $cost,
-          'price' => ($p->virtual_cost + $additionalPrice)
+          'price' => ($cost + $additionalPrice)
       ]);
 
       $json = json_decode('{}', true);
