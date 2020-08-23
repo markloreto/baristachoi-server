@@ -187,6 +187,8 @@ Route::post('/botRequest', 'API\BotController@botRequest');
 Route::post('/botChekTimeDelivery', 'API\BotController@botChekTimeDelivery');
 Route::post('/checkLatestDate', 'API\BotController@checkLatestDate');
 Route::post('/updateLatestDate', 'API\BotController@updateLatestDate');
+Route::post('/productStatus', 'API\BotController@productStatus');
+
 
 Route::get('/pricelist', 'API\BotController@pricelist');
 

@@ -28,6 +28,21 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
+    public function productStatus(Request $request){
+      $data = $request->all();
+      $productId = $data["productId"];
+      $status = $data["status"];
+
+      DB::table("pabile_products")->where("product_id", $productId)
+      ->update([ 
+          'enabled' => $status
+      ]);
+
+      $json = json_decode('{}', true);
+
+      return response()->json($json);
+
+    }
 
     public function pricelist(Request $request){
       $data = $request->all();
@@ -619,7 +634,7 @@ class BotController extends BaseController
           if($admin){
             $items[] = [
               "title" => "[₱ " . $r->price . "] " . $r->name . (($r->brand) ? ", " . $r->brand : "") . (($r->weight) ? ", " . $r->weight : "") . (($r->color) ? ", " . $r->color : "") . (($r->flavor) ? ", " . $r->flavor : "") . (($r->size) ? ", " . $r->size : "") . (($r->manufacturer) ? ", " . $r->manufacturer : "") . (($r->dimension) ? ", " . $r->dimension : "") . (($r->type) ? ", " . $r->type : "") . (($r->unit) ? ", " . $r->unit : ""),
-              "subtitle" => "status: " . (($r->enabled) ? "✅" : "☑️"),
+              "subtitle" => "status: " . (($r->enabled) ? "✅" : "❌"),
               "image_url" => $thumb,
               "buttons" => [
                   [
