@@ -189,6 +189,8 @@ Route::post('/checkLatestDate', 'API\BotController@checkLatestDate');
 Route::post('/updateLatestDate', 'API\BotController@updateLatestDate');
 Route::post('/productStatus', 'API\BotController@productStatus');
 Route::post('/updateVirtualCost', 'API\BotController@updateVirtualCost');
+Route::post('/dailyPromo', 'API\BotController@dailyPromo');
+
 
 
 Route::get('/pricelist', 'API\BotController@pricelist');

@@ -28,6 +28,63 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
+    public function dailyPromo(Request $request){
+      $data = $request->all();
+      $token = $data["token"];
+      $minimumItems = $data["minimumItems"];
+      $start = $data["start"];
+      $end = $data["end"];
+      $free = $data["free"];
+      $limit = $data["limit"];
+      $save = $data["save"];
+      $now   = Carbon::now();
+      $time  = $now->format('H:i:s');
+      $pasokSaTime = false;
+      $json = json_decode('{}', true);
+
+      //minimum orders
+      $totalOrders = DB::table("pabile_temp_orders")->where("token", $token)->count();
+
+      //time limit
+      if ($time >= $start && $time <= $end) {
+        $pasokSaTime = true;
+      }
+
+      //limit of winners
+      $winners = DB::table("pabile_promo_winners")->where("name", $free)->count();
+      $areYouAWinner = DB::table("pabile_promo_winners")->where([["token", $token], ["name", $free]])->count();
+
+      if($pasokSaTime && ($winners <= $limit && !$areYouAWinner)){
+        if($totalOrders >= $minimumItems){
+          if($save){
+            DB::table("pabile_promo_winners")->where("id", $productId)
+            ->insert([ 
+                'name' => $free,
+                'token' => $token
+            ]);
+          }
+
+          $json["set_attributes"] = [
+            "u-promo-free" => $free,
+            "u-promo-status" => "winner"
+          ];
+
+        }else{
+          $json["set_attributes"] = [
+            "u-promo-free" => $free,
+            "u-promo-status" => "prospect"
+          ];
+        }
+      }else{
+        $json["set_attributes"] = [
+          "u-promo-free" => $free,
+          "u-promo-status" => "loser"
+        ];
+      }
+
+      return response()->json($json);
+    }
+
     public function updateVirtualCost(Request $request){
       $data = $request->all();
       $productId = $data["productId"];
