@@ -37,49 +37,52 @@ class BotController extends BaseController
       $free = $data["free"];
       $limit = $data["limit"];
       $save = $data["save"];
+      $enabled = $data["enabled"];
       $now   = Carbon::now();
       $time  = $now->format('H:i:s');
       $pasokSaTime = false;
       $json = json_decode('{}', true);
 
-      //minimum orders
-      $totalOrders = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
+      if($enabled){
+        //minimum orders
+        $totalOrders = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
 
-      //time limit
-      if ($time >= $start && $time <= $end) {
-        $pasokSaTime = true;
-      }
+        //time limit
+        if ($time >= $start && $time <= $end) {
+          $pasokSaTime = true;
+        }
 
-      //limit of winners
-      $winners = DB::table("pabile_promo_winners")->where("name", $free)->count();
-      $areYouAWinner = DB::table("pabile_promo_winners")->where([["token", $token], ["name", $free]])->count();
+        //limit of winners
+        $winners = DB::table("pabile_promo_winners")->where("name", $free)->count();
+        $areYouAWinner = DB::table("pabile_promo_winners")->where([["token", $token], ["name", $free]])->count();
 
-      if($pasokSaTime && ($winners <= $limit && !$areYouAWinner)){
-        if($totalOrders >= $minimumItems){
-          if($save){
-            DB::table("pabile_promo_winners")->where("id", $productId)
-            ->insert([ 
-                'name' => $free,
-                'token' => $token
-            ]);
+        if($pasokSaTime && ($winners <= $limit && !$areYouAWinner)){
+          if($totalOrders >= $minimumItems){
+            if($save){
+              DB::table("pabile_promo_winners")->where("id", $productId)
+              ->insert([ 
+                  'name' => $free,
+                  'token' => $token
+              ]);
+            }
+
+            $json["set_attributes"] = [
+              "u-promo-free" => $free,
+              "u-promo-status" => "winner"
+            ];
+
+          }else{
+            $json["set_attributes"] = [
+              "u-promo-free" => $free,
+              "u-promo-status" => "prospect"
+            ];
           }
-
-          $json["set_attributes"] = [
-            "u-promo-free" => $free,
-            "u-promo-status" => "winner"
-          ];
-
         }else{
           $json["set_attributes"] = [
             "u-promo-free" => $free,
-            "u-promo-status" => "prospect"
+            "u-promo-status" => "loser"
           ];
         }
-      }else{
-        $json["set_attributes"] = [
-          "u-promo-free" => $free,
-          "u-promo-status" => "loser"
-        ];
       }
 
       return response()->json($json);
