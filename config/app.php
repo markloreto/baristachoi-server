@@ -147,6 +147,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Berkayk\OneSignal\OneSignalServiceProvider::class,
+        App\Providers\GoogleDriveServiceProvider::class,
 
         /*
          * Package Service Providers...
