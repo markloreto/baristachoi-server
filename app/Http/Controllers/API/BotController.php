@@ -67,18 +67,21 @@ class BotController extends BaseController
             }
 
             $json["set_attributes"] = [
+              "u-promo-item-limit" => $minimumItems,
               "u-promo-free" => $free,
               "u-promo-status" => "winner"
             ];
 
           }else{
             $json["set_attributes"] = [
+              "u-promo-item-limit" => $minimumItems,
               "u-promo-free" => $free,
               "u-promo-status" => "prospect"
             ];
           }
         }else{
           $json["set_attributes"] = [
+            "u-promo-item-limit" => $minimumItems,
             "u-promo-free" => $free,
             "u-promo-status" => "loser"
           ];
