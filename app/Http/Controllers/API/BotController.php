@@ -31,7 +31,7 @@ class BotController extends BaseController
     public function dailyPromo(Request $request){
       $data = $request->all();
       $token = $data["token"];
-      $minimumItems = $data["minimumItems"];
+      $minimumItems = intval($data["minimumItems"]);
       $start = $data["start"];
       $end = $data["end"];
       $free = $data["free"];
