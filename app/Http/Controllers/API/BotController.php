@@ -43,7 +43,7 @@ class BotController extends BaseController
       $json = json_decode('{}', true);
 
       //minimum orders
-      $totalOrders = DB::table("pabile_temp_orders")->where("token", $token)->count();
+      $totalOrders = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
 
       //time limit
       if ($time >= $start && $time <= $end) {
