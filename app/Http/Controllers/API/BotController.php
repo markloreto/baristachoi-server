@@ -207,7 +207,7 @@ class BotController extends BaseController
 
       $json = json_decode('{
         "messages": [
-          {"text": "'.$link.'"}
+          {"text": "test"}
         ]
       }', true);
 
