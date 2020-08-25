@@ -763,6 +763,21 @@ class BotController extends BaseController
                   $query->orWhere('name', 'like', "%" . $r . "%");
               }
           })->get();
+
+          $mains = DB::table("pabile_products")->select("id")->whereIn('category_id', function($query) use ($q){
+            $query->select('id')
+            ->from("pabile_product_categories AS ppc")
+            ->join("pabile_product_main_categories AS ppmc", "ppc.parent_id", "=", "ppmc.id");
+
+            $myArray = explode(' ', $q);
+            $i = 0;
+            foreach($myArray as $r){
+              if($i === 0)
+                $query->where('ppmc.name', 'like', "%" . $r . "%");
+              else
+                $query->orWhere('ppmc.name', 'like', "%" . $r . "%");
+            }
+        })->get();
         foreach($tags as $tag){
             $ids[] = $tag->product_id;
         }
@@ -772,6 +787,10 @@ class BotController extends BaseController
         }
 
         foreach($cats as $cat){
+          $ids[] = $cat->id;
+        }
+
+        foreach($mains as $main){
           $ids[] = $cat->id;
         }
       }
