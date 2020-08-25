@@ -177,10 +177,16 @@ class BotController extends BaseController
       return response()->json($json);
     }
 
-    public function priceListCloud(){
-       
+    public function priceListCloud(Request $request){
+      $data = $request->all();
+      $type = $data["type"];
+      if($type == "PDF"){
+        $format = "pdf";
+      }else{
+        $format = "xlsx";
+      }
 
-      $filename = 'pricelist.pdf';
+      $filename = 'pricelist.' . $format;
 
       $dir = '/';
       $recursive = false; // Get subdirectories also?
@@ -195,7 +201,7 @@ class BotController extends BaseController
       Storage::cloud()->delete($file['path']);
 
 
-      $c = Storage::disk('local')->get('public/pricelist.pdf');
+      $c = Storage::disk('local')->get('public/pricelist.' . $format);
       Storage::cloud()->put($filename, $c);
 
       $dir = '/';
