@@ -791,7 +791,7 @@ class BotController extends BaseController
         }
 
         foreach($mains as $main){
-          $ids[] = $cat->id;
+          $ids[] = $main->id;
         }
       }
 
