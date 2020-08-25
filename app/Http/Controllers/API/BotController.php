@@ -755,8 +755,12 @@ class BotController extends BaseController
               ->from("pabile_product_categories");
 
               $myArray = explode(' ', $q);
+              $i = 0;
               foreach($myArray as $r){
-                $query->where('name', 'like', "%" . $r . "%");
+                if($i === 0)
+                  $query->where('name', 'like', "%" . $r . "%");
+                else
+                  $query->orWhere('name', 'like', "%" . $r . "%");
               }
           })->get();
         foreach($tags as $tag){
