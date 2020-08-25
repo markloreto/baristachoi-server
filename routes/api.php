@@ -194,7 +194,7 @@ Route::post('/dailyPromo', 'API\BotController@dailyPromo');
 
 
 Route::get('/pricelist', 'API\BotController@pricelist');
-
+Route::get('/weee', 'API\BotController@weee');
 
 
 

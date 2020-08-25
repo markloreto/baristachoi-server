@@ -142,6 +142,10 @@ class BotController extends BaseController
 
     }
 
+    public function weee(){
+      $mainDisk = Storage::disk('google')->put('weeeeeeeeeeeee.txt', 'Contents');;
+    }
+
     public function pricelist(Request $request){
       $data = $request->all();
       $type = $data["type"];
@@ -173,6 +177,8 @@ class BotController extends BaseController
           }
         ]
       }', true);
+
+      //$mainDisk = Storage::disk('google');
 
       /* if ($time >= $start && $time <= $end) {
         $json["redirect_to_blocks"] = ["profile check"];
