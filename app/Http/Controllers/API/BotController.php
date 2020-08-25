@@ -767,6 +767,10 @@ class BotController extends BaseController
         foreach($specs as $spec){
             $ids[] = $spec->product_id;
         }
+
+        foreach($cats as $cat){
+          $ids[] = $cat->id;
+      }
       }
 
       $recordsQ = DB::table("pabile_products as pp")
