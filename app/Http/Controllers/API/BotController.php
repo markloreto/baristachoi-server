@@ -189,8 +189,7 @@ class BotController extends BaseController
       $permission->setAllowFileDiscovery(false);
       $permissions = $service->permissions->create($file['basename'], $permission);
 
-
-      $json = json_decode('{
+      /* $json = json_decode('{
         "messages": [
           {
             "attachment": {
@@ -200,6 +199,12 @@ class BotController extends BaseController
               }
             }
           },
+          {"text": "'.Storage::cloud()->url($file['path']).'"}
+        ]
+      }', true); */
+
+      $json = json_decode('{
+        "messages": [
           {"text": "'.Storage::cloud()->url($file['path']).'"}
         ]
       }', true);
