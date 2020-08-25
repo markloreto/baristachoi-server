@@ -765,7 +765,7 @@ class BotController extends BaseController
           })->get();
 
           $mains = DB::table("pabile_products AS pp")->select("pp.id")->whereIn('pp.category_id', function($query) use ($q){
-            $query->select('id')
+            $query->select('ppc.id')
             ->from("pabile_product_categories AS ppc")
             ->join("pabile_product_main_categories AS ppmc", "ppc.parent_id", "=", "ppmc.id");
 
