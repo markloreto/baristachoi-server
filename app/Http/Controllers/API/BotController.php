@@ -757,10 +757,14 @@ class BotController extends BaseController
               $myArray = explode(' ', $q);
               $i = 0;
               foreach($myArray as $r){
-                if($i === 0)
-                  $query->where('name', 'like', "%" . $r . "%");
-                else
-                  $query->orWhere('name', 'like', "%" . $r . "%");
+                if($r != "&"){
+                  if($i === 0)
+                    $query->where('name', 'like', "%" . $r . "%");
+                  else
+                    $query->orWhere('name', 'like', "%" . $r . "%");
+                }
+
+                $i++;
               }
           })->get();
 
@@ -772,10 +776,14 @@ class BotController extends BaseController
             $myArray = explode(' ', $q);
             $i = 0;
             foreach($myArray as $r){
-              if($i === 0)
-                $query->where('ppmc.name', 'like', "%" . $r . "%");
-              else
-                $query->orWhere('ppmc.name', 'like', "%" . $r . "%");
+              if($r != "&"){
+                if($i === 0)
+                  $query->where('ppmc.name', 'like', "%" . $r . "%");
+                else
+                  $query->orWhere('ppmc.name', 'like', "%" . $r . "%");
+              }
+
+              $i++;
             }
         })->get();
         foreach($tags as $tag){
