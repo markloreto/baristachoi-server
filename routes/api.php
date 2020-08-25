@@ -190,7 +190,7 @@ Route::post('/updateLatestDate', 'API\BotController@updateLatestDate');
 Route::post('/productStatus', 'API\BotController@productStatus');
 Route::post('/updateVirtualCost', 'API\BotController@updateVirtualCost');
 Route::post('/dailyPromo', 'API\BotController@dailyPromo');
-
+Route::post('/changeFor', 'API\BotController@changeFor');
 
 
 Route::get('/pricelist', 'API\BotController@pricelist');

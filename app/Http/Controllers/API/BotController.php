@@ -1301,7 +1301,8 @@ class BotController extends BaseController
             {
               "u-status": "active",
               "u-id": '.$realClientId.',
-              "u-cart-items": 0
+              "u-cart-items": 0,
+              "u-cart-order-id": '.$orderId.'
             },
             "messages": [
               {
@@ -1359,6 +1360,21 @@ class BotController extends BaseController
 
     return response()->json($json);
 
+    }
+
+    public function changeFor(Request $request){
+      $data = $request->all();
+      $orderId = $data["orderId"];
+      $amount = $data["amount"];
+
+      DB::table('pabile_clients')->where("id", $orderId)
+      ->update([ 
+          'changeFor' => $amount
+      ]);
+
+      $json = json_decode('{}', true);
+
+      return response()->json($json);
     }
 
     public function botSetAddress(Request $request){
