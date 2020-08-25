@@ -1367,7 +1367,7 @@ class BotController extends BaseController
       $orderId = $data["orderId"];
       $amount = $data["amount"];
 
-      DB::table('pabile_clients')->where("id", $orderId)
+      DB::table('pabile_orders')->where("id", $orderId)
       ->update([ 
           'changeFor' => $amount
       ]);
