@@ -159,7 +159,36 @@ class BotController extends BaseController
         $format = "xlsx";
         Excel::store($exportation, 'public/pricelist.xlsx');
       }
-      
+
+      $c = Storage::disk('local')->get('public/pricelist.pdf');
+
+      $mainDisk = Storage::disk('google')->put('pricelist.pdf', $c);
+
+      $filename = 'pricelist.pdf';
+
+      // Store a demo file
+      Storage::cloud()->put($filename, $c);
+
+      // Get the file to find the ID
+      $dir = '/';
+      $recursive = false; // Get subdirectories also?
+      $contents = collect(Storage::cloud()->listContents($dir, $recursive));
+      $file = $contents
+          ->where('type', '=', 'file')
+          ->where('filename', '=', pathinfo($filename, PATHINFO_FILENAME))
+          ->where('extension', '=', pathinfo($filename, PATHINFO_EXTENSION))
+          ->first(); // there can be duplicate file names!
+
+      // Change permissions
+      // - https://developers.google.com/drive/v3/web/about-permissions
+      // - https://developers.google.com/drive/v3/reference/permissions
+      $service = Storage::cloud()->getAdapter()->getService();
+      $permission = new \Google_Service_Drive_Permission();
+      $permission->setRole('reader');
+      $permission->setType('anyone');
+      $permission->setAllowFileDiscovery(false);
+      $permissions = $service->permissions->create($file['basename'], $permission);
+
 
       $json = json_decode('{
         "messages": [
@@ -170,13 +199,12 @@ class BotController extends BaseController
                 "url": "https://markloreto.xyz/storage/pricelist.'.$format.'"
               }
             }
-          }
+          },
+          {"text": "'.Storage::cloud()->url($file['path']).'"}
         ]
       }', true);
 
-      $c = Storage::disk('local')->get('public/pricelist.pdf');
-
-      $mainDisk = Storage::disk('google')->put('pricelist.pdf', $c);;
+      
 
       //$mainDisk = Storage::disk('google');
 
