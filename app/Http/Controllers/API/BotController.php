@@ -226,14 +226,24 @@ class BotController extends BaseController
     }
 
     public function priceListCloud(){
-       $c = Storage::disk('local')->get('public/pricelist.pdf');
+       
 
       $filename = 'pricelist.pdf';
-      if (Storage::cloud()->exists($filename)) {
-        Storage::cloud()->delete($filename);
-      }
+
+      $dir = '/';
+      $recursive = false; // Get subdirectories also?
+      $contents = collect(Storage::cloud()->listContents($dir, $recursive));
+
+      $file = $contents
+          ->where('type', '=', 'file')
+          ->where('filename', '=', pathinfo($filename, PATHINFO_FILENAME))
+          ->where('extension', '=', pathinfo($filename, PATHINFO_EXTENSION))
+          ->first(); // there can be duplicate file names!
+
+      Storage::cloud()->delete($file['path']);
 
 
+      $c = Storage::disk('local')->get('public/pricelist.pdf');
       Storage::cloud()->put($filename, $c);
 
       $dir = '/';
