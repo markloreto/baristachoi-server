@@ -271,7 +271,7 @@ class BotController extends BaseController
               "type": "template",
               "payload": {
                 "template_type": "button",
-                "text": "Your price list is ready",
+                "text": "You may also view the pricelist",
                 "buttons": [
                   {
                     "type": "web_url",
