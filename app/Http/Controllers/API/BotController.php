@@ -142,55 +142,6 @@ class BotController extends BaseController
 
     }
 
-    public function weee(){
-      $filename = 'pricelist.pdf';
-
-      // Store a demo file
-      //Storage::cloud()->put($filename, $c);
-
-      // Get the file to find the ID
-      $dir = '/';
-      $recursive = false; // Get subdirectories also?
-      $contents = collect(Storage::cloud()->listContents($dir, $recursive));
-      $file = $contents
-          ->where('type', '=', 'file')
-          ->where('filename', '=', pathinfo($filename, PATHINFO_FILENAME))
-          ->where('extension', '=', pathinfo($filename, PATHINFO_EXTENSION))
-          ->first(); // there can be duplicate file names!
-
-      // Change permissions
-      // - https://developers.google.com/drive/v3/web/about-permissions
-      // - https://developers.google.com/drive/v3/reference/permissions
-      $service = Storage::cloud()->getAdapter()->getService();
-      $permission = new \Google_Service_Drive_Permission();
-      $permission->setRole('reader');
-      $permission->setType('anyone');
-      $permission->setAllowFileDiscovery(false);
-      $permissions = $service->permissions->create($file['basename'], $permission);
-
-
-      $link = Storage::cloud()->url($file['path']);
-
-      $json = json_decode('{
-        "messages": [
-          {"text": "Welcome to the Chatfuel Rockets!"},
-          {"text": "'.$link.'"}
-        ]
-       }', true);
-
-      
-
-      //$mainDisk = Storage::disk('google');
-
-      /* if ($time >= $start && $time <= $end) {
-        $json["redirect_to_blocks"] = ["profile check"];
-      }else{
-        $json["redirect_to_blocks"] = ["Beyond operating hours"];
-      } */
-
-      return response()->json($json);
-    }
-
     public function pricelist(Request $request){
       $data = $request->all();
       $type = $data["type"];
