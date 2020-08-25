@@ -165,10 +165,13 @@ class BotController extends BaseController
       //$mainDisk = Storage::disk('google')->put('pricelist.pdf', $c);
 
       $filename = 'pricelist.' . $format;
+      if (Storage::disk('google')->exists($filename)) {
+        Storage::disk('google')->delete($filename);
+      }
 
       // Store a demo file
-      Storage::cloud()->put($filename, $c);
-
+      //Storage::cloud()->put($filename, $c);
+      Storage::disk('google')->put($filename, $c);
       // Get the file to find the ID
       $dir = '/';
       $recursive = false; // Get subdirectories also?
