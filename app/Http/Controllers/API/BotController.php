@@ -757,7 +757,7 @@ class BotController extends BaseController
               $myArray = explode(' ', $q);
               $i = 0;
               foreach($myArray as $r){
-                if($r != "&"){
+                if($r != "&" || $r != "product" || $r != "products"){
                   if($i === 0)
                     $query->where('name', 'like', "%" . $r . "%");
                   else
