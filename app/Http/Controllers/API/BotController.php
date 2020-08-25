@@ -750,7 +750,7 @@ class BotController extends BaseController
       if(!$catId){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
         $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
-        $cats = DB::table("pabile_products")->select("id")->whereIn('category_id', function($query) use ($q){
+        /* $cats = DB::table("pabile_products")->select("id")->whereIn('category_id', function($query) use ($q){
               $query->select('id')
               ->from("pabile_product_categories")
               ->where('parent_id', '!=', null);
@@ -759,7 +759,7 @@ class BotController extends BaseController
               foreach($myArray as $r){
                 $query->orWhere('pp.name', 'like', "%" . $r . "%");
               }
-          })->get();
+          })->get(); */
         foreach($tags as $tag){
             $ids[] = $tag->product_id;
         }
@@ -768,9 +768,9 @@ class BotController extends BaseController
             $ids[] = $spec->product_id;
         }
 
-        foreach($cats as $cat){
+        /* foreach($cats as $cat){
           $ids[] = $cat->id;
-      }
+      } */
       }
 
       $recordsQ = DB::table("pabile_products as pp")
