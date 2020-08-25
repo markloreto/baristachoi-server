@@ -750,6 +750,16 @@ class BotController extends BaseController
       if(!$catId){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
         $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
+        $cats = DB::table("pabile_products")->select("id")->whereIn('category_id', function($query) use ($q){
+              $query->select('id')
+              ->from("pabile_product_categories")
+              ->where('parent_id', '!=', null);
+
+              $myArray = explode(' ', $q);
+              foreach($myArray as $r){
+                $query->orWhere('pp.name', 'like', "%" . $r . "%");
+              }
+          })->get();
         foreach($tags as $tag){
             $ids[] = $tag->product_id;
         }
