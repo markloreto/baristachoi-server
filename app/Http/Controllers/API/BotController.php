@@ -195,8 +195,7 @@ class BotController extends BaseController
                 "url": "https://markloreto.xyz/storage/pricelist.'.$format.'"
               }
             }
-          },
-          {"text": "'.Storage::cloud()->url($file['path']).'"}
+          }
         ]
       }', true);
 
