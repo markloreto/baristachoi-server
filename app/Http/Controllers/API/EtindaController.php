@@ -611,17 +611,17 @@ class EtindaController extends BaseController
 
             $order = DB::table('pabile_orders')->select("client_id")->where("id", $delivered["orderId"])->first();
             
-            if($order->client_id){
+            /* if($order->client_id){
                 DB::table('pabile_clients')->where("id", $order->client_id)
                 ->update([ 
                     'lat' => $delivered["lat"],
                     'lng' => $delivered["lng"]
                 ]);
-            }
+            } */
             
         }
 
-        return $this->sendResponse($delivereds, 'deliveredOrder');
+        return $this->sendResponse($order, 'deliveredOrder');
     }
 
     public function completeOrder(Request $request){
