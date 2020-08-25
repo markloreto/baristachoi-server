@@ -142,10 +142,6 @@ class BotController extends BaseController
 
     }
 
-    public function weee(){
-      $mainDisk = Storage::disk('google')->put('weeeeeeeeeeeee.txt', 'Contents');;
-    }
-
     public function pricelist(Request $request){
       $data = $request->all();
       $type = $data["type"];
@@ -177,6 +173,10 @@ class BotController extends BaseController
           }
         ]
       }', true);
+
+      $c = Storage::disk('local')->get('public/pricelist.pdf');
+
+      $mainDisk = Storage::disk('google')->put('pricelist.pdf', $c);;
 
       //$mainDisk = Storage::disk('google');
 
