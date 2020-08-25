@@ -203,9 +203,11 @@ class BotController extends BaseController
         ]
       }', true); */
 
+      $link = Storage::cloud()->url($file['path']);
+
       $json = json_decode('{
         "messages": [
-          {"text": "'.Storage::cloud()->url($file['path']).'"}
+          {"text": "'.$link.'"}
         ]
       }', true);
 
