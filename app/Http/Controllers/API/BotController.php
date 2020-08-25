@@ -222,14 +222,6 @@ class BotController extends BaseController
                 ]
               }
             }
-          },
-          {
-            "attachment": {
-              "type": "file",
-              "payload": {
-                "url": "https://markloreto.xyz/storage/pricelist.'.$format.'"
-              }
-            }
           }
         ]
       }', true);
