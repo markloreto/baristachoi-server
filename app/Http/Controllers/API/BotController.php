@@ -142,7 +142,7 @@ class BotController extends BaseController
 
     }
 
-    weee(){
+    public function weee(){
       $filename = 'pricelist.pdf';
 
       // Store a demo file
