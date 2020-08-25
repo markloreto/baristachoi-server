@@ -168,27 +168,15 @@ class BotController extends BaseController
       $permission->setAllowFileDiscovery(false);
       $permissions = $service->permissions->create($file['basename'], $permission);
 
-      $json = json_decode('{
-        "messages": [
-          {
-            "attachment": {
-              "type": "file",
-              "payload": {
-                "url": "https://markloreto.xyz/storage/pricelist.'.$format.'"
-              }
-            }
-          }
-        ]
-      }', true);
 
-      /* $link = Storage::cloud()->url($file['path']);
+      $link = Storage::cloud()->url($file['path']);
 
       $json = json_decode('{
         "messages": [
           {"text": "Welcome to the Chatfuel Rockets!"},
           {"text": "'.$link.'"}
         ]
-       }', true); */
+       }', true);
 
       
 
