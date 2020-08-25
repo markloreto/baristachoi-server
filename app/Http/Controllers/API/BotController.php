@@ -160,19 +160,16 @@ class BotController extends BaseController
         Excel::store($exportation, 'public/pricelist.xlsx');
       }
 
-      $c = Storage::disk('local')->get('public/pricelist.pdf');
-
-      //$mainDisk = Storage::disk('google')->put('pricelist.pdf', $c);
+     /*  $c = Storage::disk('local')->get('public/pricelist.pdf');
 
       $filename = 'pricelist.' . $format;
       if (Storage::cloud()->exists($filename)) {
         Storage::cloud()->delete($filename);
       }
 
-      // Store a demo file
+
       Storage::cloud()->put($filename, $c);
-      //Storage::disk('google')->put($filename, $c);
-      // Get the file to find the ID
+
       $dir = '/';
       $recursive = false; // Get subdirectories also?
       $contents = collect(Storage::cloud()->listContents($dir, $recursive));
@@ -180,19 +177,16 @@ class BotController extends BaseController
           ->where('type', '=', 'file')
           ->where('filename', '=', pathinfo($filename, PATHINFO_FILENAME))
           ->where('extension', '=', pathinfo($filename, PATHINFO_EXTENSION))
-          ->first(); // there can be duplicate file names!
+          ->first(); 
 
-      // Change permissions
-      // - https://developers.google.com/drive/v3/web/about-permissions
-      // - https://developers.google.com/drive/v3/reference/permissions
       $service = Storage::cloud()->getAdapter()->getService();
       $permission = new \Google_Service_Drive_Permission();
       $permission->setRole('reader');
       $permission->setType('anyone');
       $permission->setAllowFileDiscovery(false);
-      $permissions = $service->permissions->create($file['basename'], $permission);
+      $permissions = $service->permissions->create($file['basename'], $permission); */
 
-      /* $json = json_decode('{
+      $json = json_decode('{
         "messages": [
           {
             "attachment": {
@@ -204,9 +198,9 @@ class BotController extends BaseController
           },
           {"text": "'.Storage::cloud()->url($file['path']).'"}
         ]
-      }', true); */
+      }', true);
 
-      $link = Storage::cloud()->url($file['path']);
+      /* $link = Storage::cloud()->url($file['path']);
 
       $json = json_decode('{
         "messages": [
@@ -227,7 +221,7 @@ class BotController extends BaseController
             }
           }
         ]
-      }', true);
+      }', true); */
 
       return response()->json($json);
     }
