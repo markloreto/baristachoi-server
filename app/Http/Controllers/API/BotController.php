@@ -230,7 +230,7 @@ class BotController extends BaseController
                 "url": "https://markloreto.xyz/storage/pricelist.'.$format.'"
               }
             }
-          },
+          }
         ]
       }', true);
 
