@@ -768,7 +768,12 @@ class BotController extends BaseController
       }elseif($latest){
         $recordsQ = $recordsQ->where("pp.updated_at", ">=", $data["latestDate"]);
       }else{
-        $recordsQ = $recordsQ->where('pp.name', 'like', "%" . $q . "%")->orWhere('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids);
+        $recordsQ = $recordsQ->where('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids);
+
+        $myArray = explode(' ', $q);
+        foreach($myArray as $r){
+          $recordsQ = $recordsQ->orWhere('pp.name', 'like', "%" . $r . "%");
+        }
       }
 
       $r = clone $recordsQ;
