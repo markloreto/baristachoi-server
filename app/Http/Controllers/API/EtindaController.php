@@ -610,12 +610,15 @@ class EtindaController extends BaseController
             ]);
 
             $order = DB::table('pabile_orders')->select("client_id")->where("id", $delivered["orderId"])->first();
-
-            DB::table('pabile_clients')->where("id", $order->client_id)
-            ->update([ 
-                'lat' => $delivered["lat"],
-                'lng' => $delivered["lng"]
-            ]);
+            
+            if($order->client_id){
+                DB::table('pabile_clients')->where("id", $order->client_id)
+                ->update([ 
+                    'lat' => $delivered["lat"],
+                    'lng' => $delivered["lng"]
+                ]);
+            }
+            
         }
 
         return $this->sendResponse($delivereds, 'deliveredOrder');
