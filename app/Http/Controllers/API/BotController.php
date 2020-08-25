@@ -225,6 +225,59 @@ class BotController extends BaseController
       return response()->json($json);
     }
 
+    public function priceListCloud(){
+       $c = Storage::disk('local')->get('public/pricelist.pdf');
+
+      $filename = 'pricelist.pdf';
+      if (Storage::cloud()->exists($filename)) {
+        Storage::cloud()->delete($filename);
+      }
+
+
+      Storage::cloud()->put($filename, $c);
+
+      $dir = '/';
+      $recursive = false; // Get subdirectories also?
+      $contents = collect(Storage::cloud()->listContents($dir, $recursive));
+      $file = $contents
+          ->where('type', '=', 'file')
+          ->where('filename', '=', pathinfo($filename, PATHINFO_FILENAME))
+          ->where('extension', '=', pathinfo($filename, PATHINFO_EXTENSION))
+          ->first(); 
+
+      $service = Storage::cloud()->getAdapter()->getService();
+      $permission = new \Google_Service_Drive_Permission();
+      $permission->setRole('reader');
+      $permission->setType('anyone');
+      $permission->setAllowFileDiscovery(false);
+      $permissions = $service->permissions->create($file['basename'], $permission);
+
+      $link = Storage::cloud()->url($file['path']);
+
+      $json = json_decode('{
+        "messages": [
+          {
+            "attachment": {
+              "type": "template",
+              "payload": {
+                "template_type": "button",
+                "text": "Your price list is ready",
+                "buttons": [
+                  {
+                    "type": "web_url",
+                    "url": "'.$link.'",
+                    "title": "View Price list"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }', true);
+
+      return response()->json($json);
+    }
+
     public function botChekTimeDelivery(Request $request){
       $data = $request->all();
 
