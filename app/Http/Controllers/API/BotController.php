@@ -275,16 +275,6 @@ class BotController extends BaseController
         ]
       }', true);
 
-      
-
-      //$mainDisk = Storage::disk('google');
-
-      /* if ($time >= $start && $time <= $end) {
-        $json["redirect_to_blocks"] = ["profile check"];
-      }else{
-        $json["redirect_to_blocks"] = ["Beyond operating hours"];
-      } */
-
       return response()->json($json);
     }
 
