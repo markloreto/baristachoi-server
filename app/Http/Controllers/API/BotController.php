@@ -256,10 +256,24 @@ class BotController extends BaseController
 
       $json = json_decode('{
         "messages": [
-          {"text": "Welcome to the Chatfuel Rockets!"},
-          {"text": "'.$link.'"}
+          {
+            "attachment": {
+              "type": "template",
+              "payload": {
+                "template_type": "button",
+                "text": "Your price list is ready",
+                "buttons": [
+                  {
+                    "type": "web_url",
+                    "url": "'.$link.'",
+                    "title": "View Price list"
+                  }
+                ]
+              }
+            }
+          }
         ]
-       }', true);
+      }', true);
 
       
 
