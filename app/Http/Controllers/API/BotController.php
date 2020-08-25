@@ -211,7 +211,7 @@ class BotController extends BaseController
 
       $c = Storage::disk('local')->get('public/pricelist.pdf');
 
-      $mainDisk = Storage::disk('google')->put('pricelist.pdf', $c);
+      //$mainDisk = Storage::disk('google')->put('pricelist.pdf', $c);
 
       $filename = 'pricelist.pdf';
 
