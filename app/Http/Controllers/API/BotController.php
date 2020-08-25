@@ -213,7 +213,7 @@ class BotController extends BaseController
 
       //$mainDisk = Storage::disk('google')->put('pricelist.pdf', $c);
 
-      $filename = 'pricelist.pdf';
+      $filename = 'pricelist.' . $format;
 
       // Store a demo file
       Storage::cloud()->put($filename, $c);
@@ -271,7 +271,15 @@ class BotController extends BaseController
                 ]
               }
             }
-          }
+          },
+          {
+            "attachment": {
+              "type": "file",
+              "payload": {
+                "url": "https://markloreto.xyz/storage/pricelist.'.$format.'"
+              }
+            }
+          },
         ]
       }', true);
 
