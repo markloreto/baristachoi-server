@@ -752,7 +752,7 @@ class BotController extends BaseController
         $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
         $cats = DB::table("pabile_products")->select("id")->whereIn('category_id', function($query) use ($q){
               $query->select('id')
-              ->from("pabile_product_categories")
+              ->from("pabile_product_categories");
 
               $myArray = explode(' ', $q);
               foreach($myArray as $r){
