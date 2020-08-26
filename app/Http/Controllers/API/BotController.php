@@ -747,6 +747,7 @@ class BotController extends BaseController
       $tryAnother = "Search for products";
       $messengerId = (isset($data["messenger_id"])) ? $data["messenger_id"] : 0;
       $all = (isset($data["all"])) ? $data["all"] : false;
+      $mainCat = (isset($data["mainCat"])) ? $data["mainCat"] : false;
 
       if(!$catId){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
@@ -808,7 +809,17 @@ class BotController extends BaseController
       ->select(DB::raw('pp.*, UNIX_TIMESTAMP(pp.updated_at) AS `updated_date`, IF(pp.virtual_cost, 999, (SELECT COUNT(id) FROM pabile_inventories pi WHERE pi.product_id = pp.id AND pi.order_id IS NULL)) AS inventory, (SELECT value FROM pabile_product_specs WHERE `key` = 6 AND product_id = pp.id) AS brand, (SELECT value FROM pabile_product_specs WHERE `key` = 3 AND product_id = pp.id) AS `dimension`, (SELECT value FROM pabile_product_specs WHERE `key` = 10 AND product_id = pp.id) AS `type`, (SELECT value FROM pabile_product_specs WHERE `key` = 11 AND product_id = pp.id) AS `unit`, (SELECT value FROM pabile_product_specs WHERE `key` = 1 AND product_id = pp.id) AS weight, (SELECT value FROM pabile_product_specs WHERE `key` = 2 AND product_id = pp.id) AS `color`, (SELECT value FROM pabile_product_specs WHERE `key` = 5 AND product_id = pp.id) AS `flavor`, (SELECT value FROM pabile_product_specs WHERE `key` = 9 AND product_id = pp.id) AS `size`, (SELECT value FROM pabile_product_specs WHERE `key` = 4 AND product_id = pp.id) AS `manufacturer`, (SELECT photo FROM pabile_product_photos WHERE product_id = pp.id AND `primary` = 1) AS `thumbnail`'));
 
       if($catId){
-        $recordsQ = $recordsQ->where("category_id", $catId);
+        if($mainCat){
+          $recordsQ = $recordsQ->whereIn('pp.category_id', function($query) use ($q){
+            $query->select('ppc.id')
+            ->from("pabile_product_categories AS ppc")
+            ->join("pabile_product_main_categories AS ppmc", "ppc.parent_id", "=", "ppmc.id")
+            ->where('ppmc.id', $catId);
+          });
+        }else{
+          $recordsQ = $recordsQ->where("category_id", $catId);
+        }
+        
         $tryAnother = "Main Category Search";
       }elseif($latest){
         $recordsQ = $recordsQ->where("pp.updated_at", ">=", $data["latestDate"]);
