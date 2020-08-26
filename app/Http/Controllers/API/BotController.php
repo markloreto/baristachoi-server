@@ -810,7 +810,7 @@ class BotController extends BaseController
 
       if($catId){
         if($mainCat){
-          $recordsQ = $recordsQ->whereIn('pp.category_id', function($query){
+          $recordsQ = $recordsQ->whereIn('pp.category_id', function($query) use ($catId){
             $query->select('ppc.id')
             ->from("pabile_product_categories AS ppc")
             ->join("pabile_product_main_categories AS ppmc", "ppc.parent_id", "=", "ppmc.id")
