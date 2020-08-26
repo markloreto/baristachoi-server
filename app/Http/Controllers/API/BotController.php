@@ -28,6 +28,11 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
+    public function test(){
+      $now   = Carbon::now();
+      echo $now->addHour()->format('H:i:s');;
+    }
+
     public function dailyPromo(Request $request){
       $data = $request->all();
       $token = $data["token"];
