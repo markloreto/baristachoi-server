@@ -28,9 +28,16 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
-    public function test(){
+    public function test(Request $request){
+      $data = $request->all();
+      $dt = $data["dt"];
       $now   = Carbon::now();
-      echo $now->addHour()->format('H:i:s');;
+      $plusOneHour = $now->addHour()->format('Y-m-d H:i:s');
+      echo $plusOneHour;
+      if($dt >= $plusOneHour){
+        echo "<br/>Greater than";
+      }
+      
     }
 
     public function dailyPromo(Request $request){
