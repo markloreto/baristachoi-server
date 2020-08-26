@@ -746,6 +746,7 @@ class BotController extends BaseController
       $default = (isset($data["default"])) ? $data["default"] : false;
       $tryAnother = "Search for products";
       $messengerId = (isset($data["messenger_id"])) ? $data["messenger_id"] : 0;
+      $all = (isset($data["all"])) ? $data["all"] : false;
 
       if(!$catId){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
@@ -811,6 +812,8 @@ class BotController extends BaseController
         $tryAnother = "Main Category Search";
       }elseif($latest){
         $recordsQ = $recordsQ->where("pp.updated_at", ">=", $data["latestDate"]);
+      }elseif($all){
+        $recordsQ = $recordsQ->whereNotIn("pp.category_id", [1, 2, 4, 5]);
       }else{
         $recordsQ = $recordsQ->where('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids);
 
