@@ -770,8 +770,8 @@ class BotController extends BaseController
       $data = $request->all();
       $q = $data["q"];
       $page = intval($data["page"]);
-      $offset = $page * 10;
-      $limit = 10;
+      $offset = $page * 12;
+      $limit = 12;
       $ids = [];
       $items = [];
       $catId = (isset($data["catId"])) ? $data["catId"] : false;
