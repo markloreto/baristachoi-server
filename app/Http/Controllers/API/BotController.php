@@ -782,7 +782,7 @@ class BotController extends BaseController
       $all = (isset($data["all"])) ? $data["all"] : false;
       $mainCat = (isset($data["mainCat"])) ? $data["mainCat"] : false;
 
-      if(!$catId){
+      if(!$catId || !$mainCat){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
         $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
         $cats = DB::table("pabile_products")->select("id")->whereIn('category_id', function($query) use ($q){
