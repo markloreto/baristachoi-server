@@ -40,6 +40,27 @@ class BotController extends BaseController
       
     }
 
+    public function botGetToken(Request $request){
+      $data = $request->all();
+      $messengerId = $data["messenger user id"];
+      $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
+
+      $now   = Carbon::now();
+      $plusOneHour = $now->addHour()->format('Y-m-d H:i:s');
+
+      $json = json_decode('{
+        "set_attributes":
+          {
+            "u-token": "' . $hashedMessengerId . '",
+            "u-updates-date": "' . Carbon::now() . '",
+            "u-promo-timer": "'.$plusOneHour.'",
+            "u-promo-timer-human": "'.Carbon::now()->addHour()->format('h:i A').'"
+          }
+      }');
+
+      return response()->json($json);
+    }
+
     public function dailyPromo(Request $request){
       $data = $request->all();
       $token = $data["token"];
@@ -1559,22 +1580,6 @@ class BotController extends BaseController
       }
 
       return $this->sendResponse(["status" => $success, "reason" => $reason], 'fbOrder');
-    }
-
-    public function botGetToken(Request $request){
-      $data = $request->all();
-      $messengerId = $data["messenger user id"];
-      $hashedMessengerId = hash_hmac('ripemd160', $messengerId, 'chrono');
-
-      $json = json_decode('{
-        "set_attributes":
-          {
-            "u-token": "' . $hashedMessengerId . '",
-            "u-updates-date": "' . Carbon::now() . '"
-          }
-      }');
-
-      return response()->json($json);
     }
 
     public function getBotCategoriesById(Request $request){
