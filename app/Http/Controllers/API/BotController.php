@@ -871,7 +871,7 @@ class BotController extends BaseController
       $r = clone $recordsQ;
       $r2 = clone $recordsQ;
 
-      $records = $r->forPage(($page+1), $limit)->get(); //$r->limit($limit)->offset($offset)->get();
+      $records = $r->limit($limit)->offset($offset)->get(); //$r->limit($limit)->offset($offset)->get();
       $recordsCount = count($records);
       $totalRecords = $r2->count();//->count();
       $isThereNext = $totalRecords - ($offset + $recordsCount);
