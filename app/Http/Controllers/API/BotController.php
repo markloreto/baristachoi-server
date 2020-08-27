@@ -864,7 +864,7 @@ class BotController extends BaseController
 
         $myArray = explode(' ', $q);
         foreach($myArray as $r){
-          $recordsQ = $recordsQ->where('pp.name', 'like', "%" . $r . "%");
+          $recordsQ = $recordsQ->orWhere('pp.name', 'like', "%" . $r . "%");
         }
       }
 
