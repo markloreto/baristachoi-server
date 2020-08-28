@@ -443,7 +443,15 @@ class BotController extends BaseController
       $data = $request->all();
       $q = trim($data["q"]);
 
-      $main = DB::table("pabile_product_main_categories")->where('name', 'like', "%" . $q . "%")->get();
+      $c = DB::table("pabile_product_main_categories")->where('name', $q)->count();
+
+      if($c){
+        $main = DB::table("pabile_product_main_categories")->where('name', $q)->get();
+      }else{
+        $main = DB::table("pabile_product_main_categories")->where('name', 'like', "%" . $q . "%")->get();
+      }
+
+      
 
       $json = json_decode('{
         
