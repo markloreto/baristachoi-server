@@ -412,7 +412,13 @@ class BotController extends BaseController
       ->having("bilang", "!=", 0);
 
       if($q){
-        $records = $records->where('name', 'like', "%" . $q . "%")->get();
+        $c = $records->where('name', $q)->count();
+        if($c){
+          $records = $records->where('name', $q)->get();
+        }else{
+          $records = $records->where('name', 'like', "%" . $q . "%")->get();
+        }
+        
       }else{
         $records = $records->get();
       }
@@ -983,7 +989,7 @@ class BotController extends BaseController
                       {
                         "type": "show_block",
                         "block_names": ["'.$tryAnother.'"],
-                        "title": "try another search"
+                        "title": "Search product"
                       },
                       {
                         "type": "show_block",
