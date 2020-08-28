@@ -378,8 +378,15 @@ class BotController extends BaseController
       $q = trim($data["q"]);
       $parent_id = $data["parent_id"];
 
-      $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
-      ->get();
+      $c = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', $q], ["ppc.parent_id", $parent_id]])->count();
+
+      if($c){
+        DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', $q], ["ppc.parent_id", $parent_id]])->get();
+      }else{
+        $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
+        ->get();
+      }
+      
 
       $json = json_decode('{
         
@@ -412,13 +419,7 @@ class BotController extends BaseController
       ->having("bilang", "!=", 0);
 
       if($q){
-        $c = $records->where('name', $q)->count();
-        if($c){
-          $records = $records->where('name', $q)->get();
-        }else{
-          $records = $records->where('name', 'like', "%" . $q . "%")->get();
-        }
-        
+        $records = $records->where('name', 'like', "%" . $q . "%")->get();
       }else{
         $records = $records->get();
       }
