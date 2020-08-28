@@ -381,7 +381,7 @@ class BotController extends BaseController
       $c = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', $q], ["ppc.parent_id", $parent_id]])->count();
 
       if($c){
-        DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', $q], ["ppc.parent_id", $parent_id]])->get();
+        $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', $q], ["ppc.parent_id", $parent_id]])->get();
       }else{
         $cat = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', 'like', "%" . $q . "%"], ["ppc.parent_id", $parent_id]])
         ->get();
