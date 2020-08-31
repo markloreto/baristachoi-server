@@ -28,16 +28,23 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
-    public function test(Request $request){
+    public function checkIfAdmin(Request $request){
       $data = $request->all();
-      $dt = $data["dt"];
-      $now   = Carbon::now();
-      $plusOneHour = $now->addHour()->format('Y-m-d H:i:s');
-      echo $plusOneHour;
-      if($dt >= $plusOneHour){
-        echo "<br/>Greater than";
+      $messengerId = $data["messenger user id"];
+
+      $c = DB::table("pabile_partners")->where("messenger_id", $messengerId)->count();
+
+      if($c){
+        $json = json_decode('{
+          "redirect_to_blocks": ["cannot understand"]
+        }');
+      }else{
+        $json = json_decode('{
+
+        }');
       }
       
+      return response()->json($json);
     }
 
     public function botGetToken(Request $request){
