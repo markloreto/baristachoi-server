@@ -36,14 +36,14 @@ class BotController extends BaseController
 
       if($c){
         $json = json_decode('{
-          "redirect_to_blocks": ["cannot understand"]
+          "redirect_to_blocks": ["admin: with access"]
         }');
       }else{
         $json = json_decode('{
 
         }');
       }
-      
+
       return response()->json($json);
     }
 
