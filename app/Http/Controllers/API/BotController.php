@@ -880,7 +880,7 @@ class BotController extends BaseController
       }elseif($all){
         $recordsQ = $recordsQ->whereNotIn("pp.category_id", [1, 2, 4, 5]);
       }elseif($admin){
-        $recordsQ = $recordsQ>whereIn('pp.id', function($query) use ($catId){
+        $recordsQ = $recordsQ->whereIn('pp.id', function($query) use ($messengerId){
           $query->select('ppa.product_id')
           ->from("pabile_product_admins AS ppa")
           ->join("pabile_partners AS ppart", "ppa.partner_id", "=", "ppart.id")
