@@ -800,8 +800,9 @@ class BotController extends BaseController
       $messengerId = (isset($data["messenger_id"])) ? $data["messenger_id"] : 0;
       $all = (isset($data["all"])) ? $data["all"] : false;
       $mainCat = (isset($data["mainCat"])) ? $data["mainCat"] : false;
+      $admin = (isset($data["admin"])) ? $data["admin"] : false;
 
-      if(!$catId && !$all){
+      if(!$catId && !$all && !$admin){
         $tags = DB::table("pabile_product_tags")->select("product_id")->where('name', 'like', "%" . $q . "%")->get();
         $specs = DB::table("pabile_product_specs")->select("product_id")->where('value', 'like', "%" . $q . "%")->get();
         $cats = DB::table("pabile_products")->select("id")->whereIn('category_id', function($query) use ($q){
@@ -878,6 +879,13 @@ class BotController extends BaseController
         $recordsQ = $recordsQ->where("pp.updated_at", ">=", $data["latestDate"]);
       }elseif($all){
         $recordsQ = $recordsQ->whereNotIn("pp.category_id", [1, 2, 4, 5]);
+      }elseif($admin){
+        $recordsQ = $recordsQ>whereIn('pp.id', function($query) use ($catId){
+          $query->select('ppa.product_id')
+          ->from("pabile_product_admins AS ppa")
+          ->join("pabile_partners AS ppart", "ppa.partner_id", "=", "ppart.id")
+          ->where('ppart.messenger_id', $messengerId);
+        });
       }else{
         $recordsQ = $recordsQ->where('description', 'like', "%" . $q . "%")->orWhereIn("pp.id", $ids);
 
