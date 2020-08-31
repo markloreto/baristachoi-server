@@ -28,7 +28,7 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
-    public function partner(Request $request){
+    public function partnerDetails(Request $request){
       $data = $request->all();
       $messengerId = $data["messenger user id"];
 
@@ -38,8 +38,7 @@ class BotController extends BaseController
         "set_attributes":
           {
             "u-partner-name": "'.$partner->name.'"
-          },
-        "redirect_to_blocks": ["admin: with access"]
+          }
       }');
 
       return response()->json($json);
