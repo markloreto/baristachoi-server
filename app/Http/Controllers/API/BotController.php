@@ -28,21 +28,19 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
-    public function checkIfAdmin(Request $request){
+    public function partner(Request $request){
       $data = $request->all();
       $messengerId = $data["messenger user id"];
 
-      $c = DB::table("pabile_partners")->where("messenger_id", $messengerId)->count();
+      $partner = DB::table("pabile_partners")->where("messenger_id", $messengerId)->first();
 
-      if($c){
-        $json = json_decode('{
-          "redirect_to_blocks": ["admin: with access"]
-        }');
-      }else{
-        $json = json_decode('{
-
-        }');
-      }
+      $json = json_decode('{
+        "set_attributes":
+          {
+            "u-partner-name": "'.$partner->name.'"
+          },
+        "redirect_to_blocks": ["admin: with access"]
+      }');
 
       return response()->json($json);
     }
@@ -139,8 +137,8 @@ class BotController extends BaseController
 
       $additionalPrice = 0;
 
-      $details = DB::table("pabile_clients AS pc")
-          ->join("pabile_product_admins AS ppa", "ppa.client_id", "=", "pc.id")
+      $details = DB::table("pabile_partners AS pc")
+          ->join("pabile_product_admins AS ppa", "ppa.partner_id", "=", "pc.id")
           ->where([["pc.messenger_id", $messengerId], ["ppa.product_id", $productId]])
           ->first();
 
@@ -902,8 +900,8 @@ class BotController extends BaseController
         foreach($records as $r){
           $thumb = 'https://markloreto.xyz/botPhotoGallery/' . $r->id . "?t=" . $r->updated_date;
 
-          $admin = DB::table("pabile_clients AS pc")
-          ->join("pabile_product_admins AS ppa", "ppa.client_id", "=", "pc.id")
+          $admin = DB::table("pabile_partners AS pc")
+          ->join("pabile_product_admins AS ppa", "ppa.partner_id", "=", "pc.id")
           ->where([["pc.messenger_id", $messengerId], ["ppa.product_id", $r->id]])
           ->count();
 
