@@ -34,7 +34,7 @@ class BotController extends BaseController
       $price = floatval($data["price"]);
       $categoryId = $data["category_id"];
       $description = $data["description"];
-      $partner_id = $data["description"];
+      $partner_id = $data["partner_id"];
 
       $seq = DB::table('pabile_products')->max('id');
 
