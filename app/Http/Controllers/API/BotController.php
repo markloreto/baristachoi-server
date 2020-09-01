@@ -381,6 +381,7 @@ class BotController extends BaseController
       $data = $request->all();
       $q = trim($data["q"]);
       $parent_id = $data["parent_id"];
+      $admin = (isset($data["admin"])) ? $data["admin"] : false;
 
       $c = DB::table("pabile_product_categories AS ppc")->select(DB::raw("ppc.*"))->where([['ppc.name', $q], ["ppc.parent_id", $parent_id]])->count();
 
@@ -401,13 +402,20 @@ class BotController extends BaseController
           "u-cat-id" => $cat[0]->id,
           "u-cat-name" => $cat[0]->name
         ];
-        $json["redirect_to_blocks"] = ["product select"];
+        if($admin)
+          $json["redirect_to_blocks"] = ["admin: create product next step"];
+        else
+          $json["redirect_to_blocks"] = ["product select"];
       }elseif(count($cat) > 1){
-
-        $json["redirect_to_blocks"] = ["multi category"];
+        if($admin)
+          $json["redirect_to_blocks"] = ["admin: multi category"];
+        else
+          $json["redirect_to_blocks"] = ["multi category"];
       }else{
-        $json["redirect_to_blocks"] = ["category no result"];
-        
+        if($admin)
+          $json["redirect_to_blocks"] = ["admin: category no result"];
+        else
+          $json["redirect_to_blocks"] = ["category no result"];
       }
 
       return response()->json($json);
@@ -467,7 +475,10 @@ class BotController extends BaseController
           "u-main-cat-id" => $main[0]->id,
           "u-main-name" => $main[0]->name
         ];
-        $json["redirect_to_blocks"] = ["category search"];
+        if($admin)
+          $json["redirect_to_blocks"] = ["admin: category search"];
+        else
+          $json["redirect_to_blocks"] = ["category search"];
       }elseif(count($main) > 1){
         $json["set_attributes"] = [
           "u-main-cat-id" => $main[0]->id,
