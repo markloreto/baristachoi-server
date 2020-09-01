@@ -28,6 +28,29 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
+    public function partnerNewProduct(Request $request){
+      $data = $request->all();
+      $name = $data["name"];
+      $price = $data["price"];
+      $categoryId = $data["category_id"];
+      $description = $data["description"];
+      $partner_id = $data["description"];
+
+      $seq = DB::table('pabile_products')->max('id');
+
+      $id = DB::table("pabile_products")->insertGetId(
+        ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => 0, "barcode" => null, "price" => $price, "updated_at" => Carbon::now(), 'virtual_cost' => $price]
+      );
+
+      DB::table("pabile_product_admins")->insert([ 
+        'partner_id' => $partner_id,
+        'token' => $token,
+        'product_id' => $id,
+        'percentage' => 0,
+        'additional' => 0
+      ]);
+    }
+
     public function partnerDetails(Request $request){
       $data = $request->all();
       $messengerId = $data["messenger user id"];
