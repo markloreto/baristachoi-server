@@ -446,6 +446,7 @@ class BotController extends BaseController
     public function botSelectMainCategory(Request $request){
       $data = $request->all();
       $q = trim($data["q"]);
+      $admin = (isset($data["admin"])) ? $data["admin"] : false;
 
       $c = DB::table("pabile_product_main_categories")->where('name', $q)->count();
 
@@ -472,9 +473,15 @@ class BotController extends BaseController
           "u-main-cat-id" => $main[0]->id,
           "u-main-name" => $main[0]->name
         ];
-        $json["redirect_to_blocks"] = ["multi main category"];
+        if($admin)
+          $json["redirect_to_blocks"] = ["admin: multi main category"];
+        else
+          $json["redirect_to_blocks"] = ["multi main category"];
       }else{
-        $json["redirect_to_blocks"] = ["main category no result"];
+        if($admin)
+          $json["redirect_to_blocks"] = ["admin: main category no result"];
+        else
+          $json["redirect_to_blocks"] = ["main category no result"];
       }
 
       return response()->json($json);
@@ -924,7 +931,7 @@ class BotController extends BaseController
                       "u-product-id" => $r->id,
                       "u-product-name" => $r->name
                     ],
-                    "block_names" => ["administer product"],
+                    "block_names" => ["admin: administer product"],
                     "type" => "show_block",
                     "title" => "Administer"
                   ]
