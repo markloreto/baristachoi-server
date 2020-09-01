@@ -192,6 +192,8 @@ Route::post('/updateVirtualCost', 'API\BotController@updateVirtualCost');
 Route::post('/dailyPromo', 'API\BotController@dailyPromo');
 Route::post('/changeFor', 'API\BotController@changeFor');
 Route::post('/partnerDetails', 'API\BotController@partnerDetails');
+Route::post('/partnerCreateProduct', 'API\BotController@partnerCreateProduct');
+
 
 Route::get('/pricelist', 'API\BotController@pricelist');
 Route::get('/priceListCloud', 'API\BotController@priceListCloud');

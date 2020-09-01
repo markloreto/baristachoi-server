@@ -28,7 +28,7 @@ use Jenssegers\Agent\Agent;
 class BotController extends BaseController
 {
     //BOT
-    public function partnerNewProduct(Request $request){
+    public function partnerCreateProduct(Request $request){
       $data = $request->all();
       $name = $data["name"];
       $price = $data["price"];
