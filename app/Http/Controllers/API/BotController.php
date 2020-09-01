@@ -39,7 +39,7 @@ class BotController extends BaseController
       $seq = DB::table('pabile_products')->max('id');
 
       $id = DB::table("pabile_products")->insertGetId(
-        ["name" => $name, "category_id" => $category, "description" => $description, "sequence" => $seq, "enabled" => 0, "barcode" => null, "price" => $price, "updated_at" => Carbon::now(), 'virtual_cost' => $price, 'reviewed' => 0]
+        ["name" => $name, "category_id" => $categoryId, "description" => $description, "sequence" => $seq, "enabled" => 0, "barcode" => null, "price" => $price, "updated_at" => Carbon::now(), 'virtual_cost' => $price, 'reviewed' => 0]
       );
 
       DB::table("pabile_product_admins")->insert([ 
