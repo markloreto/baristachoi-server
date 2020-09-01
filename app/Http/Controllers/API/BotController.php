@@ -44,7 +44,6 @@ class BotController extends BaseController
 
       DB::table("pabile_product_admins")->insert([ 
         'partner_id' => $partner_id,
-        'token' => $token,
         'product_id' => $id,
         'percentage' => 0,
         'additional' => 0
