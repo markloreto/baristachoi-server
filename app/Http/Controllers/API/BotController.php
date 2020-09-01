@@ -31,7 +31,7 @@ class BotController extends BaseController
     public function partnerCreateProduct(Request $request){
       $data = $request->all();
       $name = $data["name"];
-      $price = $data["price"];
+      $price = floatval($data["price"]);
       $categoryId = $data["category_id"];
       $description = $data["description"];
       $partner_id = $data["description"];
