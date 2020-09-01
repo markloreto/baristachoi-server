@@ -49,6 +49,10 @@ class BotController extends BaseController
         'percentage' => 0,
         'additional' => 0
       ]);
+
+      $json = json_decode('{}');
+
+      return response()->json($json);
     }
 
     public function partnerDetails(Request $request){
