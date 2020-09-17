@@ -33,7 +33,7 @@ class BotController extends BaseController
       $name = $data["name"];
       $price = floatval($data["price"]);
       $categoryId = $data["category_id"];
-      $description = $data["description"];
+      $description = (trim($data["description"])) ? $data["description"] : null;
       $partner_id = $data["partner_id"];
 
       $seq = DB::table('pabile_products')->max('id');
@@ -1069,6 +1069,9 @@ class BotController extends BaseController
           }', true);
           //u-updates-date
           $json["messages"][1]["attachment"]["payload"]["elements"] = $items;
+          if($admin){
+            array_splice($json["messages"], 2, 1);
+          }
         }else{
           if($latest){
             $json = json_decode('{
@@ -1282,7 +1285,7 @@ class BotController extends BaseController
       $token = $data["token"];
       $messengerId = $data["messenger_uid"];
       $clientId = $data["clientId"];
-      $name = $data["name"];
+      $name = trim($data["name"]);
       $mobile = $data["mobile"];
       $brgyId = $data["brgyId"];
       $brgyName = $data["brgyName"];
