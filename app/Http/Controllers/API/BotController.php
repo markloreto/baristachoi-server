@@ -921,7 +921,7 @@ class BotController extends BaseController
         $tryAnother = "Main Category Search";
       }elseif($latest){
         $recordsQ = $recordsQ->where("pp.updated_at", ">=", $data["latestDate"]);
-      }elseif($all){
+      }elseif(1){
         $recordsQ = $recordsQ->whereNotIn("pp.category_id", [1, 2, 4, 5]);
       }elseif($admin){
         $recordsQ = $recordsQ->whereIn('pp.id', function($query) use ($messengerId){
