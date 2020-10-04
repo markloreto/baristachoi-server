@@ -731,6 +731,31 @@ class BotController extends BaseController
       return response()->json($json);
     }
 
+    public function computeIt(){
+      $data = $request->all();
+      $token = $data["token"];
+
+      $recordsQ = DB::table("pabile_products as pp")->addBinding($token)
+      ->whereIn('pp.id', function($query) use ($token){
+        $query->select('product_id')
+          ->from("pabile_temp_orders")
+          ->where('token', $token);
+      })
+      ->select(DB::raw('pp.*, UNIX_TIMESTAMP(pp.updated_at) AS `updated_date`, (SELECT `qty` FROM pabile_temp_orders WHERE product_id = pp.id AND token = ?) AS `qty`'))->get();
+
+      $total = 0;
+      foreach($recordsQ as $r){
+        $total += $r->price * $r->qty;
+      }
+
+      $json = json_decode('{
+        "set_attributes": 
+          {
+            "u-cart-total": '.$total.'
+          }
+      }');
+    }
+
     public function botAddtoCart(Request $request){
       $data = $request->all();
       $product_id = $data["product_id"];
@@ -767,24 +792,12 @@ class BotController extends BaseController
 
           $sum = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
 
-          $recordsQ = DB::table("pabile_products as pp")->addBinding($token)
-          ->whereIn('pp.id', function($query) use ($token){
-            $query->select('product_id')
-              ->from("pabile_temp_orders")
-              ->where('token', $token);
-          })
-          ->select(DB::raw('pp.*, UNIX_TIMESTAMP(pp.updated_at) AS `updated_date`, (SELECT `qty` FROM pabile_temp_orders WHERE product_id = pp.id AND token = ?) AS `qty`'))->get();
-
-          $total = 0;
-          foreach($recordsQ as $r){
-            $total += $r->price * $r->qty;
-          }
+      
 
           $json = json_decode('{
             "set_attributes": 
               {
-                "u-cart-items": '.$sum.',
-                "u-cart-total": '.$total.'
+                "u-cart-items": '.$sum.'
               },
             "redirect_to_blocks": ["item updated"]
           }');
@@ -795,24 +808,10 @@ class BotController extends BaseController
 
         $sum = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
 
-        $recordsQ = DB::table("pabile_products as pp")->addBinding($token)
-        ->whereIn('pp.id', function($query) use ($token){
-          $query->select('product_id')
-            ->from("pabile_temp_orders")
-            ->where('token', $token);
-        })
-        ->select(DB::raw('pp.*, UNIX_TIMESTAMP(pp.updated_at) AS `updated_date`, (SELECT `qty` FROM pabile_temp_orders WHERE product_id = pp.id AND token = ?) AS `qty`'))->get();
-
-        $total = 0;
-        foreach($recordsQ as $r){
-          $total += $r->price * $r->qty;
-        }
-
         $json = json_decode('{
           "set_attributes": 
     {
-      "u-cart-items": '.$sum.',
-      "u-cart-total": '.$total.'
+      "u-cart-items": '.$sum.'
     },
           "redirect_to_blocks": ["item added"]
         }');

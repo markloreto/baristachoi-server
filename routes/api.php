@@ -193,6 +193,8 @@ Route::post('/dailyPromo', 'API\BotController@dailyPromo');
 Route::post('/changeFor', 'API\BotController@changeFor');
 Route::post('/partnerDetails', 'API\BotController@partnerDetails');
 Route::post('/partnerCreateProduct', 'API\BotController@partnerCreateProduct');
+Route::post('/computeIt', 'API\BotController@computeIt');
+
 
 
 Route::get('/pricelist', 'API\BotController@pricelist');
