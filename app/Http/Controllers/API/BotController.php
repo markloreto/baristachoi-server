@@ -754,6 +754,7 @@ class BotController extends BaseController
             "u-cart-total": '.$total.'
           }
       }');
+      return response()->json($json);
     }
 
     public function botAddtoCart(Request $request){
