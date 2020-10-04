@@ -731,7 +731,7 @@ class BotController extends BaseController
       return response()->json($json);
     }
 
-    public function computeIt(){
+    public function computeIt(Request $request){
       $data = $request->all();
       $token = $data["token"];
 
