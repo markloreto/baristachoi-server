@@ -757,6 +757,7 @@ class BotController extends BaseController
       $query = DB::table("pabile_temp_orders")->where([["product_id", $product_id], ["token", $token]]);
       $c = clone $query;
 
+
       if($c->count()){
         $query = $query->get();
         DB::table('pabile_temp_orders')->where([["product_id", $product_id], ["token", $token]])
@@ -766,11 +767,25 @@ class BotController extends BaseController
 
           $sum = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
 
+          $recordsQ = DB::table("pabile_products as pp")->addBinding($token)
+          ->whereIn('pp.id', function($query) use ($token){
+            $query->select('product_id')
+              ->from("pabile_temp_orders")
+              ->where('token', $token);
+          })
+          ->select(DB::raw('pp.*, UNIX_TIMESTAMP(pp.updated_at) AS `updated_date`, (SELECT `qty` FROM pabile_temp_orders WHERE product_id = pp.id AND token = ?) AS `qty`'))->get();
+
+          $total = 0;
+          foreach($recordsQ as $r){
+            $total += $r->price * $r->qty;
+          }
+
           $json = json_decode('{
             "set_attributes": 
-    {
-      "u-cart-items": '.$sum.'
-    },
+              {
+                "u-cart-items": '.$sum.',
+                "u-cart-total": '.$total.'
+              },
             "redirect_to_blocks": ["item updated"]
           }');
       }else{
@@ -780,10 +795,24 @@ class BotController extends BaseController
 
         $sum = DB::table("pabile_temp_orders")->where("token", $token)->sum("qty");
 
+        $recordsQ = DB::table("pabile_products as pp")->addBinding($token)
+        ->whereIn('pp.id', function($query) use ($token){
+          $query->select('product_id')
+            ->from("pabile_temp_orders")
+            ->where('token', $token);
+        })
+        ->select(DB::raw('pp.*, UNIX_TIMESTAMP(pp.updated_at) AS `updated_date`, (SELECT `qty` FROM pabile_temp_orders WHERE product_id = pp.id AND token = ?) AS `qty`'))->get();
+
+        $total = 0;
+        foreach($recordsQ as $r){
+          $total += $r->price * $r->qty;
+        }
+
         $json = json_decode('{
           "set_attributes": 
     {
-      "u-cart-items": '.$sum.'
+      "u-cart-items": '.$sum.',
+      "u-cart-total": '.$total.'
     },
           "redirect_to_blocks": ["item added"]
         }');
@@ -922,7 +951,7 @@ class BotController extends BaseController
       }elseif($latest){
         $recordsQ = $recordsQ->where("pp.updated_at", ">=", $data["latestDate"]);
       }elseif($all){
-        $recordsQ = $recordsQ->whereNotIn("pp.category_id", [1, 2, 4, 5]);
+        //$recordsQ = $recordsQ->whereNotIn("pp.category_id", [1, 2, 4, 5]);
       }elseif($admin){
         $recordsQ = $recordsQ->whereIn('pp.id', function($query) use ($messengerId){
           $query->select('ppa.product_id')
