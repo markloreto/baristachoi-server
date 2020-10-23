@@ -111,43 +111,44 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/getLoc', 'API\PHPController@getLoc');
 	Route::post('/phpContributionSubmit', 'API\PHPController@phpContributionSubmit');
 
-	/* E-Tinda */
-	Route::post('/createProductCategory', 'API\EtindaController@createProductCategory');
-	Route::get('/getProductCategory', 'API\EtindaController@getProductCategory');
-	Route::get('/getMainProductCategory', 'API\EtindaController@getMainProductCategory');
-	Route::get('/getCategories', 'API\EtindaController@getCategories');
-	Route::get('/getSpecKeys', 'API\EtindaController@getSpecKeys');
-	Route::get('/getProductTags', 'API\EtindaController@getProductTags');
-	Route::get('/getProducts', 'API\EtindaController@getProducts');
-	Route::get('/checkBarcode', 'API\EtindaController@checkBarcode');
-	Route::get('/searchProducts', 'API\EtindaController@searchProducts');
-	Route::get('/getProductDetails', 'API\EtindaController@getProductDetails');
-	Route::get('/pabileBrgyList', 'API\EtindaController@pabileBrgyList');
-	Route::get('/searchClients', 'API\EtindaController@searchClients');
-	Route::get('/deliveries', 'API\EtindaController@deliveries');
-	Route::get('/getOrderItems', 'API\EtindaController@getOrderItems');
-	Route::get('/getRiders', 'API\EtindaController@getRiders');
-	Route::get('/getPurchases', 'API\EtindaController@getPurchases');
-	Route::get('/getOrdersInPurchases', 'API\EtindaController@getOrdersInPurchases');
-	Route::get('/orderInfo', 'API\EtindaController@orderInfo');
-	Route::get('/getCategoriesById', 'API\EtindaController@getCategoriesById');
-	Route::get('/getFbOrders', 'API\EtindaController@getFbOrders');
-	Route::get('/getVirtualList', 'API\EtindaController@getVirtualList');
-	Route::get('/pabilEdashboard', 'API\EtindaController@pabilEdashboard');
-
-	Route::post('/createSpecKeys', 'API\EtindaController@createSpecKeys');
-	Route::post('/createNewProduct', 'API\EtindaController@createNewProduct');
-	Route::post('/purchase', 'API\EtindaController@purchase');
-	Route::post('/addClient', 'API\EtindaController@addClient');
-	Route::post('/submitOrder', 'API\EtindaController@submitOrder');
-	Route::post('/voidOrder', 'API\EtindaController@voidOrder');
-	Route::post('/processOrder', 'API\EtindaController@processOrder');
-	Route::post('/completeOrder', 'API\EtindaController@completeOrder');
-	Route::post('/setRider', 'API\EtindaController@setRider');
-	Route::post('/deliveredOrder', 'API\EtindaController@deliveredOrder');
-	Route::post('/removePurchases', 'API\EtindaController@removePurchases');
-	Route::post('/remitVirtual', 'API\EtindaController@remitVirtual');
+	
 });
+/* E-Tinda */
+Route::post('/createProductCategory', 'API\EtindaController@createProductCategory');
+Route::get('/getProductCategory', 'API\EtindaController@getProductCategory');
+Route::get('/getMainProductCategory', 'API\EtindaController@getMainProductCategory');
+Route::get('/getCategories', 'API\EtindaController@getCategories');
+Route::get('/getSpecKeys', 'API\EtindaController@getSpecKeys');
+Route::get('/getProductTags', 'API\EtindaController@getProductTags');
+Route::get('/getProducts', 'API\EtindaController@getProducts');
+Route::get('/checkBarcode', 'API\EtindaController@checkBarcode');
+Route::get('/searchProducts', 'API\EtindaController@searchProducts');
+Route::get('/getProductDetails', 'API\EtindaController@getProductDetails');
+Route::get('/pabileBrgyList', 'API\EtindaController@pabileBrgyList');
+Route::get('/searchClients', 'API\EtindaController@searchClients');
+Route::get('/deliveries', 'API\EtindaController@deliveries');
+Route::get('/getOrderItems', 'API\EtindaController@getOrderItems');
+Route::get('/getRiders', 'API\EtindaController@getRiders');
+Route::get('/getPurchases', 'API\EtindaController@getPurchases');
+Route::get('/getOrdersInPurchases', 'API\EtindaController@getOrdersInPurchases');
+Route::get('/orderInfo', 'API\EtindaController@orderInfo');
+Route::get('/getCategoriesById', 'API\EtindaController@getCategoriesById');
+Route::get('/getFbOrders', 'API\EtindaController@getFbOrders');
+Route::get('/getVirtualList', 'API\EtindaController@getVirtualList');
+Route::get('/pabilEdashboard', 'API\EtindaController@pabilEdashboard');
+
+Route::post('/createSpecKeys', 'API\EtindaController@createSpecKeys');
+Route::post('/createNewProduct', 'API\EtindaController@createNewProduct');
+Route::post('/purchase', 'API\EtindaController@purchase');
+Route::post('/addClient', 'API\EtindaController@addClient');
+Route::post('/submitOrder', 'API\EtindaController@submitOrder');
+Route::post('/voidOrder', 'API\EtindaController@voidOrder');
+Route::post('/processOrder', 'API\EtindaController@processOrder');
+Route::post('/completeOrder', 'API\EtindaController@completeOrder');
+Route::post('/setRider', 'API\EtindaController@setRider');
+Route::post('/deliveredOrder', 'API\EtindaController@deliveredOrder');
+Route::post('/removePurchases', 'API\EtindaController@removePurchases');
+Route::post('/remitVirtual', 'API\EtindaController@remitVirtual');
 
 Route::get('/ETinda', 'API\PHPController@ETinda');
 Route::get('/updateMobilePrefix', 'API\EtindaController@updateMobilePrefix');
