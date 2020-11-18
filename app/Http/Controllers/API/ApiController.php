@@ -1181,7 +1181,7 @@ class ApiController extends BaseController
     
     public function dealerVersion(){
         $arr = array(); 
-        $arr["version"] = 5.2;
+        $arr["version"] = 5.3;
         $arr["changelog"] = array(
             array("UPDATED", "Server Information")
         );
